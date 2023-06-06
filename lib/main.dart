@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'actions.dart';
+
 void main() {
   runApp(const TodoApp());
 }
@@ -11,11 +13,12 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      routes: {'/actions': (context) => MyWidget()},
       title: 'Todo Manage',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Todo Manage'),
+      home: const MyHomePage(title: 'Clients'),
     );
   }
 }
@@ -34,19 +37,34 @@ class _TodoListState extends State<MyHomePage> {
   final TextEditingController _textFieldController = TextEditingController();
   final TextEditingController _mailFieldController = TextEditingController();
   final TextEditingController _phoneFieldController = TextEditingController();
+  final TextEditingController _addressFieldController = TextEditingController();
+//  final IntTextEditingController _phoneFieldController =
+//       IntTextEditingController();
 
-  void _addTodoItem(String name, String mail, int phone) {
+  void _addTodoItem(String name, String mail, String address
+      // , int phone
+      ) {
     setState(() {
-      _todos.add(Todo(name: name, completed: false, email: mail, phone: phone));
+      _todos.add(Todo(
+        name: name, completed: false, email: mail, address: address,
+        // , phone: phone
+      ));
     });
     _textFieldController.clear();
     _mailFieldController.clear();
     _phoneFieldController.clear();
+    _addressFieldController.clear();
   }
 
   void _handleTodoChange(Todo todo) {
     setState(() {
       todo.completed = !todo.completed;
+    });
+  }
+
+  void _deleteTodo(Todo todo) {
+    setState(() {
+      _todos.removeWhere((element) => element.name == todo.name);
     });
   }
 
@@ -80,6 +98,12 @@ class _TodoListState extends State<MyHomePage> {
                     const InputDecoration(hintText: 'Type your phone number'),
                 autofocus: true,
               ),
+              TextField(
+                controller: _addressFieldController,
+                decoration:
+                    const InputDecoration(hintText: 'Type your phone address'),
+                autofocus: true,
+              ),
             ],
           ),
           actions: <Widget>[
@@ -102,8 +126,8 @@ class _TodoListState extends State<MyHomePage> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                _addTodoItem(
-                    _textFieldController.text, _mailFieldController.text);
+                _addTodoItem(_textFieldController.text,
+                    _mailFieldController.text, _addressFieldController.text);
               },
               child: const Text('Add'),
             ),
@@ -123,9 +147,9 @@ class _TodoListState extends State<MyHomePage> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         children: _todos.map((Todo todo) {
           return TodoItem(
-            todo: todo,
-            onTodoChanged: _handleTodoChange,
-          );
+              todo: todo,
+              onTodoChanged: _handleTodoChange,
+              removeTodo: _deleteTodo);
         }).toList(),
       ),
       floatingActionButton: FloatingActionButton(
@@ -143,23 +167,30 @@ class _TodoListState extends State<MyHomePage> {
 }
 
 class Todo {
-  Todo(
-      {required this.name,
-      required this.completed,
-      required this.email,
-      required this.phone});
+  Todo({
+    required this.name,
+    required this.completed,
+    required this.email,
+    required this.address,
+    // this.phone
+  });
   String name;
   String email;
+  String address;
   bool completed;
-  int phone;
+  // int? phone;
 }
 
 class TodoItem extends StatelessWidget {
-  TodoItem({required this.todo, required this.onTodoChanged})
+  TodoItem(
+      {required this.todo,
+      required this.onTodoChanged,
+      required this.removeTodo})
       : super(key: ObjectKey(todo));
 
   final Todo todo;
   final void Function(Todo todo) onTodoChanged;
+  final void Function(Todo todo) removeTodo;
 
   TextStyle? _getTextStyle(bool checked) {
     if (!checked) return null;
@@ -201,11 +232,12 @@ class TodoItem extends StatelessWidget {
     //   ]),
     // );
     return Card(
-      elevation: 4,
+      elevation: 10,
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
               'Client Name: ${todo.name}',
@@ -214,22 +246,25 @@ class TodoItem extends StatelessWidget {
             SizedBox(height: 8),
             Text('Email: ${todo.email}'),
             SizedBox(height: 8),
-            Text('Address: ${todo.phone}'),
+            // Text('Phone number: ${todo.phone}'),
+            // SizedBox(height: 8),
+            Text('address: ${todo.address}'),
             SizedBox(height: 8),
-            // Text('Phone Number: $phoneNumber'),
-            SizedBox(height: 16),
             Row(
               children: [
                 ElevatedButton(
                   onPressed: () {
                     // Add your logic for the button action here
                     // For example, navigate to another screen with more details
+                    Navigator.pushNamed(context, '/actions');
                   },
                   child: Text('More Details'),
                 ),
                 SizedBox(width: 8),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    removeTodo(todo);
+                  },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red,
                     onPrimary: Colors.white,
