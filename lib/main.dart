@@ -32,12 +32,16 @@ class MyHomePage extends StatefulWidget {
 class _TodoListState extends State<MyHomePage> {
   final List<Todo> _todos = <Todo>[];
   final TextEditingController _textFieldController = TextEditingController();
+  final TextEditingController _mailFieldController = TextEditingController();
+  final TextEditingController _phoneFieldController = TextEditingController();
 
-  void _addTodoItem(String name) {
+  void _addTodoItem(String name, String mail, int phone) {
     setState(() {
-      _todos.add(Todo(name: name, completed: false));
+      _todos.add(Todo(name: name, completed: false, email: mail, phone: phone));
     });
     _textFieldController.clear();
+    _mailFieldController.clear();
+    _phoneFieldController.clear();
   }
 
   void _handleTodoChange(Todo todo) {
@@ -53,10 +57,30 @@ class _TodoListState extends State<MyHomePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Add a todo'),
-          content: TextField(
-            controller: _textFieldController,
-            decoration: const InputDecoration(hintText: 'Type your todo'),
-            autofocus: true,
+          // content: TextField(
+          //   controller: _textFieldController,
+          //   decoration: const InputDecoration(hintText: 'Type your todo'),
+          //   autofocus: true,
+          // ),
+          content: Column(
+            children: [
+              TextField(
+                controller: _textFieldController,
+                decoration: const InputDecoration(hintText: 'Type your name'),
+                autofocus: true,
+              ),
+              TextField(
+                controller: _mailFieldController,
+                decoration: const InputDecoration(hintText: 'Type your email'),
+                autofocus: true,
+              ),
+              TextField(
+                controller: _phoneFieldController,
+                decoration:
+                    const InputDecoration(hintText: 'Type your phone number'),
+                autofocus: true,
+              ),
+            ],
           ),
           actions: <Widget>[
             OutlinedButton(
@@ -78,7 +102,8 @@ class _TodoListState extends State<MyHomePage> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                _addTodoItem(_textFieldController.text);
+                _addTodoItem(
+                    _textFieldController.text, _mailFieldController.text);
               },
               child: const Text('Add'),
             ),
@@ -118,9 +143,15 @@ class _TodoListState extends State<MyHomePage> {
 }
 
 class Todo {
-  Todo({required this.name, required this.completed});
+  Todo(
+      {required this.name,
+      required this.completed,
+      required this.email,
+      required this.phone});
   String name;
+  String email;
   bool completed;
+  int phone;
 }
 
 class TodoItem extends StatelessWidget {
@@ -141,32 +172,75 @@ class TodoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () {
-        onTodoChanged(todo);
-      },
-      leading: Checkbox(
-        checkColor: Colors.greenAccent,
-        activeColor: Colors.red,
-        value: todo.completed,
-        onChanged: (value) {
-          onTodoChanged(todo);
-        },
+    // return ListTile(
+    //   onTap: () {
+    //     onTodoChanged(todo);
+    //   },
+    //   leading: Checkbox(
+    //     checkColor: Colors.greenAccent,
+    //     activeColor: Colors.red,
+    //     value: todo.completed,
+    //     onChanged: (value) {
+    //       onTodoChanged(todo);
+    //     },
+    //   ),
+    //   title: Row(children: <Widget>[
+    //     Expanded(
+    //       child: Text(todo.email + todo.name,
+    //           style: _getTextStyle(todo.completed)),
+    //     ),
+    //     IconButton(
+    //       iconSize: 30,
+    //       icon: const Icon(
+    //         Icons.delete,
+    //         color: Colors.red,
+    //       ),
+    //       alignment: Alignment.centerRight,
+    //       onPressed: () {},
+    //     ),
+    //   ]),
+    // );
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Client Name: ${todo.name}',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Text('Email: ${todo.email}'),
+            SizedBox(height: 8),
+            Text('Address: ${todo.phone}'),
+            SizedBox(height: 8),
+            // Text('Phone Number: $phoneNumber'),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your logic for the button action here
+                    // For example, navigate to another screen with more details
+                  },
+                  child: Text('More Details'),
+                ),
+                SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                    onPrimary: Colors.white,
+                  ),
+                  child: Icon(Icons.delete),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-      title: Row(children: <Widget>[
-        Expanded(
-          child: Text(todo.name, style: _getTextStyle(todo.completed)),
-        ),
-        IconButton(
-          iconSize: 30,
-          icon: const Icon(
-            Icons.delete,
-            color: Colors.red,
-          ),
-          alignment: Alignment.centerRight,
-          onPressed: () {},
-        ),
-      ]),
     );
   }
 }
