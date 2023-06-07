@@ -127,17 +127,14 @@ Widget call(arg) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Flexible(
-              child: TextField(
-                controller: _mailFieldController,
-                decoration: const InputDecoration(hintText: 'מספר שעות'),
-                autofocus: true,
-              ),
+          Flexible(
+            child: TextField(
+              controller: _mailFieldController,
+              decoration: const InputDecoration(hintText: 'מספר שעות'),
+              autofocus: true,
             ),
           ),
-          // SizedBox(width: 6),
+          SizedBox(width: 6),
           Flexible(
             child: TextField(
               controller: _mailFieldController,
