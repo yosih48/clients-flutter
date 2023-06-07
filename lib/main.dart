@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'actions.dart';
+import 'datePick.dart';
 
 void main() {
   runApp(const TodoApp());
@@ -13,7 +14,10 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {'/actions': (context) => MyWidget()},
+      routes: {
+        '/actions': (context) => MyWidget(),
+        '/date': (context) => HomePage()
+      },
       title: 'Todo Manage',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -231,49 +235,54 @@ class TodoItem extends StatelessWidget {
     //     ),
     //   ]),
     // );
-    return Card(
-      elevation: 10,
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              'Client Name: ${todo.name}',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text('Email: ${todo.email}'),
-            SizedBox(height: 8),
-            // Text('Phone number: ${todo.phone}'),
-            // SizedBox(height: 8),
-            Text('address: ${todo.address}'),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Add your logic for the button action here
-                    // For example, navigate to another screen with more details
-                    Navigator.pushNamed(context, '/actions');
-                  },
-                  child: Text('More Details'),
-                ),
-                SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    removeTodo(todo);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
-                    onPrimary: Colors.white,
-                  ),
-                  child: Icon(Icons.delete),
-                ),
-              ],
-            ),
-          ],
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, '/actions');
+      },
+      child: Card(
+        elevation: 10,
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'Client Name: ${todo.name}',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text('Email: ${todo.email}'),
+              SizedBox(height: 8),
+              // Text('Phone number: ${todo.phone}'),
+              // SizedBox(height: 8),
+              // Text('address: ${todo.address}'),
+              // SizedBox(height: 8),
+              // Row(
+              //   children: [
+              //     ElevatedButton(
+              //       onPressed: () {
+              //         // Add your logic for the button action here
+              //         // For example, navigate to another screen with more details
+              //         Navigator.pushNamed(context, '/actions');
+              //       },
+              //       child: Text('More Details'),
+              //     ),
+              //     SizedBox(width: 8),
+              //     ElevatedButton(
+              //       onPressed: () {
+              //         removeTodo(todo);
+              //       },
+              //       style: ElevatedButton.styleFrom(
+              //         primary: Colors.red,
+              //         onPrimary: Colors.white,
+              //       ),
+              //       child: Icon(Icons.delete),
+              //     ),
+              //   ],
+              // ),
+            ],
+          ),
         ),
       ),
     );

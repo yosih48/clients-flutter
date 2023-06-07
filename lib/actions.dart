@@ -1,12 +1,15 @@
+import 'package:clientsf/datePick.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:widget_bindings/widget_bindings.dart';
+import 'datePick.dart';
 
 const List<String> list = <String>[
+  'סוג טיפול',
   'טיפול מרחוק',
   'מכירת ציוד',
   'בית הלקוח',
-  'Four'
 ];
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
@@ -23,7 +26,20 @@ class MyWidget extends StatelessWidget {
         title: Text('חיובים'),
       ),
       // body: const Center(child: dropdown()),
-      body: call(),
+      body: call(context),
+      // body: ElevatedButton(
+      //   child: Text('תאריך קריאה'),
+      //   onPressed: () {
+      //     // Open the DatePicker in the current screen.
+      //     // showDatePicker(
+      //     //   context: BuildContext.current,
+      //     //   initialDate: DateTime.now(),
+      //     //   firstDate: DateTime(2023, 1, 1),
+      //     //   lastDate: DateTime(2023, 12, 31),
+      //     // );
+      //     Navigator.pushNamed(context, '/date');
+      //   },
+      // ),
     );
   }
 }
@@ -37,6 +53,7 @@ class dropdown extends StatefulWidget {
 
 class _dropdownState extends State<dropdown> {
   String dropdownValue = list.first;
+  // String defalutValue = 'dsds';
 
   @override
   Widget build(BuildContext context) {
@@ -65,33 +82,87 @@ class _dropdownState extends State<dropdown> {
   }
 }
 
-Widget call() {
-  return Column(children: [
-    Column(
-      children: [
-        TextField(
-          controller: _textFieldController,
-          decoration: const InputDecoration(hintText: 'תאריך'),
-          autofocus: true,
-        ),
-        SizedBox(height: 8),
-        TextField(
-          controller: _mailFieldController,
-          decoration: const InputDecoration(hintText: 'Type your email'),
-          autofocus: true,
-        ),
-        TextField(
-          controller: _phoneFieldController,
-          decoration: const InputDecoration(hintText: 'Type your phone number'),
-          autofocus: true,
-        ),
-        TextField(
-          controller: _addressFieldController,
-          decoration:
-              const InputDecoration(hintText: 'Type your phone address'),
-          autofocus: true,
-        ),
-      ],
-    )
-  ]);
+Widget call(arg) {
+  return Container(
+      child: Column(
+    children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          dropdown(),
+          ElevatedButton(
+            child: Text('תאריך קריאה'),
+            onPressed: () {
+              // Open the DatePicker in the current screen.
+              // showDatePicker(
+              //   context: arg,
+              //   initialDate: DateTime.now(),
+              //   firstDate: DateTime(2023, 1, 1),
+              //   lastDate: DateTime(2023, 12, 31),
+              // );
+              Navigator.pushNamed(arg, '/date');
+            },
+          ),
+          // dropdown(),
+          // dropdown(),
+          // HomePage(),
+          // Text('dsdssd'),
+          // Text('lllll'),
+        ],
+      ),
+      Column(
+        children: <Widget>[
+          Card(
+              color: Colors.grey,
+              child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: TextField(
+                  maxLines: 8, //or null
+                  decoration:
+                      InputDecoration.collapsed(hintText: "תיאור טיפול"),
+                ),
+              ))
+        ],
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Flexible(
+              child: TextField(
+                controller: _mailFieldController,
+                decoration: const InputDecoration(hintText: 'מספר שעות'),
+                autofocus: true,
+              ),
+            ),
+          ),
+          // SizedBox(width: 6),
+          Flexible(
+            child: TextField(
+              controller: _mailFieldController,
+              decoration: const InputDecoration(hintText: 'מספר שעות'),
+              autofocus: true,
+            ),
+          ),
+        ],
+      ),
+      SizedBox(height: 8),
+      TextField(
+        controller: _mailFieldController,
+        decoration: const InputDecoration(hintText: 'Type your email'),
+        autofocus: true,
+      ),
+      TextField(
+        controller: _phoneFieldController,
+        decoration: const InputDecoration(hintText: 'Type your phone number'),
+        autofocus: true,
+      ),
+      TextField(
+        controller: _addressFieldController,
+        decoration: const InputDecoration(hintText: 'Type your phone address'),
+        autofocus: true,
+      ),
+    ],
+  ));
 }
