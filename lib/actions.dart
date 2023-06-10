@@ -130,7 +130,7 @@ Widget call(arg) {
           Flexible(
             child: TextField(
               controller: _mailFieldController,
-              decoration: const InputDecoration(hintText: 'מספר שעות'),
+              decoration: const InputDecoration(hintText: 'שעות עבודה'),
               autofocus: true,
             ),
           ),
