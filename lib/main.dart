@@ -1,12 +1,21 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'Constants/AppString.dart';
 import 'actions.dart';
+import 'todoItem.dart';
 import 'datePick.dart';
 import 'objects/todo.dart';
 
-void main() {
-  runApp(const TodoApp());
+// Future< void> main() 
+// async{
+//   WidgetsFlutterBinding.ensureInitialized();
+// await Firebase.initializeApp();
+//   runApp(const TodoApp());
+// }
+
+void main(){
+   runApp(const TodoApp());
 }
 
 class TodoApp extends StatelessWidget {
@@ -156,7 +165,8 @@ class _TodoListState extends State<MyHomePage> {
           return TodoItem(
               todo: todo,
               onTodoChanged: _handleTodoChange,
-              removeTodo: _deleteTodo);
+              removeTodo: _deleteTodo
+              );
         }).toList(),
       ),
       floatingActionButton: FloatingActionButton(
@@ -173,78 +183,6 @@ class _TodoListState extends State<MyHomePage> {
   }
 }
 
-class TodoItem extends StatelessWidget {
-  TodoItem(
-      {required this.todo,
-      required this.onTodoChanged,
-      required this.removeTodo})
-      : super(key: ObjectKey(todo));
 
-  final Todo todo;
-  final void Function(Todo todo) onTodoChanged;
-  final void Function(Todo todo) removeTodo;
 
-  TextStyle? _getTextStyle(bool checked) {
-    if (!checked) return null;
 
-    return const TextStyle(
-      color: Colors.black54,
-      decoration: TextDecoration.lineThrough,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, '/actions');
-      },
-      child: Card(
-        elevation: 10,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                'Client Name: ${todo.name}',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              Text('Email: ${todo.email}'),
-              SizedBox(height: 8),
-              // Text('Phone number: ${todo.phone}'),
-              // SizedBox(height: 8),
-              // Text('address: ${todo.address}'),
-              // SizedBox(height: 8),
-              // Row(
-              //   children: [
-              ElevatedButton(
-                onPressed: () {
-                  // Add your logic for the button action here
-                  // For example, navigate to another screen with more details
-                  Navigator.pushNamed(context, '/actions');
-                },
-                child: Text(AppStrings.openCall),
-              ),
-              //     SizedBox(width: 8),
-              //     ElevatedButton(
-              //       onPressed: () {
-              //         removeTodo(todo);
-              //       },
-              //       style: ElevatedButton.styleFrom(
-              //         primary: Colors.red,
-              //         onPrimary: Colors.white,
-              //       ),
-              //       child: Icon(Icons.delete),
-              //     ),
-              //   ],
-              // ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
