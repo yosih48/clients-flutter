@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:widget_bindings/widget_bindings.dart';
+import 'Constants/AppString.dart';
+import 'checkbox.dart';
 import 'datePick.dart';
 
 const List<String> list = <String>[
@@ -103,11 +105,6 @@ Widget call(arg) {
               Navigator.pushNamed(arg, '/date');
             },
           ),
-          // dropdown(),
-          // dropdown(),
-          // HomePage(),
-          // Text('dsdssd'),
-          // Text('lllll'),
         ],
       ),
       Column(
@@ -125,41 +122,37 @@ Widget call(arg) {
         ],
       ),
       Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          Flexible(
-            child: TextField(
-              controller: _mailFieldController,
-              decoration: const InputDecoration(hintText: 'שעות עבודה'),
-              autofocus: true,
-            ),
-          ),
-          SizedBox(width: 6),
-          Flexible(
-            child: TextField(
-              controller: _mailFieldController,
-              decoration: const InputDecoration(hintText: 'מספר שעות'),
-              autofocus: true,
+          CheckboxExample(),
+          SizedBox(width: 206),
+          Expanded(
+            child: Container(
+              width: 100,
+              child: TextField(
+                decoration: const InputDecoration(hintText: AppStrings.sumHour),
+                autofocus: true,
+              ),
             ),
           ),
         ],
       ),
       SizedBox(height: 8),
-      TextField(
-        controller: _mailFieldController,
-        decoration: const InputDecoration(hintText: 'Type your email'),
-        autofocus: true,
-      ),
-      TextField(
-        controller: _phoneFieldController,
-        decoration: const InputDecoration(hintText: 'Type your phone number'),
-        autofocus: true,
-      ),
-      TextField(
-        controller: _addressFieldController,
-        decoration: const InputDecoration(hintText: 'Type your phone address'),
-        autofocus: true,
-      ),
+      // TextField(
+      //   controller: _mailFieldController,
+      //   decoration: const InputDecoration(hintText: 'Type your email'),
+      //   autofocus: true,
+      // ),
+      // TextField(
+      //   controller: _phoneFieldController,
+      //   decoration: const InputDecoration(hintText: 'Type your phone number'),
+      //   autofocus: true,
+      // ),
+      // TextField(
+      //   controller: _addressFieldController,
+      //   decoration: const InputDecoration(hintText: 'Type your phone address'),
+      //   autofocus: true,
+      // ),
     ],
   ));
 }

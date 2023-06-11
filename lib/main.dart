@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'actions.dart';
 import 'datePick.dart';
+import 'objects/todo.dart';
 
 void main() {
   runApp(const TodoApp());
@@ -132,6 +133,7 @@ class _TodoListState extends State<MyHomePage> {
                 Navigator.of(context).pop();
                 _addTodoItem(_textFieldController.text,
                     _mailFieldController.text, _addressFieldController.text);
+                print(_todos);
               },
               child: const Text('Add'),
             ),
@@ -170,21 +172,6 @@ class _TodoListState extends State<MyHomePage> {
   }
 }
 
-class Todo {
-  Todo({
-    required this.name,
-    required this.completed,
-    required this.email,
-    required this.address,
-    // this.phone
-  });
-  String name;
-  String email;
-  String address;
-  bool completed;
-  // int? phone;
-}
-
 class TodoItem extends StatelessWidget {
   TodoItem(
       {required this.todo,
@@ -207,34 +194,6 @@ class TodoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return ListTile(
-    //   onTap: () {
-    //     onTodoChanged(todo);
-    //   },
-    //   leading: Checkbox(
-    //     checkColor: Colors.greenAccent,
-    //     activeColor: Colors.red,
-    //     value: todo.completed,
-    //     onChanged: (value) {
-    //       onTodoChanged(todo);
-    //     },
-    //   ),
-    //   title: Row(children: <Widget>[
-    //     Expanded(
-    //       child: Text(todo.email + todo.name,
-    //           style: _getTextStyle(todo.completed)),
-    //     ),
-    //     IconButton(
-    //       iconSize: 30,
-    //       icon: const Icon(
-    //         Icons.delete,
-    //         color: Colors.red,
-    //       ),
-    //       alignment: Alignment.centerRight,
-    //       onPressed: () {},
-    //     ),
-    //   ]),
-    // );
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, '/actions');
