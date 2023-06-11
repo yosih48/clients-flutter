@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'Constants/AppString.dart';
 import 'actions.dart';
 import 'datePick.dart';
 import 'objects/todo.dart';
@@ -219,14 +220,14 @@ class TodoItem extends StatelessWidget {
               // SizedBox(height: 8),
               // Row(
               //   children: [
-              //     ElevatedButton(
-              //       onPressed: () {
-              //         // Add your logic for the button action here
-              //         // For example, navigate to another screen with more details
-              //         Navigator.pushNamed(context, '/actions');
-              //       },
-              //       child: Text('More Details'),
-              //     ),
+              ElevatedButton(
+                onPressed: () {
+                  // Add your logic for the button action here
+                  // For example, navigate to another screen with more details
+                  Navigator.pushNamed(context, '/actions');
+                },
+                child: Text(AppStrings.openCall),
+              ),
               //     SizedBox(width: 8),
               //     ElevatedButton(
               //       onPressed: () {
