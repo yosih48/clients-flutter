@@ -11,4 +11,14 @@ class Todo {
   String address;
   bool completed;
   // int? phone;
+
+  
+Map<String, dynamic> toJson(){
+
+  return {"name": name, "email": email, "address": address};
 }
+}
+
+
+
+

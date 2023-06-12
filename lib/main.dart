@@ -7,15 +7,15 @@ import 'todoItem.dart';
 import 'datePick.dart';
 import 'objects/todo.dart';
 
-// Future< void> main() 
+// Future< void> main()
 // async{
 //   WidgetsFlutterBinding.ensureInitialized();
 // await Firebase.initializeApp();
 //   runApp(const TodoApp());
 // }
 
-void main(){
-   runApp(const TodoApp());
+void main() {
+  runApp(const TodoApp());
 }
 
 class TodoApp extends StatelessWidget {
@@ -64,6 +64,8 @@ class _TodoListState extends State<MyHomePage> {
         name: name, completed: false, email: mail, address: address,
         // , phone: phone
       ));
+      print(_todos.length);
+      print(_todos);
     });
     _textFieldController.clear();
     _mailFieldController.clear();
@@ -165,8 +167,7 @@ class _TodoListState extends State<MyHomePage> {
           return TodoItem(
               todo: todo,
               onTodoChanged: _handleTodoChange,
-              removeTodo: _deleteTodo
-              );
+              removeTodo: _deleteTodo);
         }).toList(),
       ),
       floatingActionButton: FloatingActionButton(
@@ -182,7 +183,3 @@ class _TodoListState extends State<MyHomePage> {
     );
   }
 }
-
-
-
-

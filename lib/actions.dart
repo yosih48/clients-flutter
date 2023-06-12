@@ -137,7 +137,35 @@ Widget call(arg) {
           ),
         ],
       ),
+
+      Row(
+        children: [
+          Expanded(
+            child: Container(
+              width: 20,
+              child: TextField(
+                decoration: const InputDecoration(hintText: AppStrings.sumHour),
+                autofocus: true,
+              ),
+            ),
+          ),
+        ],
+      ),
+
       SizedBox(height: 8),
+      ElevatedButton(
+        child: Text('שמור'),
+        onPressed: () {
+          // Open the DatePicker in the current screen.
+          // showDatePicker(
+          //   context: arg,
+          //   initialDate: DateTime.now(),
+          //   firstDate: DateTime(2023, 1, 1),
+          //   lastDate: DateTime(2023, 12, 31),
+          // );
+          // Navigator.pushNamed(arg, '/date');
+        },
+      ),
       // TextField(
       //   controller: _mailFieldController,
       //   decoration: const InputDecoration(hintText: 'Type your email'),
