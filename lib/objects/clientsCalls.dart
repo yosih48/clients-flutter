@@ -7,7 +7,7 @@ class Calls {
     // this.phone
   });
   String call;
-  String paid;
+  bool paid;
   String type;
   // bool completed;
   // int? phone;

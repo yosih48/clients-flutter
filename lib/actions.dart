@@ -6,6 +6,8 @@ import 'package:widget_bindings/widget_bindings.dart';
 import 'Constants/AppString.dart';
 import 'checkbox.dart';
 import 'datePick.dart';
+import 'objects/clients.dart';
+import 'objects/clientsCalls.dart';
 
 const List<String> list = <String>[
   'סוג טיפול',
@@ -13,6 +15,20 @@ const List<String> list = <String>[
   'מכירת ציוד',
   'בית הלקוח',
 ];
+
+
+
+
+
+
+void createCall(){
+  
+Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
+Todo.userList.add(callNumberOne);
+print(callNumberOne);
+}
+
+
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
@@ -137,7 +153,28 @@ Widget call(arg) {
           ),
         ],
       ),
+
+      Row(
+        children: [
+          Expanded(
+            child: Container(
+              width: 20,
+              child: TextField(
+                decoration: const InputDecoration(hintText: AppStrings.sumHour),
+                autofocus: true,
+              ),
+            ),
+          ),
+        ],
+      ),
+
       SizedBox(height: 8),
+      ElevatedButton(
+        child: Text('שמור'),
+        onPressed: () {
+  createCall();
+        },
+      ),
       // TextField(
       //   controller: _mailFieldController,
       //   decoration: const InputDecoration(hintText: 'Type your email'),
