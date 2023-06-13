@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 
 import 'Constants/AppString.dart';
 import 'actions.dart';
+import 'objects/clientsCalls.dart';
 import 'todoItem.dart';
 import 'datePick.dart';
-import 'objects/todo.dart';
+import 'objects/clients.dart';
 
 // Future< void> main() 
 // async{
@@ -65,6 +66,13 @@ class _TodoListState extends State<MyHomePage> {
         // , phone: phone
       ));
     });
+
+
+void createCall(){
+// Calls new call = Calls()
+
+}
+
     _textFieldController.clear();
     _mailFieldController.clear();
     _phoneFieldController.clear();
@@ -169,6 +177,46 @@ class _TodoListState extends State<MyHomePage> {
               );
         }).toList(),
       ),
+
+      // body: ListView.builder(
+      //   itemBuilder: (context, index){
+      //     return Padding(
+      //       padding: const EdgeInsets.symmetric(vertical: 1.0,horizontal: 4.0),
+      //       child: Card(
+      //         child: ListTile(
+      //           onTap: (){
+      // //  updateTime(index);
+      //           },
+      //           title: Row(
+      //             children: [
+      //               Text(_todos[index].name),
+      //               Text(_todos[index].address),
+      //                  SizedBox(width: 8.0),
+      //                  ElevatedButton(
+                        
+      //                 onPressed: (){
+
+
+      //                 },
+      //                  child:Text('Button'))
+      //             ],
+      //           ),
+      //                  subtitle: Column(
+      //               crossAxisAlignment: CrossAxisAlignment.start,
+      //               children: [
+      //                 Text(_todos[index].address),
+      //                 Text(_todos[index].address),
+      //               ],
+      //             ),
+      //           // leading: CircleAvatar(
+      //           //   backgroundImage: AssetImage('assets/${_todos[index].flag}'),
+      //           // ),
+      //         ),
+      //       ),
+      //     );
+        // },
+      // itemCount:_todos.length ,
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _displayDialog(),
         tooltip: 'Add a Todo',

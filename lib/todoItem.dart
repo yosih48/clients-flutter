@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'Constants/AppString.dart';
-import 'objects/todo.dart';
+import 'objects/clients.dart';
 
 class TodoItem extends StatelessWidget {
   TodoItem(
