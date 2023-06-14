@@ -140,15 +140,15 @@ Widget call(arg) {
 
       Row(
         children: [
-          Expanded(
-            child: Container(
-              width: 20,
-              child: TextField(
-                decoration: const InputDecoration(hintText: AppStrings.sumHour),
-                autofocus: true,
-              ),
-            ),
-          ),
+          // Expanded(
+          //   child: Container(
+          //     width: 20,
+          //     child: TextField(
+          //       decoration: const InputDecoration(hintText: AppStrings.sumHour),
+          //       autofocus: true,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
 
