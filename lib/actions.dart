@@ -16,18 +16,11 @@ const List<String> list = <String>[
   'בית הלקוח',
 ];
 
-
-
-
-
-
-void createCall(){
-  
-Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
-Todo.userList.add(callNumberOne);
-print(callNumberOne);
+void createCall() {
+  Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
+// Todo.userList.add(callNumberOne);
+  print(callNumberOne);
 }
-
 
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
@@ -172,7 +165,7 @@ Widget call(arg) {
       ElevatedButton(
         child: Text('שמור'),
         onPressed: () {
-  createCall();
+          createCall();
         },
       ),
       // TextField(

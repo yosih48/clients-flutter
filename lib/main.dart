@@ -8,15 +8,17 @@ import 'todoItem.dart';
 import 'datePick.dart';
 import 'objects/clients.dart';
 
-// Future< void> main() 
+// Future< void> main()
 // async{
 //   WidgetsFlutterBinding.ensureInitialized();
 // await Firebase.initializeApp();
 //   runApp(const TodoApp());
 // }
 
-void main(){
-   runApp(const TodoApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+await Firebase.initializeApp();
+  runApp(const TodoApp());
 }
 
 class TodoApp extends StatelessWidget {
@@ -62,16 +64,17 @@ class _TodoListState extends State<MyHomePage> {
       ) {
     setState(() {
       _todos.add(Todo(
-        name: name, completed: false, email: mail, address: address,
+        name: name,
+        completed: false,
+        email: mail,
+        address: address,
         userList: [],
       ));
     });
 
-
-void createCall(){
+    void createCall() {
 // Calls new call = Calls()
-
-}
+    }
 
     _textFieldController.clear();
     _mailFieldController.clear();
@@ -173,8 +176,7 @@ void createCall(){
           return TodoItem(
               todo: todo,
               onTodoChanged: _handleTodoChange,
-              removeTodo: _deleteTodo
-              );
+              removeTodo: _deleteTodo);
         }).toList(),
       ),
 
@@ -193,9 +195,8 @@ void createCall(){
       //               Text(_todos[index].address),
       //                  SizedBox(width: 8.0),
       //                  ElevatedButton(
-                        
-      //                 onPressed: (){
 
+      //                 onPressed: (){
 
       //                 },
       //                  child:Text('Button'))
@@ -214,7 +215,7 @@ void createCall(){
       //         ),
       //       ),
       //     );
-        // },
+      // },
       // itemCount:_todos.length ,
       // ),
       floatingActionButton: FloatingActionButton(
@@ -230,7 +231,3 @@ void createCall(){
     );
   }
 }
-
-
-
-
