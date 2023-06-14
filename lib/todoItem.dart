@@ -26,11 +26,7 @@ class TodoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, '/actions');
-      },
-      child: Card(
+    return  Card(
         elevation: 10,
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -74,7 +70,7 @@ class TodoItem extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
+    
   }
 }

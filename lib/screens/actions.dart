@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:widget_bindings/widget_bindings.dart';
-import 'Constants/AppString.dart';
-import 'checkbox.dart';
-import 'datePick.dart';
-import 'objects/clients.dart';
-import 'objects/clientsCalls.dart';
+import '../Constants/AppString.dart';
+import '../checkbox.dart';
+import '../datePick.dart';
+import '../objects/clients.dart';
+import '../objects/clientsCalls.dart';
 
 const List<String> list = <String>[
   'סוג טיפול',
@@ -18,7 +18,8 @@ const List<String> list = <String>[
 
 void createCall() {
   Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
-// Todo.userList.add(callNumberOne);
+
+// client.userList?.add(callNumberOne);
   print(callNumberOne);
 }
 

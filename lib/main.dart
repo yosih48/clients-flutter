@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'Constants/AppString.dart';
-import 'actions.dart';
+import 'screens/actions.dart';
 import 'objects/clientsCalls.dart';
 import 'todoItem.dart';
 import 'datePick.dart';
@@ -55,6 +55,7 @@ class MyHomePage extends StatefulWidget {
 
 class _TodoListState extends State<MyHomePage> {
   final List<Todo> _todos = <Todo>[];
+
   final TextEditingController _textFieldController = TextEditingController();
   final TextEditingController _mailFieldController = TextEditingController();
   final TextEditingController _phoneFieldController = TextEditingController();
@@ -66,18 +67,19 @@ class _TodoListState extends State<MyHomePage> {
       // , int phone
       ) {
     setState(() {
-      _todos.add(Todo(
-        name: name,
-        completed: false,
-        email: mail,
-        address: address,
-        userList: [],
-      ));
+    Todo client =
+        Todo(name: name, email: mail, address: address, completed: false);
+      // _todos.add(Todo(
+      //   name: name,
+      //   completed: false,
+      //   email: mail,
+      //   address: address,
+      //   userList: [],
+      // ));
+      print(client);
+      _todos.add(client);
+       print(_todos);
     });
-
-    void createCall() {
-// Calls new call = Calls()
-    }
 
     _textFieldController.clear();
     _mailFieldController.clear();
@@ -226,11 +228,6 @@ class _TodoListState extends State<MyHomePage> {
         tooltip: 'Add a Todo',
         child: const Icon(Icons.add),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
