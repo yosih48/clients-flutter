@@ -1,3 +1,5 @@
+import 'package:clientsf/screens/AppStarter.dart';
+import 'package:clientsf/screens/PhoneLogin.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -17,8 +19,9 @@ import 'objects/clients.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-await Firebase.initializeApp();
-  runApp(const TodoApp());
+  await Firebase.initializeApp();
+  // runApp(const TodoApp());
+  runApp(const AppStarter());
 }
 
 class TodoApp extends StatelessWidget {
