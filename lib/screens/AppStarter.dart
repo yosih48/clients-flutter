@@ -16,8 +16,8 @@ class AppStarter extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
 
-      // home: const TodoApp(),
-      home: PhoneLoginPage(),
+      home: const TodoApp(),
+      // home: PhoneLoginPage(),
     );
   }
 }

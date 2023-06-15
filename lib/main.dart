@@ -9,6 +9,7 @@ import 'objects/clientsCalls.dart';
 import 'todoItem.dart';
 import 'datePick.dart';
 import 'objects/clients.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Future< void> main()
 // async{
@@ -67,8 +68,8 @@ class _TodoListState extends State<MyHomePage> {
       // , int phone
       ) {
     setState(() {
-    Todo client =
-        Todo(name: name, email: mail, address: address, completed: false);
+      Todo client =
+          Todo(name: name, email: mail, address: address, completed: false);
       // _todos.add(Todo(
       //   name: name,
       //   completed: false,
@@ -78,7 +79,7 @@ class _TodoListState extends State<MyHomePage> {
       // ));
       print(client);
       _todos.add(client);
-       print(_todos);
+      print(_todos);
     });
 
     _textFieldController.clear();
@@ -149,6 +150,20 @@ class _TodoListState extends State<MyHomePage> {
               },
               child: const Text('Cancel'),
             ),
+            // ElevatedButton(
+            //   style: ElevatedButton.styleFrom(
+            //     shape: RoundedRectangleBorder(
+            //       borderRadius: BorderRadius.circular(12),
+            //     ),
+            //   ),
+            //   onPressed: () {
+            //     Navigator.of(context).pop();
+            //     _addTodoItem(_textFieldController.text,
+            //         _mailFieldController.text, _addressFieldController.text);
+            //     print(_todos);
+            //   },
+            //   child: const Text('Add'),
+            // ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -157,16 +172,28 @@ class _TodoListState extends State<MyHomePage> {
               ),
               onPressed: () {
                 Navigator.of(context).pop();
-                _addTodoItem(_textFieldController.text,
-                    _mailFieldController.text, _addressFieldController.text);
-                print(_todos);
+                addUser(_textFieldController.text, _mailFieldController.text,
+                    _addressFieldController.text);
               },
-              child: const Text('Add'),
+              child: const Text('Add user'),
             ),
           ],
         );
       },
     );
+  }
+
+  CollectionReference clients = FirebaseFirestore.instance.collection('users');
+  Future<void> addUser(name, email, address) {
+    // Call the user's CollectionReference to add a new user
+    return clients
+        .add({
+          'name': name, // John Doe
+          'email': email, // Stokes and Sons
+          'address': address // 42
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
   }
 
   @override
