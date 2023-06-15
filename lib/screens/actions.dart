@@ -1,4 +1,5 @@
 import 'package:clientsf/datePick.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -21,12 +22,14 @@ void createCall() {
 
 // client.userList?.add(callNumberOne);
   print(callNumberOne);
+  _callDetailsController.clear();
 }
-
+ final String dropdownValue = 'gg';
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
+
 
 class MyWidget extends StatelessWidget {
   const MyWidget({super.key});
@@ -37,25 +40,14 @@ class MyWidget extends StatelessWidget {
       appBar: AppBar(
         title: Text('חיובים'),
       ),
-      // body: const Center(child: dropdown()),
+   
       body: call(context),
-      // body: ElevatedButton(
-      //   child: Text('תאריך קריאה'),
-      //   onPressed: () {
-      //     // Open the DatePicker in the current screen.
-      //     // showDatePicker(
-      //     //   context: BuildContext.current,
-      //     //   initialDate: DateTime.now(),
-      //     //   firstDate: DateTime(2023, 1, 1),
-      //     //   lastDate: DateTime(2023, 12, 31),
-      //     // );
-      //     Navigator.pushNamed(context, '/date');
-      //   },
-      // ),
+
     );
   }
 }
 
+  final TextEditingController _callDetailsController = TextEditingController();
 class dropdown extends StatefulWidget {
   const dropdown({super.key});
 
@@ -124,6 +116,7 @@ Widget call(arg) {
               child: Padding(
                 padding: EdgeInsets.all(8.0),
                 child: TextField(
+                  controller: _callDetailsController,
                   maxLines: 8, //or null
                   decoration:
                       InputDecoration.collapsed(hintText: "תיאור טיפול"),
@@ -166,7 +159,8 @@ Widget call(arg) {
       ElevatedButton(
         child: Text('שמור'),
         onPressed: () {
-          createCall();
+   
+          addCall(_callDetailsController.text, true,dropdownValue );
         },
       ),
       // TextField(
@@ -187,3 +181,19 @@ Widget call(arg) {
     ],
   ));
 }
+  CollectionReference clients = FirebaseFirestore.instance.collection('users');
+  Future<void> addCall( call,paid, type) {
+    print(call);
+    // Call the user's CollectionReference to add a new user
+    return clients
+    .doc('1')
+        .update({
+          'calls': {
+          'call': call,
+          'paid': paid,
+          'type': type,
+        },
+        })
+        .then((value) => print("call Added"))
+        .catchError((error) => print("Failed to add call: $error"));
+  }
