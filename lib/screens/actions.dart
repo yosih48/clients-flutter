@@ -30,6 +30,7 @@ final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
 
+  bool _checkboxValue = false;
 
 class MyWidget extends StatelessWidget {
   const MyWidget({super.key});
@@ -127,7 +128,16 @@ Widget call(arg) {
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          CheckboxExample(),
+//           CheckboxExample(
+//  value: _checkboxValue,
+//          onChanged: (newValue) {
+//  print(_checkboxValue);
+//                 setState(() {
+//                   _checkboxValue = newValue;
+//                 });
+//                  print(_checkboxValue);
+//          }
+//           ),
           SizedBox(width: 206),
           Expanded(
             child: Container(
@@ -180,6 +190,9 @@ Widget call(arg) {
       // ),
     ],
   ));
+}
+
+void setState(Null Function() param0) {
 }
   CollectionReference clients = FirebaseFirestore.instance.collection('users');
   Future<void> addCall( call,paid, type) {
