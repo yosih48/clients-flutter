@@ -81,6 +81,7 @@ class _TodoListState extends State<MyHomePage> {
       _todos.add(client);
       print(_todos);
     });
+         
 
     _textFieldController.clear();
     _mailFieldController.clear();
@@ -174,8 +175,10 @@ class _TodoListState extends State<MyHomePage> {
                 Navigator.of(context).pop();
                 addUser(_textFieldController.text, _mailFieldController.text,
                     _addressFieldController.text);
-                _addTodoItem(_textFieldController.text, _mailFieldController.text,
-                    _addressFieldController.text);
+                _addTodoItem(_textFieldController.text,
+                    _mailFieldController.text, _addressFieldController.text);
+
+                setState(() {});
               },
               child: const Text('Add user'),
             ),
@@ -190,7 +193,7 @@ class _TodoListState extends State<MyHomePage> {
     // Call the user's CollectionReference to add a new user
     print(name);
     return clients
-     .doc('1')
+        .doc('1')
         .update({
           'name': name, // John Doe
           'email': email, // Stokes and Sons
@@ -199,15 +202,12 @@ class _TodoListState extends State<MyHomePage> {
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
   }
+
   void getDataFromFirestore() async {
- var snapshot = await FirebaseFirestore.instance.collection('users').get();
+    var snapshot = await FirebaseFirestore.instance.collection('users').get();
 // print(snapshot);
-  if (snapshot.docs.isNotEmpty) {
-
- 
+    if (snapshot.docs.isNotEmpty) {}
   }
-
-}
 
   @override
   Widget build(BuildContext context) {

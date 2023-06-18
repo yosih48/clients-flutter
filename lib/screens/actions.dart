@@ -19,36 +19,39 @@ const List<String> list = <String>[
 
 void createCall() {
   Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
-
 // client.userList?.add(callNumberOne);
   print(callNumberOne);
   _callDetailsController.clear();
 }
- final String dropdownValue = 'gg';
+
+final String dropdownValue = 'gg';
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
 
-  bool _checkboxValue = false;
-
-class MyWidget extends StatelessWidget {
+class MyWidget extends StatefulWidget {
   const MyWidget({super.key});
 
   @override
+  State<MyWidget> createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<MyWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('חיובים'),
-      ),
-   
-      body: call(context),
-
-    );
+        appBar: AppBar(
+          title: Text('חיובים'),
+        ),
+        // body: call(context),
+        body: const call());
   }
 }
 
-  final TextEditingController _callDetailsController = TextEditingController();
+bool _checkboxValue = false;
+
+final TextEditingController _callDetailsController = TextEditingController();
+
 class dropdown extends StatefulWidget {
   const dropdown({super.key});
 
@@ -87,126 +90,151 @@ class _dropdownState extends State<dropdown> {
   }
 }
 
-Widget call(arg) {
-  return Container(
-      child: Column(
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          dropdown(),
-          ElevatedButton(
-            child: Text('תאריך קריאה'),
-            onPressed: () {
-              // Open the DatePicker in the current screen.
-              // showDatePicker(
-              //   context: arg,
-              //   initialDate: DateTime.now(),
-              //   firstDate: DateTime(2023, 1, 1),
-              //   lastDate: DateTime(2023, 12, 31),
-              // );
-              Navigator.pushNamed(arg, '/date');
-            },
-          ),
-        ],
-      ),
-      Column(
-        children: <Widget>[
-          Card(
-              color: Colors.grey,
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: TextField(
-                  controller: _callDetailsController,
-                  maxLines: 8, //or null
-                  decoration:
-                      InputDecoration.collapsed(hintText: "תיאור טיפול"),
+class call extends StatefulWidget {
+  const call({super.key});
+
+  @override
+  State<call> createState() => _callState();
+}
+
+class _callState extends State<call> {
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            dropdown(),
+            ElevatedButton(
+              child: Text('תאריך קריאה'),
+              onPressed: () {
+                // Open the DatePicker in the current screen.
+                // showDatePicker(
+                //   context: arg,
+                //   initialDate: DateTime.now(),
+                //   firstDate: DateTime(2023, 1, 1),
+                //   lastDate: DateTime(2023, 12, 31),
+                // );
+                Navigator.pushNamed(context, '/date');
+              },
+            ),
+          ],
+        ),
+        Column(
+          children: <Widget>[
+            Card(
+                color: Colors.grey,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _callDetailsController,
+                    maxLines: 8, //or null
+                    decoration:
+                        InputDecoration.collapsed(hintText: "תיאור טיפול"),
+                  ),
+                ))
+          ],
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Row(
+              children: [
+                Checkbox(
+                    value: _checkboxValue,
+                    onChanged: (newValue) {
+                      print(newValue);
+
+                      setState(() {
+                        _checkboxValue = newValue!;
+
+                        print(_checkboxValue);
+                      });
+                      
+                    }),
+                                    Text(
+                  AppStrings.paid,
+                  style: TextStyle(fontSize: 16),
                 ),
-              ))
-        ],
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-//           CheckboxExample(
-//  value: _checkboxValue,
-//          onChanged: (newValue) {
-//  print(_checkboxValue);
-//                 setState(() {
-//                   _checkboxValue = newValue;
-//                 });
-//                  print(_checkboxValue);
-//          }
-//           ),
-          SizedBox(width: 206),
-          Expanded(
-            child: Container(
-              width: 100,
-              child: TextField(
-                decoration: const InputDecoration(hintText: AppStrings.sumHour),
-                autofocus: true,
+              ],
+            ),
+            SizedBox(width: 206),
+            Expanded(
+              child: Container(
+                width: 100,
+                child: TextField(
+                  decoration:
+                      const InputDecoration(hintText: AppStrings.sumHour),
+                  autofocus: true,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
 
-      Row(
-        children: [
-          Expanded(
-            child: Container(
-              width: 20,
-              child: TextField(
-                decoration: const InputDecoration(hintText: AppStrings.sumHour),
-                autofocus: true,
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                width: 20,
+                child: TextField(
+                  decoration:
+                      const InputDecoration(hintText: AppStrings.sumHour),
+                  autofocus: true,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
 
-      SizedBox(height: 8),
-      ElevatedButton(
-        child: Text('שמור'),
-        onPressed: () {
-   
-          addCall(_callDetailsController.text, true,dropdownValue );
-        },
-      ),
-      // TextField(
-      //   controller: _mailFieldController,
-      //   decoration: const InputDecoration(hintText: 'Type your email'),
-      //   autofocus: true,
-      // ),
-      // TextField(
-      //   controller: _phoneFieldController,
-      //   decoration: const InputDecoration(hintText: 'Type your phone number'),
-      //   autofocus: true,
-      // ),
-      // TextField(
-      //   controller: _addressFieldController,
-      //   decoration: const InputDecoration(hintText: 'Type your phone address'),
-      //   autofocus: true,
-      // ),
-    ],
-  ));
+        SizedBox(height: 8),
+        ElevatedButton(
+          child: Text('שמור'),
+          onPressed: () {
+            setState(() {
+              print(_checkboxValue);
+              addCall(
+                  _callDetailsController.text, _checkboxValue, dropdownValue);
+            });
+          },
+        ),
+        // TextField(
+        //   controller: _mailFieldController,
+        //   decoration: const InputDecoration(hintText: 'Type your email'),
+        //   autofocus: true,
+        // ),
+        // TextField(
+        //   controller: _phoneFieldController,
+        //   decoration: const InputDecoration(hintText: 'Type your phone number'),
+        //   autofocus: true,
+        // ),
+        // TextField(
+        //   controller: _addressFieldController,
+        //   decoration: const InputDecoration(hintText: 'Type your phone address'),
+        //   autofocus: true,
+        // ),
+      ],
+    ));
+    ;
+  }
 }
 
-void setState(Null Function() param0) {
-}
-  CollectionReference clients = FirebaseFirestore.instance.collection('users');
-  Future<void> addCall( call,paid, type) {
-    print(call);
-    // Call the user's CollectionReference to add a new user
-    return clients
-    .doc('1')
-        .update({
-          'calls': {
+CollectionReference clients = FirebaseFirestore.instance.collection('users');
+Future<void> addCall(call, paid, type) {
+  print(call);
+  // Call the user's CollectionReference to add a new user
+  return clients
+      .doc('1')
+      .update({
+        'calls': {
           'call': call,
           'paid': paid,
           'type': type,
         },
-        })
-        .then((value) => print("call Added"))
-        .catchError((error) => print("Failed to add call: $error"));
-  }
+      })
+      .then((value) => print("call Added"))
+      .catchError((error) => print("Failed to add call: $error"));
+}
