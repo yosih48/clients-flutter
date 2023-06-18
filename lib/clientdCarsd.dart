@@ -53,7 +53,7 @@ class UserListView extends StatelessWidget {
                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => actions(),
+                              builder: (context) => actions(user: user,),
                             ),
                           );
                         },

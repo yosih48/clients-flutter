@@ -32,10 +32,9 @@ final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
 
 class actions extends StatefulWidget {
-final String? userId;
 
-
-  const actions({super.key, this.userId});
+final Todo user ;
+  const actions({super.key, required this.user});
     // const actions({Key? key, required this.userId}) : super(key: key);
 
 
@@ -44,9 +43,11 @@ final String? userId;
 }
 
 class _actionsState extends State<actions> {
+
+
   void initState() {
     
-    print(widget.userId);
+    print(widget.user.name);
     print('select');
   }
   Widget build(BuildContext context) {
