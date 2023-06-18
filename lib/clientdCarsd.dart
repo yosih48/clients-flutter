@@ -46,7 +46,7 @@ class UserListView extends StatelessWidget {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Age: ${user.email}'),
+                      Text('Email: ${user.email}'),
                       Text('Address: ${user.address}'),
                       ElevatedButton(
                         onPressed: ()  {

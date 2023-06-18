@@ -47,8 +47,8 @@ class _actionsState extends State<actions> {
 
   void initState() {
     
-    print(widget.user.name);
-    print('select');
+    print(widget.user.id);
+    
   }
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +56,8 @@ class _actionsState extends State<actions> {
           title: Text('חיובים'),
         ),
         // body: call(context),
-        body: const call());
+        body: call(user: widget.user),
+        );
   }
 }
 
@@ -103,8 +104,10 @@ class _dropdownState extends State<dropdown> {
 }
 
 class call extends StatefulWidget {
-  const call({super.key});
+final Todo user;
 
+  const call({super.key, required this.user});
+  
   @override
   State<call> createState() => _callState();
 }
@@ -206,8 +209,7 @@ class _callState extends State<call> {
           onPressed: () {
             setState(() {
               print(_checkboxValue);
-              addCall(
-                  _callDetailsController.text, _checkboxValue, dropdownValue);
+              addCall(widget.user, _callDetailsController.text, _checkboxValue, dropdownValue);
             });
           },
         ),
@@ -233,11 +235,11 @@ class _callState extends State<call> {
 }
 
 CollectionReference clients = FirebaseFirestore.instance.collection('users');
-Future<void> addCall(call, paid, type) {
-  print(call);
+Future<void> addCall( user, call, paid, type) {
+  print(user.id);
   // Call the user's CollectionReference to add a new user
   return clients
-      .doc('selectedUser')
+      .doc(user.id)
       .update({
         'calls': {
           'call': call,

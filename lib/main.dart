@@ -193,18 +193,27 @@ class _TodoListState extends State<MyHomePage> {
 
   CollectionReference clients = FirebaseFirestore.instance.collection('users');
   Future<void> addUser(name, email, address) {
+    String clientId = generateClientId();
     // Call the user's CollectionReference to add a new user
     print(name);
     return clients
-        
-        .add({
-          'name': name, // John Doe
-          'email': email, // Stokes and Sons
-          'address': address // 42
+         .doc(clientId)
+        .set({
+            'id': clientId,
+          'name': name, 
+          'email': email, 
+          'address': address 
         })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
   }
+
+  String generateClientId() {
+  // Implement your logic to generate a unique client ID
+  // This can be a randomly generated string, a combination of user input, or any other unique identifier generation method
+  // For simplicity, we will use a timestamp-based ID in this example
+  return DateTime.now().millisecondsSinceEpoch.toString();
+}
 
   void getDataFromFirestore() async {
     var snapshot = await FirebaseFirestore.instance.collection('users').get();
