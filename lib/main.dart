@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'Constants/AppString.dart';
+import 'clientdCarsd.dart';
 import 'screens/actions.dart';
 import 'objects/clientsCalls.dart';
 import 'todoItem.dart';
@@ -32,10 +33,10 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {
-        '/actions': (context) => MyWidget(),
-        '/date': (context) => HomePage()
-      },
+      // routes: {
+      //   '/actions': (context) => MyWidget(user.id),
+      //   '/date': (context) => HomePage()
+      // },
       title: 'Todo Manage',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -68,18 +69,20 @@ class _TodoListState extends State<MyHomePage> {
       // , int phone
       ) {
     setState(() {
-      Todo client =
-          Todo(name: name, email: mail, address: address, completed: false);
-      // _todos.add(Todo(
-      //   name: name,
-      //   completed: false,
-      //   email: mail,
-      //   address: address,
-      //   userList: [],
-      // ));
-      print(client);
-      _todos.add(client);
-      print(_todos);
+      // Todo client =
+      //     Todo(name: name, email: mail, address: address, completed: false);
+
+      // // _todos.add(Todo(
+      // //   name: name,
+      // //   completed: false,
+      // //   email: mail,
+      // //   address: address,
+      // //   userList: [],
+      // // ));
+
+      // print(client);
+      // _todos.add(client);
+      // print(_todos);
     });
          
 
@@ -193,8 +196,8 @@ class _TodoListState extends State<MyHomePage> {
     // Call the user's CollectionReference to add a new user
     print(name);
     return clients
-        .doc('1')
-        .update({
+        
+        .add({
           'name': name, // John Doe
           'email': email, // Stokes and Sons
           'address': address // 42
@@ -215,16 +218,24 @@ class _TodoListState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        children: _todos.map((Todo todo) {
-          return TodoItem(
-              todo: todo,
-              onTodoChanged: _handleTodoChange,
-              removeTodo: _deleteTodo);
-        }).toList(),
-      ),
 
+
+
+// option1
+      body: UserListView(),
+      
+// option2
+      // body: ListView(
+      //   padding: const EdgeInsets.symmetric(vertical: 8.0),
+      //   children: _todos.map((Todo todo) {
+      //     return TodoItem(
+      //         todo: todo,
+      //         onTodoChanged: _handleTodoChange,
+      //         removeTodo: _deleteTodo);
+      //   }).toList(),
+      // ),
+
+// option3
       // body: ListView.builder(
       //   itemBuilder: (context, index){
       //     return Padding(

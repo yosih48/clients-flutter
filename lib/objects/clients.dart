@@ -2,6 +2,7 @@ import 'clientsCalls.dart';
 
 class Todo {
   Todo({
+   required this.id,
     required this.name,
     required this.completed,
     required this.email,
@@ -9,9 +10,10 @@ class Todo {
     this.userList
     // this.phone
   });
-  String name;
-  String email;
-  String address;
+    final String id;
+  String? name;
+  String? email;
+  String? address;
   bool completed;
       List<Calls>?userList;
   // int? phone;
@@ -19,6 +21,7 @@ class Todo {
 
 
   factory Todo.fromJson(Map<String, dynamic> json) => Todo(
+      id: json["id"],
         name: json["name"],
         completed: json["completed"],
         email: json["email"],

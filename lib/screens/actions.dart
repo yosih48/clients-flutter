@@ -1,5 +1,6 @@
 import 'package:clientsf/datePick.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -30,14 +31,24 @@ final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class actions extends StatefulWidget {
+final String? userId;
+
+
+  const actions({super.key, this.userId});
+    // const actions({Key? key, required this.userId}) : super(key: key);
+
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<actions> createState() => _actionsState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _actionsState extends State<actions> {
+  void initState() {
+    
+    print(widget.userId);
+    print('select');
+  }
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -98,7 +109,6 @@ class call extends StatefulWidget {
 }
 
 class _callState extends State<call> {
-  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -153,9 +163,8 @@ class _callState extends State<call> {
 
                         print(_checkboxValue);
                       });
-                      
                     }),
-                                    Text(
+                Text(
                   AppStrings.paid,
                   style: TextStyle(fontSize: 16),
                 ),
@@ -227,7 +236,7 @@ Future<void> addCall(call, paid, type) {
   print(call);
   // Call the user's CollectionReference to add a new user
   return clients
-      .doc('1')
+      .doc('selectedUser')
       .update({
         'calls': {
           'call': call,
