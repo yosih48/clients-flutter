@@ -33,10 +33,10 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // routes: {
-      //   '/actions': (context) => MyWidget(user.id),
-      //   '/date': (context) => HomePage()
-      // },
+      routes: {
+        // '/actions': (context) => actions(user: user),
+        '/date': (context) => HomePage()
+      },
       title: 'Todo Manage',
       theme: ThemeData(
         primarySwatch: Colors.blue,

@@ -209,8 +209,10 @@ class _callState extends State<call> {
           onPressed: () {
             setState(() {
               print(_checkboxValue);
+              print(dropdownValue);
               addCall(widget.user, _callDetailsController.text, _checkboxValue, dropdownValue);
             });
+        
           },
         ),
         // TextField(
@@ -247,6 +249,9 @@ Future<void> addCall( user, call, paid, type) {
           'type': type,
         },
       })
+      
       .then((value) => print("call Added"))
+      
       .catchError((error) => print("Failed to add call: $error"));
+      
 }
