@@ -11,9 +11,7 @@ class UserListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('User List'),
-      ),
+   
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -60,7 +58,7 @@ class UserListView extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => CallsScreen(
-                                        clientId: '1'),
+                                        clientId: user),
                                   ),
                                 );
                               },

@@ -1,8 +1,9 @@
+import 'package:clientsf/objects/clients.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CallsScreen extends StatelessWidget {
-  final String clientId;
+  final Todo clientId;
 
   CallsScreen({required this.clientId});
 
@@ -15,7 +16,7 @@ class CallsScreen extends StatelessWidget {
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
-            .doc(clientId)
+            .doc(clientId.id)
             .collection('calls')
             .orderBy('timestamp', descending: true)
             .snapshots(),
@@ -34,13 +35,26 @@ class CallsScreen extends StatelessWidget {
             itemCount: calls.length,
             itemBuilder: (BuildContext context, int index) {
               final call = calls[index].data() as Map<String, dynamic>;
-              final callDetails = call['callDetails'];
+              // print(call['call']);
+              // print(call['timestamp']);
+              final callDetails = call['call'];
+              final type = call['type'];
+              final paid = call['paid'];
               // final timestamp = call['timestamp'] as Timestamp;
               // final dateTime = timestamp.toDate();
 
-              return ListTile(
-                title: Text(callDetails),
-                // subtitle: Text('Timestamp: $dateTime'),
+              return Card(
+                child: ListTile(
+                  title: Text(callDetails),
+                         subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('סוג טיפול: ${type}'),
+                          Text('שולם: ${paid}'),
+                  
+                        ],
+                      ),
+                ),
               );
             },
           );
