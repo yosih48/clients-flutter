@@ -1,3 +1,4 @@
+import 'package:clientsf/screens/clientCalls.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,7 +29,7 @@ class UserListView extends StatelessWidget {
               snapshot.data!.docs.map((QueryDocumentSnapshot doc) {
             final data = doc.data() as Map<String, dynamic>;
             return Todo(
-               id: doc.id,
+              id: doc.id,
               name: data['name'],
               email: data['email'],
               address: data['address'],
@@ -40,26 +41,73 @@ class UserListView extends StatelessWidget {
             itemCount: users.length,
             itemBuilder: (BuildContext context, int index) {
               final user = users[index];
-              return Card(
-                child: ListTile(
-                  title: Text(user.name),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Email: ${user.email}'),
-                      Text('Address: ${user.address}'),
-                      ElevatedButton(
-                        onPressed: ()  {
-                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => actions(user: user,),
+
+              return GestureDetector(
+                onLongPress: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Options'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                // Handle the first option
+                           Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CallsScreen(
+                                        clientId: '1'),
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text('היסטוריית קריאות'),
+                              ),
                             ),
-                          );
-                        },
-                        child: Text(AppStrings.openCall),
-                      ),
-                    ],
+                            InkWell(
+                              onTap: () {
+                                // Handle the second option
+                                Navigator.of(context).pop();
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text('Option 2'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: Card(
+                  child: ListTile(
+                    title: Text(user.name),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Email: ${user.email}'),
+                        Text('Address: ${user.address}'),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => actions(
+                                  user: user,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Text(AppStrings.openCall),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
