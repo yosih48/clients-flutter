@@ -32,32 +32,27 @@ final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
 
 class actions extends StatefulWidget {
-
-final Todo user ;
+  final Todo user;
   const actions({super.key, required this.user});
-    // const actions({Key? key, required this.userId}) : super(key: key);
-
+  // const actions({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<actions> createState() => _actionsState();
 }
 
 class _actionsState extends State<actions> {
-
-
   void initState() {
-    
     print(widget.user.id);
-    
   }
+
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('חיובים'),
-        ),
-        // body: call(context),
-        body: call(user: widget.user),
-        );
+      appBar: AppBar(
+        title: Text('חיובים'),
+      ),
+      // body: call(context),
+      body: call(user: widget.user),
+    );
   }
 }
 
@@ -93,7 +88,7 @@ class _dropdownState extends State<dropdown> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
-           widget.onDropdownChanged(dropdownValue);
+          widget.onDropdownChanged(dropdownValue);
         });
       },
       items: list.map<DropdownMenuItem<String>>((String value) {
@@ -107,20 +102,21 @@ class _dropdownState extends State<dropdown> {
 }
 
 class call extends StatefulWidget {
-final Todo user;
+  final Todo user;
   const call({super.key, required this.user});
-  
+
   @override
   State<call> createState() => _callState();
 }
 
 class _callState extends State<call> {
   String dropdownValue = '';
-    void handleDropdownValueChange(String value) {
-  setState(() {
-    dropdownValue = value;
-  });
-}
+  void handleDropdownValueChange(String value) {
+    setState(() {
+      dropdownValue = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -218,9 +214,9 @@ class _callState extends State<call> {
             setState(() {
               print(_checkboxValue);
               print(dropdownValue);
-              addCall(widget.user, _callDetailsController.text, _checkboxValue, dropdownValue);
+              addCall(widget.user, _callDetailsController.text, _checkboxValue,
+                  dropdownValue);
             });
-        
           },
         ),
         // TextField(
@@ -244,22 +240,39 @@ class _callState extends State<call> {
   }
 }
 
-CollectionReference clients = FirebaseFirestore.instance.collection('users');
-Future<void> addCall( user, call, paid, type) {
-  print(user.id);
-  // Call the user's CollectionReference to add a new user
-  return clients
-      .doc(user.id)
-      .update({
-        'calls': {
-          'call': call,
-          'paid': paid,
-          'type': type,
-        },
-      })
-      
-      .then((value) => print("call Added"))
-      
-      .catchError((error) => print("Failed to add call: $error"));
-      
+// CollectionReference clients = FirebaseFirestore.instance.collection('users');
+
+// Future<void> addCall( user, call, paid, type) {
+//   print(user.id);
+//   // Call the user's CollectionReference to add a new user
+//   return clients
+//       .doc(user.id)
+//       .update({
+//         'calls': {
+//           'call': call,
+//           'paid': paid,
+//           'type': type,
+//         },
+//       })
+
+//       .then((value) => print("call Added"))
+
+//       .catchError((error) => print("Failed to add call: $error"));
+
+// }
+Future<void> addCall(user, call, paid, type) async {
+  final clientRef = FirebaseFirestore.instance.collection('users').doc(user.id);
+  final callsRef = clientRef.collection('calls');
+
+  try {
+    await callsRef.add({
+      'call': call,
+      'paid': paid,
+      'type': type,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+    });
+    print("Call Added");
+  } catch (error) {
+    print("Failed to add call: $error");
+  }
 }
