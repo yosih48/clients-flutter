@@ -18,14 +18,14 @@ const List<String> list = <String>[
   'בית הלקוח',
 ];
 
-void createCall() {
-  Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
-// client.userList?.add(callNumberOne);
-  print(callNumberOne);
-  _callDetailsController.clear();
-}
+// void createCall() {
+//   Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
+// // client.userList?.add(callNumberOne);
+//   print(callNumberOne);
+//   _callDetailsController.clear();
+// }
 
-final String dropdownValue = 'gg';
+// final String dropdownValue = 'gg';
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
@@ -66,7 +66,9 @@ bool _checkboxValue = false;
 final TextEditingController _callDetailsController = TextEditingController();
 
 class dropdown extends StatefulWidget {
-  const dropdown({super.key});
+  final Function(String) onDropdownChanged;
+
+  const dropdown({Key? key, required this.onDropdownChanged}) : super(key: key);
 
   @override
   State<dropdown> createState() => _dropdownState();
@@ -91,6 +93,7 @@ class _dropdownState extends State<dropdown> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
+           widget.onDropdownChanged(dropdownValue);
         });
       },
       items: list.map<DropdownMenuItem<String>>((String value) {
@@ -105,7 +108,6 @@ class _dropdownState extends State<dropdown> {
 
 class call extends StatefulWidget {
 final Todo user;
-
   const call({super.key, required this.user});
   
   @override
@@ -113,6 +115,12 @@ final Todo user;
 }
 
 class _callState extends State<call> {
+  String dropdownValue = '';
+    void handleDropdownValueChange(String value) {
+  setState(() {
+    dropdownValue = value;
+  });
+}
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -121,7 +129,7 @@ class _callState extends State<call> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            dropdown(),
+            dropdown(onDropdownChanged: handleDropdownValueChange),
             ElevatedButton(
               child: Text('תאריך קריאה'),
               onPressed: () {
