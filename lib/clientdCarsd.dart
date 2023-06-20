@@ -1,4 +1,5 @@
 import 'package:clientsf/screens/clientCalls.dart';
+import 'package:clientsf/screens/clientInfo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,6 +32,7 @@ class UserListView extends StatelessWidget {
               name: data['name'],
               email: data['email'],
               address: data['address'],
+              phone: data['phone'],
               completed: false,
             );
           }).toList();
@@ -84,16 +86,56 @@ class UserListView extends StatelessWidget {
                   );
                 },
                 child: Card(
-                  child: ListTile(
-                    title: Text(user.name),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Email: ${user.email}'),
-                        Text('Address: ${user.address}'),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
+                  child: 
+                  // ListTile(
+                  //   title: Text(user.name),
+                  //   subtitle: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: [
+                  //       Text('Email: ${user.email}'),
+                  //       Text('Address: ${user.address}'),
+                  //       Text('phone: ${user.phone}'),
+                  //       ElevatedButton(
+                  //         onPressed: () {
+                  //           Navigator.push(
+                  //             context,
+                  //             MaterialPageRoute(
+                  //               builder: (context) => actions(
+                  //                 user: user,
+                  //               ),
+                  //             ),
+                  //           );
+                  //         },
+                  //         child: Text(AppStrings.openCall),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  ListTile(
+  title: 
+  Text(user.name),
+  subtitle: Text('phone: ${user.phone}'),
+  trailing: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      ElevatedButton(
+        child: Text('פרטי לקוח'),
+        onPressed: () {
+                   Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => clientInfo(
+                                  user: user,
+                                ),
+                              ),
+                            );
+        },
+      ),
+      SizedBox(width: 8),
+      ElevatedButton(
+        child: Text('פתיחת קריאה'),
+        onPressed: () {
+                         Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => actions(
@@ -101,12 +143,11 @@ class UserListView extends StatelessWidget {
                                 ),
                               ),
                             );
-                          },
-                          child: Text(AppStrings.openCall),
-                        ),
-                      ],
-                    ),
-                  ),
+        },
+      ),
+    ],
+  ),
+)
                 ),
               );
             },

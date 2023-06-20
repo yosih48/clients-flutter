@@ -8,6 +8,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
 import 'package:widget_bindings/widget_bindings.dart';
 import '../Constants/AppString.dart';
+import '../alertDialog.dart';
 import '../checkbox.dart';
 import '../datePick.dart';
 import '../objects/clients.dart';
@@ -29,7 +30,7 @@ const List<String> list = <String>[
 //   _callDetailsController.clear();
 // }
 
-// final String dropdownValue = 'gg';
+
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
@@ -293,6 +294,7 @@ Future<void> addCall(user, call, paid, type, hour, payment) async {
       'payment': payment
     });
     print("Call Added");
+   showToast('נשמר בהצלחה');
   } catch (error) {
     print("Failed to add call: $error");
   }

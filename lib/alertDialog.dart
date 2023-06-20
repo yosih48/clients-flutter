@@ -30,7 +30,7 @@ showToast(String text){
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.CENTER,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
+      backgroundColor: Colors.blue[400],
       textColor: Colors.white,
       fontSize: 16.0);
 }

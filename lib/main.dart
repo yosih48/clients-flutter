@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'Constants/AppString.dart';
+import 'alertDialog.dart';
 import 'clientdCarsd.dart';
 import 'screens/actions.dart';
 import 'objects/clientsCalls.dart';
@@ -177,9 +178,9 @@ class _TodoListState extends State<MyHomePage> {
               onPressed: () {
                 Navigator.of(context).pop();
                 addUser(_textFieldController.text, _mailFieldController.text,
-                    _addressFieldController.text);
-                _addTodoItem(_textFieldController.text,
-                    _mailFieldController.text, _addressFieldController.text);
+                    _addressFieldController.text,_phoneFieldController.text);
+                // _addTodoItem(_textFieldController.text,
+                //     _mailFieldController.text, _addressFieldController.text);
 
                 setState(() {});
               },
@@ -192,7 +193,7 @@ class _TodoListState extends State<MyHomePage> {
   }
 
   CollectionReference clients = FirebaseFirestore.instance.collection('users');
-  Future<void> addUser(name, email, address) {
+  Future<void> addUser(name, email, address, phone) {
     String clientId = generateClientId();
     // Call the user's CollectionReference to add a new user
     print(name);
@@ -202,9 +203,19 @@ class _TodoListState extends State<MyHomePage> {
             'id': clientId,
           'name': name, 
           'email': email, 
-          'address': address 
+          'address': address ,
+          'phone': phone ,
         })
-        .then((value) => print("User Added"))
+        // .then((value) => print("User Added") )
+        .then((value) {
+          print("User Added");
+          showToast('נשמר בהצלחה');
+              _textFieldController.clear();
+    _mailFieldController.clear();
+    _phoneFieldController.clear();
+    _addressFieldController.clear();
+
+        })
         .catchError((error) => print("Failed to add user: $error"));
   }
 

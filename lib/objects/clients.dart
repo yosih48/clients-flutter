@@ -7,6 +7,7 @@ class Todo {
     required this.completed,
     required this.email,
     required this.address,
+    required this.phone,
     this.userList
     // this.phone
   });
@@ -14,6 +15,7 @@ class Todo {
   String? name;
   String? email;
   String? address;
+  String? phone;
   bool completed;
       List<Calls>?userList;
   // int? phone;
@@ -26,6 +28,7 @@ class Todo {
         completed: json["completed"],
         email: json["email"],
        address: json["address"],
+       phone: json["phone"],
         userList: json["data"] == null
             ? []
             : List<Calls>.from(json["data"]!.map((x) => Calls.fromJson(x))),
