@@ -12,6 +12,7 @@ import '../checkbox.dart';
 import '../datePick.dart';
 import '../objects/clients.dart';
 import '../objects/clientsCalls.dart';
+import '../paymentCheckbox.dart';
 import 'getTime.dart';
 
 const List<String> list = <String>[
@@ -64,12 +65,22 @@ bool _checkboxValue = false;
 final TextEditingController _callDetailsController = TextEditingController();
 final TextEditingController timeController = TextEditingController();
 final TextEditingController minuteController = TextEditingController();
-Duration getTimeFromController(TextEditingController controller, TextEditingController minuteController ) {
+final TextEditingController paimentController = TextEditingController();
+int getSumHourValue() {
+  String sumHourString = paimentController.text;
+  int sumHourValue = int.parse(sumHourString);
+  return sumHourValue;
+}
+
+
+Duration getTimeFromController(
+    TextEditingController controller, TextEditingController minuteController) {
   final hours = int.tryParse(controller.text) ?? 0;
   final minutes = int.tryParse(minuteController.text) ?? 0;
 
   return Duration(hours: hours, minutes: minutes);
 }
+
 String formatDuration(Duration duration) {
   final hours = duration.inHours.remainder(24);
   final minutes = duration.inMinutes.remainder(60);
@@ -149,22 +160,22 @@ class _callState extends State<call> {
         child: Column(
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             dropdown(onDropdownChanged: handleDropdownValueChange),
-            ElevatedButton(
-              child: Text('תאריך קריאה'),
-              onPressed: () {
-                // Open the DatePicker in the current screen.
-                // showDatePicker(
-                //   context: arg,
-                //   initialDate: DateTime.now(),
-                //   firstDate: DateTime(2023, 1, 1),
-                //   lastDate: DateTime(2023, 12, 31),
-                // );
-                Navigator.pushNamed(context, '/date');
-              },
-            ),
+            // ElevatedButton(
+            //   child: Text('תאריך קריאה'),
+            //   onPressed: () {
+            //     // Open the DatePicker in the current screen.
+            //     // showDatePicker(
+            //     //   context: arg,
+            //     //   initialDate: DateTime.now(),
+            //     //   firstDate: DateTime(2023, 1, 1),
+            //     //   lastDate: DateTime(2023, 12, 31),
+            //     // );
+            //     Navigator.pushNamed(context, '/date');
+            //   },
+            // ),
           ],
         ),
         Column(
@@ -183,44 +194,43 @@ class _callState extends State<call> {
           ],
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Row(
-              children: [
-                Checkbox(
-                    value: _checkboxValue,
-                    onChanged: (newValue) {
-                      print(newValue);
-
-                      setState(() {
-                        _checkboxValue = newValue!;
-
-                        print(_checkboxValue);
-                      });
-                    }),
-                Text(
-                  AppStrings.paid,
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-            SizedBox(width: 206),
-            // Expanded(
-            //   child: Container(
-            //     width: 100,
-            //     child: TextField(
-            //       controller: _sumHourController,
-            //       decoration:
-            //           const InputDecoration(hintText: AppStrings.sumHour),
-            //       autofocus: true,
-            //     ),
-            //   ),
-            // ),
+            Text(':זמן טיפול'),
           ],
         ),
+        TimeTextField(
+            controller: timeController, controllerMinute: minuteController),
+        Row(
+          children: [
+            Text(
+              AppStrings.paid,
+              style: TextStyle(fontSize: 16),
+            ),
+            Checkbox(
+                value: _checkboxValue,
+                onChanged: (newValue) {
+                  print(newValue);
 
-        TimeTextField(controller: timeController, controllerMinute: minuteController),
+                  setState(() {
+                    _checkboxValue = newValue!;
 
+                    print(_checkboxValue);
+                  });
+                }),
+            Expanded(
+              child: 
+      
+
+              TextField(
+                controller: paimentController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(labelText: 'סהכ לתשלום'),
+              ),
+            ),
+          ],
+        ),
         SizedBox(height: 8),
         ElevatedButton(
           child: Text('שמור'),
@@ -228,33 +238,21 @@ class _callState extends State<call> {
             setState(() {
               print(_checkboxValue);
               print(dropdownValue);
-              final time = getTimeFromController(timeController, minuteController);
+              final time =
+                  getTimeFromController(timeController, minuteController);
               // final minute = getTimeFromController(minuteController);
-        final formattedTime = formatDuration(time);
+              final formattedTime = formatDuration(time);
               // Use the 'time' duration as needed
-             print(formattedTime);
+              int sumHourValue = getSumHourValue();
+              print(formattedTime);
+              print(sumHourValue);
               // print(time);
 
               addCall(widget.user, _callDetailsController.text, _checkboxValue,
-                  dropdownValue, formattedTime);
+                  dropdownValue, formattedTime, sumHourValue );
             });
           },
         ),
-        // TextField(
-        //   controller: _mailFieldController,
-        //   decoration: const InputDecoration(hintText: 'Type your email'),
-        //   autofocus: true,
-        // ),
-        // TextField(
-        //   controller: _phoneFieldController,
-        //   decoration: const InputDecoration(hintText: 'Type your phone number'),
-        //   autofocus: true,
-        // ),
-        // TextField(
-        //   controller: _addressFieldController,
-        //   decoration: const InputDecoration(hintText: 'Type your phone address'),
-        //   autofocus: true,
-        // ),
       ],
     ));
     ;
@@ -281,7 +279,7 @@ class _callState extends State<call> {
 //       .catchError((error) => print("Failed to add call: $error"));
 
 // }
-Future<void> addCall(user, call, paid, type, hour) async {
+Future<void> addCall(user, call, paid, type, hour, payment) async {
   final clientRef = FirebaseFirestore.instance.collection('users').doc(user.id);
   final callsRef = clientRef.collection('calls');
 
@@ -291,7 +289,8 @@ Future<void> addCall(user, call, paid, type, hour) async {
       'paid': paid,
       'type': type,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
-      'hour': hour
+      'hour': hour,
+      'payment': payment
     });
     print("Call Added");
   } catch (error) {
