@@ -2,14 +2,17 @@ import 'package:clientsf/datePick.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:intl/intl.dart';
 import 'package:widget_bindings/widget_bindings.dart';
 import '../Constants/AppString.dart';
 import '../checkbox.dart';
 import '../datePick.dart';
 import '../objects/clients.dart';
 import '../objects/clientsCalls.dart';
+import 'getTime.dart';
 
 const List<String> list = <String>[
   'סוג טיפול',
@@ -59,6 +62,29 @@ class _actionsState extends State<actions> {
 bool _checkboxValue = false;
 
 final TextEditingController _callDetailsController = TextEditingController();
+final TextEditingController timeController = TextEditingController();
+final TextEditingController minuteController = TextEditingController();
+Duration getTimeFromController(TextEditingController controller, TextEditingController minuteController ) {
+  final hours = int.tryParse(controller.text) ?? 0;
+  final minutes = int.tryParse(minuteController.text) ?? 0;
+
+  return Duration(hours: hours, minutes: minutes);
+}
+String formatDuration(Duration duration) {
+  final hours = duration.inHours.remainder(24);
+  final minutes = duration.inMinutes.remainder(60);
+  final seconds = duration.inSeconds.remainder(60);
+
+  final formatter = NumberFormat('00');
+
+  final formattedTime =
+      '${formatter.format(hours)}:${formatter.format(minutes)}:${formatter.format(seconds)}';
+
+  return formattedTime;
+}
+
+// String _selectedTime = '';
+// int _selectedTimeInInt = 0;
 
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
@@ -179,33 +205,21 @@ class _callState extends State<call> {
               ],
             ),
             SizedBox(width: 206),
-            Expanded(
-              child: Container(
-                width: 100,
-                child: TextField(
-                  decoration:
-                      const InputDecoration(hintText: AppStrings.sumHour),
-                  autofocus: true,
-                ),
-              ),
-            ),
+            // Expanded(
+            //   child: Container(
+            //     width: 100,
+            //     child: TextField(
+            //       controller: _sumHourController,
+            //       decoration:
+            //           const InputDecoration(hintText: AppStrings.sumHour),
+            //       autofocus: true,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
 
-        Row(
-          children: [
-            Expanded(
-              child: Container(
-                width: 20,
-                child: TextField(
-                  decoration:
-                      const InputDecoration(hintText: AppStrings.sumHour),
-                  autofocus: true,
-                ),
-              ),
-            ),
-          ],
-        ),
+        TimeTextField(controller: timeController, controllerMinute: minuteController),
 
         SizedBox(height: 8),
         ElevatedButton(
@@ -214,8 +228,15 @@ class _callState extends State<call> {
             setState(() {
               print(_checkboxValue);
               print(dropdownValue);
+              final time = getTimeFromController(timeController, minuteController);
+              // final minute = getTimeFromController(minuteController);
+        final formattedTime = formatDuration(time);
+              // Use the 'time' duration as needed
+             print(formattedTime);
+              // print(time);
+
               addCall(widget.user, _callDetailsController.text, _checkboxValue,
-                  dropdownValue);
+                  dropdownValue, formattedTime);
             });
           },
         ),
@@ -260,7 +281,7 @@ class _callState extends State<call> {
 //       .catchError((error) => print("Failed to add call: $error"));
 
 // }
-Future<void> addCall(user, call, paid, type) async {
+Future<void> addCall(user, call, paid, type, hour) async {
   final clientRef = FirebaseFirestore.instance.collection('users').doc(user.id);
   final callsRef = clientRef.collection('calls');
 
@@ -270,6 +291,7 @@ Future<void> addCall(user, call, paid, type) async {
       'paid': paid,
       'type': type,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'hour': hour
     });
     print("Call Added");
   } catch (error) {

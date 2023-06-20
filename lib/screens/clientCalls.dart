@@ -40,6 +40,7 @@ class CallsScreen extends StatelessWidget {
               final callDetails = call['call'];
               final type = call['type'];
               final paid = call['paid'];
+              final hour = call['hour'];
               // final timestamp = call['timestamp'] as Timestamp;
               // final dateTime = timestamp.toDate();
 
@@ -51,6 +52,7 @@ class CallsScreen extends StatelessWidget {
                         children: [
                           Text('סוג טיפול: ${type}'),
                           Text('שולם: ${paid}'),
+                          Text('זמן טיפול: ${hour}'),
                   
                         ],
                       ),
