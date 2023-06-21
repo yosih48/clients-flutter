@@ -4,12 +4,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'Constants/AppString.dart';
-import 'alertDialog.dart';
+import 'componenets/alertDialog.dart';
 import 'clientdCarsd.dart';
 import 'screens/actions.dart';
 import 'objects/clientsCalls.dart';
 import 'todoItem.dart';
-import 'datePick.dart';
+import 'componenets/datePick.dart';
 import 'objects/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

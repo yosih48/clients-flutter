@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'Constants/AppString.dart';
+import '../Constants/AppString.dart';
 
 class CheckboxExample extends StatefulWidget {
   const CheckboxExample({super.key, required bool value, required Null Function(dynamic newValue) onChanged});

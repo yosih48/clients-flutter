@@ -1,4 +1,4 @@
-import 'package:clientsf/datePick.dart';
+// import 'package:clientsf/datePick.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +8,16 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
 import 'package:widget_bindings/widget_bindings.dart';
 import '../Constants/AppString.dart';
-import '../alertDialog.dart';
-import '../checkbox.dart';
-import '../datePick.dart';
+import '../componenets/alertDialog.dart';
+import '../componenets/checkbox.dart';
+import '../componenets/getTime.dart';
+import '../componenets/datePick.dart';
+import '../componenets/parts.dart';
 import '../objects/clients.dart';
 import '../objects/clientsCalls.dart';
-import '../paymentCheckbox.dart';
-import 'getTime.dart';
+import '../componenets/paymentCheckbox.dart';
+import '../componenets/getTime.dart';
+ import  'package:flutter/src/rendering/box.dart';
 
 const List<String> list = <String>[
   'סוג טיפול',
@@ -149,6 +152,15 @@ class call extends StatefulWidget {
 
 class _callState extends State<call> {
   String dropdownValue = '';
+      void handleProductListChanged(List<ProductData> productList) {
+    // Process the updated product list here
+    // You can store it in a state variable or perform any other necessary actions
+    // Example: setState(() { products = productList; });
+    print('Product List Updated: $productList');
+  }
+
+  
+  
   void handleDropdownValueChange(String value) {
     setState(() {
       dropdownValue = value;
@@ -157,8 +169,7 @@ class _callState extends State<call> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Column(
+    return  ListView(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -177,8 +188,14 @@ class _callState extends State<call> {
             //     Navigator.pushNamed(context, '/date');
             //   },
             // ),
+               
+       
+           
           ],
         ),
+          
+          
+          
         Column(
           children: <Widget>[
             Card(
@@ -219,6 +236,7 @@ class _callState extends State<call> {
                     print(_checkboxValue);
                   });
                 }),
+       
             Expanded(
               child: 
       
@@ -233,21 +251,34 @@ class _callState extends State<call> {
           ],
         ),
         SizedBox(height: 8),
+                      Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(':אספקת חלקים'),
+          ],
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: SingleChildScrollView(
+            
+            child: ProductForm(
+              onProductListChanged: handleProductListChanged
+            ),
+          ),
+        ),
+        SizedBox(height: 8),
         ElevatedButton(
           child: Text('שמור'),
           onPressed: () {
             setState(() {
-              print(_checkboxValue);
-              print(dropdownValue);
+       
               final time =
                   getTimeFromController(timeController, minuteController);
-              // final minute = getTimeFromController(minuteController);
+            
               final formattedTime = formatDuration(time);
               // Use the 'time' duration as needed
               int sumHourValue = getSumHourValue();
-              print(formattedTime);
-              print(sumHourValue);
-              // print(time);
+        
 
               addCall(widget.user, _callDetailsController.text, _checkboxValue,
                   dropdownValue, formattedTime, sumHourValue );
@@ -255,7 +286,7 @@ class _callState extends State<call> {
           },
         ),
       ],
-    ));
+    );
     ;
   }
 }
@@ -294,6 +325,7 @@ Future<void> addCall(user, call, paid, type, hour, payment) async {
       'payment': payment
     });
     print("Call Added");
+   
    showToast('נשמר בהצלחה');
   } catch (error) {
     print("Failed to add call: $error");

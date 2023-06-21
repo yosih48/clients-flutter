@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'Constants/AppString.dart';
+import '../Constants/AppString.dart';
 
 
 void showAlertDialog(BuildContext context, String title, {String? subtitle}) {
