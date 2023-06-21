@@ -88,12 +88,12 @@ Duration getTimeFromController(
 String formatDuration(Duration duration) {
   final hours = duration.inHours.remainder(24);
   final minutes = duration.inMinutes.remainder(60);
-  final seconds = duration.inSeconds.remainder(60);
+ 
 
   final formatter = NumberFormat('00');
 
   final formattedTime =
-      '${formatter.format(hours)}:${formatter.format(minutes)}:${formatter.format(seconds)}';
+      '${formatter.format(hours)}:${formatter.format(minutes)}}';
 
   return formattedTime;
 }
@@ -153,10 +153,20 @@ class call extends StatefulWidget {
 class _callState extends State<call> {
   String dropdownValue = '';
       void handleProductListChanged(List<ProductData> productList) {
-    // Process the updated product list here
-    // You can store it in a state variable or perform any other necessary actions
+     final List<Map<String, dynamic>> callsData = productList.map((product) {
+      return {
+        'name': product.name,
+        'price': product.price,
+        'discountedPrice': product.discountedPrice,
+      };
+    }).toList();
+
+
+     
+    
+;
     // Example: setState(() { products = productList; });
-    print('Product List Updated: $productList');
+    print('Product List Updated: $productList[1]');
   }
 
   
@@ -169,122 +179,123 @@ class _callState extends State<call> {
 
   @override
   Widget build(BuildContext context) {
-    return  ListView(
+    return  Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            dropdown(onDropdownChanged: handleDropdownValueChange),
-            // ElevatedButton(
-            //   child: Text('תאריך קריאה'),
-            //   onPressed: () {
-            //     // Open the DatePicker in the current screen.
-            //     // showDatePicker(
-            //     //   context: arg,
-            //     //   initialDate: DateTime.now(),
-            //     //   firstDate: DateTime(2023, 1, 1),
-            //     //   lastDate: DateTime(2023, 12, 31),
-            //     // );
-            //     Navigator.pushNamed(context, '/date');
-            //   },
-            // ),
-               
-       
-           
-          ],
-        ),
-          
-          
-          
-        Column(
-          children: <Widget>[
-            Card(
-                color: Colors.grey,
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _callDetailsController,
-                    maxLines: 8, //or null
-                    decoration:
-                        InputDecoration.collapsed(hintText: "תיאור טיפול"),
-                  ),
-                ))
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(':זמן טיפול'),
-          ],
-        ),
-        TimeTextField(
-            controller: timeController, controllerMinute: minuteController),
-        Row(
-          children: [
-            Text(
-              AppStrings.paid,
-              style: TextStyle(fontSize: 16),
-            ),
-            Checkbox(
-                value: _checkboxValue,
-                onChanged: (newValue) {
-                  print(newValue);
-
-                  setState(() {
-                    _checkboxValue = newValue!;
-
-                    print(_checkboxValue);
-                  });
-                }),
-       
-            Expanded(
-              child: 
-      
-
-              TextField(
-                controller: paimentController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: InputDecoration(labelText: 'סהכ לתשלום'),
+        Expanded(
+          child: ListView(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  dropdown(onDropdownChanged: handleDropdownValueChange),
+                  // ElevatedButton(
+                  //   child: Text('תאריך קריאה'),
+                  //   onPressed: () {
+                  //     // Open the DatePicker in the current screen.
+                  //     // showDatePicker(
+                  //     //   context: arg,
+                  //     //   initialDate: DateTime.now(),
+                  //     //   firstDate: DateTime(2023, 1, 1),
+                  //     //   lastDate: DateTime(2023, 12, 31),
+                  //     // );
+                  //     Navigator.pushNamed(context, '/date');
+                  //   },
+                  // ),
+                     
+             
+                 
+                ],
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 8),
-                      Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(':אספקת חלקים'),
-          ],
-        ),
-        SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView(
+                
+                
+                
+              Column(
+                children: <Widget>[
+                  Card(
+                      color: Colors.grey,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: TextField(
+                          controller: _callDetailsController,
+                          maxLines: 8, //or null
+                          decoration:
+                              InputDecoration.collapsed(hintText: "תיאור טיפול"),
+                        ),
+                      ))
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(':זמן טיפול'),
+                ],
+              ),
+              TimeTextField(
+                  controller: timeController, controllerMinute: minuteController),
+              Row(
+                children: [
+                  Text(
+                    AppStrings.paid,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Checkbox(
+                      value: _checkboxValue,
+                      onChanged: (newValue) {
+                        print(newValue);
+        
+                        setState(() {
+                          _checkboxValue = newValue!;
+        
+                          print(_checkboxValue);
+                        });
+                      }),
+             
+                  Expanded(
+                    child: 
             
-            child: ProductForm(
-              onProductListChanged: handleProductListChanged
-            ),
+        
+                    TextField(
+                      controller: paimentController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(labelText: 'סהכ לתשלום'),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
+                            Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(':אספקת חלקים'),
+                ],
+              ),
+              ProductForm(
+                onProductListChanged: handleProductListChanged
+              ),
+              SizedBox(height: 8),
+           
+            ],
           ),
         ),
-        SizedBox(height: 8),
-        ElevatedButton(
-          child: Text('שמור'),
-          onPressed: () {
-            setState(() {
-       
-              final time =
-                  getTimeFromController(timeController, minuteController);
-            
-              final formattedTime = formatDuration(time);
-              // Use the 'time' duration as needed
-              int sumHourValue = getSumHourValue();
+           ElevatedButton(
+                child: Text('שמור'),
+                onPressed: () {
+                  setState(() {
+             
+                    final time =
+                        getTimeFromController(timeController, minuteController);
+                  
+                    final formattedTime = formatDuration(time);
+                    // Use the 'time' duration as needed
+                    int sumHourValue = getSumHourValue();
+              
         
-
-              addCall(widget.user, _callDetailsController.text, _checkboxValue,
-                  dropdownValue, formattedTime, sumHourValue );
-            });
-          },
-        ),
+                    addCall(widget.user, _callDetailsController.text, _checkboxValue,
+                        dropdownValue, formattedTime, sumHourValue,  );
+                  });
+                },
+              ),
       ],
     );
     ;
@@ -322,7 +333,13 @@ Future<void> addCall(user, call, paid, type, hour, payment) async {
       'type': type,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'hour': hour,
-      'payment': payment
+      'payment': payment,
+      //      'parts': {
+      //   'name': name,
+      //   'price': price,
+      //   'discountedPrice': discountedPrice,
+      // },
+
     });
     print("Call Added");
    
