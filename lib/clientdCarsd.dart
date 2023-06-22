@@ -120,7 +120,7 @@ class UserListView extends StatelessWidget {
   trailing: Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Text(AppLocalizations.of(context)!.helloWorld),
+      // Text(AppLocalizations.of(context)!.helloWorld),
       ElevatedButton(
         child: Text('פרטי לקוח'),
         onPressed: () {
