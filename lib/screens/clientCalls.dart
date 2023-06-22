@@ -65,7 +65,7 @@ return Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('dssssssssssssssssssdsdsdssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'),
+              Text(callDetails),
               SizedBox(
                 height: 12,
               ),
