@@ -1,10 +1,12 @@
 import 'package:clientsf/objects/clients.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+
 
 class CallsScreen extends StatelessWidget {
   final Todo clientId;
-
+   
   CallsScreen({required this.clientId});
 
   @override
@@ -41,23 +43,84 @@ class CallsScreen extends StatelessWidget {
               final type = call['type'];
               final paid = call['paid'];
               final hour = call['hour'];
-              // final timestamp = call['timestamp'] as Timestamp;
-              // final dateTime = timestamp.toDate();
+              final timestamp = call['timestamp'];  
+              final payment = call['payment'];  
+                final formattedDate = DateFormat('dd/MM/yy').format(
+        DateTime.fromMillisecondsSinceEpoch(timestamp));
 
-              return Card(
-                child: ListTile(
-                  title: Text(callDetails),
-                         subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('סוג טיפול: ${type}'),
-                          Text('שולם: ${paid}'),
-                          Text('זמן טיפול: ${hour}'),
-                  
-                        ],
-                      ),
-                ),
-              );
+              // );
+return Container(
+  padding: EdgeInsets.symmetric(horizontal: 20),
+  width: MediaQuery.of(context).size.width,
+  margin: EdgeInsets.only(bottom: 12),
+  child: Container(
+    padding: EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(8),
+      color: Colors.blueAccent,
+    ),
+    child: Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('dssssssssssssssssssdsdsdssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss'),
+              SizedBox(
+                height: 12,
+              ),
+        
+        
+       
+            ],
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          height: 60,
+          width: 0.5,
+          color: Colors.grey[200]!.withOpacity(0.7),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+             Text('תאריך קריאה: $formattedDate '),
+            ],
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          height: 60,
+          width: 0.5,
+          color: Colors.grey[200]!.withOpacity(0.7),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+             Text(' תשלום: $payment'),
+            ],
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 10),
+          height: 60,
+          width: 0.5,
+          color: Colors.grey[200]!.withOpacity(0.7),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('שולם: $paid'),
+            ],
+          ),
+        ),
+      ],
+    ),
+  ),
+);
             },
           );
         },
@@ -65,3 +128,4 @@ class CallsScreen extends StatelessWidget {
     );
   }
 }
+ 
