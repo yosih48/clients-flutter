@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Constants/AppString.dart';
 import 'objects/clients.dart';
 import 'screens/actions.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserListView extends StatelessWidget {
   @override
@@ -85,6 +86,7 @@ class UserListView extends StatelessWidget {
                     },
                   );
                 },
+             
                 child: Card(
                   child: 
                   // ListTile(
@@ -118,6 +120,7 @@ class UserListView extends StatelessWidget {
   trailing: Row(
     mainAxisSize: MainAxisSize.min,
     children: [
+      Text(AppLocalizations.of(context)!.helloWorld),
       ElevatedButton(
         child: Text('פרטי לקוח'),
         onPressed: () {

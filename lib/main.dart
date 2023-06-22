@@ -2,6 +2,7 @@ import 'package:clientsf/screens/AppStarter.dart';
 import 'package:clientsf/screens/PhoneLogin.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'Constants/AppString.dart';
 import 'componenets/alertDialog.dart';
@@ -12,6 +13,7 @@ import 'todoItem.dart';
 import 'componenets/datePick.dart';
 import 'objects/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Future< void> main()
 // async{
@@ -39,6 +41,16 @@ class TodoApp extends StatelessWidget {
         '/date': (context) => HomePage()
       },
       title: 'Todo Manage',
+        localizationsDelegates: [
+    AppLocalizations.delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ],
+  supportedLocales: [
+    Locale('en'), // English
+    Locale('he'), // Spanish
+  ],
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

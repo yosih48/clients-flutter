@@ -85,7 +85,7 @@ return Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             Text('תאריך קריאה: $formattedDate '),
+             Text('callDate: $formattedDate '),
             ],
           ),
         ),
