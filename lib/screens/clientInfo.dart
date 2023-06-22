@@ -63,6 +63,12 @@ final Todo user;
                   ),
                 ),
               ),
+
+
+
+
+
+
               GestureDetector(
                   onTap: () {
     sendEmail('recipient@example.com');
@@ -89,6 +95,18 @@ final Todo user;
                     title: Text('${user.address}'),
                   ),
                 ),
+              ),
+                 ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+     
+                },
+                child: const Text('ערוך פרטים'),
               ),
             ],
           ),
