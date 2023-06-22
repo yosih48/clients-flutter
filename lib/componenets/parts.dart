@@ -155,7 +155,12 @@ class _ProductFormState extends State<ProductForm> {
 }
 
 class ProductData {
-  late String name;
-  late double price;
-  late double discountedPrice;
+  String? name;
+   double? price;
+   double? discountedPrice;
+     ProductData({
+    this.name,
+     this.price,
+     this.discountedPrice,
+  });
 }
