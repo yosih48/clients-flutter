@@ -2,6 +2,7 @@ import 'package:clientsf/objects/clients.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 class CallsScreen extends StatelessWidget {
@@ -65,6 +66,7 @@ return Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+               Text('callDate: $formattedDate '),
               Text(callDetails),
               SizedBox(
                 height: 12,
@@ -85,7 +87,7 @@ return Container(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             Text('callDate: $formattedDate '),
+               Text(callDetails),
             ],
           ),
         ),
