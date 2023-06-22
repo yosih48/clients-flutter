@@ -56,7 +56,7 @@ return Container(
   child: Container(
     padding: EdgeInsets.all(16),
     decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(8),
+      // borderRadius: BorderRadius.circular(8),
       color: Colors.blueAccent,
     ),
     child: Row(
