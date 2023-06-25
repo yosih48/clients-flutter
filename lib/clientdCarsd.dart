@@ -48,8 +48,11 @@ class UserListView extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text('Options'),
-                        // Text(AppLocalizations.of(context)!.helloWorld),
+                        title:
+                        Text(AppLocalizations.of(context)!.options,
+                      
+                        
+                        ),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,19 +70,19 @@ class UserListView extends StatelessWidget {
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text('היסטוריית קריאות'),
+                                child: Text(AppLocalizations.of(context)!.clientHistory),
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                // Handle the second option
-                                Navigator.of(context).pop();
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text('Option 2'),
-                              ),
-                            ),
+                            // InkWell(
+                            //   onTap: () {
+                            //     // Handle the second option
+                            //     Navigator.of(context).pop();
+                            //   },
+                            //   child: Padding(
+                            //     padding: EdgeInsets.symmetric(vertical: 8.0),
+                            //     child: Text('Option 2'),
+                            //   ),
+                            // ),
                           ],
                         ),
                       );

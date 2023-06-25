@@ -1,11 +1,17 @@
 {
     "helloWorld": "שלום עולם",
-    "Add a todo": "הוסף לקוח",
+    "addUser": "הוסף לקוח",
     "clientInfo": "פרטי לקוח",
     "openTicket": "פתיחת קריאה",
     "editClient": "ערוך פרטי לקוח",
     "callType": "סיווג קריאה",
-    "callTime": "זמן קריאה"
-    
+    "callTime": "זמן קריאה",
+    "clientHistory": "היסטוריית קריאות",
+       "options": "אפשרויות",
+       "clientName": "שם לקוח",
+       "clientEmail": " אימייל לקוח",
+       "clientAddress":"כתובת לקוח",
+       "clientPhone": "טלפון לקוח",
+       ""
 
 }

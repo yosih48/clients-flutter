@@ -42,18 +42,18 @@ class TodoApp extends StatelessWidget {
       },
       title: 'Todo Manage',
          debugShowCheckedModeBanner: false,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      // localizationsDelegates: [
-      //   AppLocalizations.delegate,
-      //   GlobalMaterialLocalizations.delegate,
-      //   GlobalWidgetsLocalizations.delegate,
-      //   GlobalCupertinoLocalizations.delegate,
-      // ],
-      // supportedLocales: [
-      //   Locale('en'), // English
-      //   Locale('he'), // Spanish
-      // ],
+        // localizationsDelegates: AppLocalizations.localizationsDelegates,
+      // supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('en'), // English
+        Locale('he'), // Spanish
+      ],
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -119,7 +119,7 @@ class _TodoListState extends State<MyHomePage> {
     });
   }
 
-  Future<void> _displayDialog(contex) async {
+  Future<void> _displayDialog() async {
     return showDialog<void>(
       context: context,
       // T: false,
@@ -127,8 +127,9 @@ class _TodoListState extends State<MyHomePage> {
   
         return AlertDialog(
           title: Text(
-          //  AppLocalizations.of(context)!.openTicket,
-           'dsds'
+           AppLocalizations.of(context)!.clientInfo,
+       
+           
           ),
           // Text(AppLocalizations.of(context)!.helloWorld),
           // content: TextField(
@@ -145,7 +146,7 @@ class _TodoListState extends State<MyHomePage> {
                 controller: _textFieldController,
                 decoration: const InputDecoration(
                   icon: const Icon(Icons.person),
-                  hintText: 'Enter your name',
+                 // Text(AppLocalizations.of(context)!.helloWorld),
                   labelText: 'Name',
                 ),
                 autofocus: true,
@@ -325,7 +326,7 @@ class _TodoListState extends State<MyHomePage> {
       // itemCount:_todos.length ,
       // ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _displayDialog(context),
+        onPressed: () => _displayDialog(),
         tooltip: 'Add a Todo',
         child: const Icon(Icons.add),
       ),

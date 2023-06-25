@@ -3,9 +3,16 @@
   "@helloWorld": {
     "description": "The conventional newborn programmer greeting"
   },
+  "addUser": "add user"
  "clientInfo": "client info",
  "openTicket": "openTicket",
  "editClient": "edit Client info",
  "callType": "call type",
- "callTime": "call time"
+ "callTime": "call time",
+   "clientHistory": "call history",
+   "options": "options",
+         "clientName": "Enter Client name",
+       "clientEmail": "Enter Client email ",
+       "clientAddress":"Enter Client address",
+       "clientPhone": "Enter Client phone"
 }
