@@ -41,6 +41,7 @@ class TodoApp extends StatelessWidget {
         '/date': (context) => HomePage()
       },
       title: 'Todo Manage',
+         debugShowCheckedModeBanner: false,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       // localizationsDelegates: [

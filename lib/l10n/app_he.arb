@@ -2,7 +2,10 @@
     "helloWorld": "שלום עולם",
     "Add a todo": "הוסף לקוח",
     "clientInfo": "פרטי לקוח",
-    "openTicket": "פתיחת קריאה"
+    "openTicket": "פתיחת קריאה",
+    "editClient": "ערוך פרטי לקוח",
+    "callType": "סיווג קריאה",
+    "callTime": "זמן קריאה"
     
 
 }

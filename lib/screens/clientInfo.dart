@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../objects/clients.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class clientInfo extends StatelessWidget {
 
@@ -106,7 +107,7 @@ final Todo user;
                   Navigator.of(context).pop();
      
                 },
-                child: const Text('ערוך פרטים'),
+                child: Text(AppLocalizations.of(context)!.editClient),
               ),
             ],
           ),

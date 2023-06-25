@@ -18,6 +18,7 @@ import '../objects/clientsCalls.dart';
 import '../componenets/paymentCheckbox.dart';
 import '../componenets/getTime.dart';
 import 'package:flutter/src/rendering/box.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const List<String> list = <String>[
   'סוג טיפול',
@@ -277,6 +278,7 @@ class _callState extends State<call> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(':זמן טיפול'),
+                  // Text(AppLocalizations.of(context)!.openTicket),
                 ],
               ),
               TimeTextField(

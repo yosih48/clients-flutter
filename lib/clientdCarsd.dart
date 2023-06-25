@@ -13,7 +13,6 @@ class UserListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-   
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('users').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -55,15 +54,14 @@ class UserListView extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                          
                             InkWell(
                               onTap: () {
                                 // Handle the first option
-                           Navigator.push(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => CallsScreen(
-                                        clientId: user),
+                                    builder: (context) =>
+                                        CallsScreen(clientId: user),
                                   ),
                                 );
                               },
@@ -88,72 +86,68 @@ class UserListView extends StatelessWidget {
                     },
                   );
                 },
-             
                 child: Card(
-                  child: 
-                  // ListTile(
-                  //   title: Text(user.name),
-                  //   subtitle: Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Text('Email: ${user.email}'),
-                  //       Text('Address: ${user.address}'),
-                  //       Text('phone: ${user.phone}'),
-                  //       ElevatedButton(
-                  //         onPressed: () {
-                  //           Navigator.push(
-                  //             context,
-                  //             MaterialPageRoute(
-                  //               builder: (context) => actions(
-                  //                 user: user,
-                  //               ),
-                  //             ),
-                  //           );
-                  //         },
-                  //         child: Text(AppStrings.openCall),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
-                  ListTile(
-  title: 
-  Text(user.name),
-  subtitle: Text('phone: ${user.phone}'),
-  trailing: Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-   
-      ElevatedButton(
-        child: Text(AppLocalizations.of(context)!.clientInfo),
-        onPressed: () {
-                   Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => clientInfo(
-                                  user: user,
-                                ),
+                    child:
+                        // ListTile(
+                        //   title: Text(user.name),
+                        //   subtitle: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Text('Email: ${user.email}'),
+                        //       Text('Address: ${user.address}'),
+                        //       Text('phone: ${user.phone}'),
+                        //       ElevatedButton(
+                        //         onPressed: () {
+                        //           Navigator.push(
+                        //             context,
+                        //             MaterialPageRoute(
+                        //               builder: (context) => actions(
+                        //                 user: user,
+                        //               ),
+                        //             ),
+                        //           );
+                        //         },
+                        //         child: Text(AppStrings.openCall),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        ListTile(
+                  title: Text(user.name),
+                  subtitle: Text('${user.phone}'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(
+                        child: Text(AppLocalizations.of(context)!.clientInfo),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => clientInfo(
+                                user: user,
                               ),
-                            );
-        },
-      ),
-      SizedBox(width: 8),
-      ElevatedButton(
-        child: Text(AppLocalizations.of(context)!.openTicket),
-        onPressed: () {
-                         Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => actions(
-                                  user: user,
-                                ),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(width: 8),
+                      ElevatedButton(
+                        child: Text(AppLocalizations.of(context)!.openTicket),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => actions(
+                                user: user,
                               ),
-                            );
-        },
-      ),
-    ],
-  ),
-)
-                ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                )),
               );
             },
           );

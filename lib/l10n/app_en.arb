@@ -4,5 +4,8 @@
     "description": "The conventional newborn programmer greeting"
   },
  "clientInfo": "client info",
- "openTicket": "openTicket"
+ "openTicket": "openTicket",
+ "editClient": "edit Client info",
+ "callType": "call type",
+ "callTime": "call time"
 }
