@@ -41,16 +41,18 @@ class TodoApp extends StatelessWidget {
         '/date': (context) => HomePage()
       },
       title: 'Todo Manage',
-        localizationsDelegates: [
-    AppLocalizations.delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-  ],
-  supportedLocales: [
-    Locale('en'), // English
-    Locale('he'), // Spanish
-  ],
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      // localizationsDelegates: [
+      //   AppLocalizations.delegate,
+      //   GlobalMaterialLocalizations.delegate,
+      //   GlobalWidgetsLocalizations.delegate,
+      //   GlobalCupertinoLocalizations.delegate,
+      // ],
+      // supportedLocales: [
+      //   Locale('en'), // English
+      //   Locale('he'), // Spanish
+      // ],
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -116,40 +118,62 @@ class _TodoListState extends State<MyHomePage> {
     });
   }
 
-  Future<void> _displayDialog() async {
+  Future<void> _displayDialog(contex) async {
     return showDialog<void>(
       context: context,
       // T: false,
       builder: (BuildContext context) {
+  
         return AlertDialog(
-          title: const Text('Add a todo'),
+          title: Text(
+          //  AppLocalizations.of(context)!.openTicket,
+           'dsds'
+          ),
+          // Text(AppLocalizations.of(context)!.helloWorld),
           // content: TextField(
           //   controller: _textFieldController,
           //   decoration: const InputDecoration(hintText: 'Type your todo'),
           //   autofocus: true,
           // ),
           content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Text(AppLocalizations.of(context)!.helloWorld),
+
               TextField(
                 controller: _textFieldController,
-                decoration: const InputDecoration(hintText: 'Type your name'),
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.person),
+                  hintText: 'Enter your name',
+                  labelText: 'Name',
+                ),
                 autofocus: true,
               ),
               TextField(
                 controller: _mailFieldController,
-                decoration: const InputDecoration(hintText: 'Type your email'),
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.email),
+                  hintText: 'Enter a phone email',
+                  labelText: 'email',
+                ),
                 autofocus: true,
               ),
               TextField(
                 controller: _phoneFieldController,
-                decoration:
-                    const InputDecoration(hintText: 'Type your phone number'),
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.phone),
+                  hintText: 'Enter a phone number',
+                  labelText: 'Phone',
+                ),
                 autofocus: true,
               ),
               TextField(
                 controller: _addressFieldController,
-                decoration:
-                    const InputDecoration(hintText: 'Type your phone address'),
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.maps_home_work),
+                  hintText: 'Enter address',
+                  labelText: 'address',
+                ),
                 autofocus: true,
               ),
             ],
@@ -300,7 +324,7 @@ class _TodoListState extends State<MyHomePage> {
       // itemCount:_todos.length ,
       // ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _displayDialog(),
+        onPressed: () => _displayDialog(context),
         tooltip: 'Add a Todo',
         child: const Icon(Icons.add),
       ),

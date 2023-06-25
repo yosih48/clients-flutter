@@ -13,7 +13,7 @@
             "name": "clients",
             "request": "launch",
             "type": "dart",
-            "deviceId": "sdk gphone x86 64"
+            "deviceId": "Android SDK built for x86"
         },
         
         {

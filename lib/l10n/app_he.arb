@@ -1,4 +1,8 @@
 {
-    "helloWorld": "שלום עולם"
+    "helloWorld": "שלום עולם",
+    "Add a todo": "הוסף לקוח",
+    "clientInfo": "פרטי לקוח",
+    "openTicket": "פתיחת קריאה"
+    
 
 }

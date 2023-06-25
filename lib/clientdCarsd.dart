@@ -50,10 +50,12 @@ class UserListView extends StatelessWidget {
                     builder: (BuildContext context) {
                       return AlertDialog(
                         title: Text('Options'),
+                        // Text(AppLocalizations.of(context)!.helloWorld),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                          
                             InkWell(
                               onTap: () {
                                 // Handle the first option
@@ -120,9 +122,9 @@ class UserListView extends StatelessWidget {
   trailing: Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      // Text(AppLocalizations.of(context)!.helloWorld),
+   
       ElevatedButton(
-        child: Text('פרטי לקוח'),
+        child: Text(AppLocalizations.of(context)!.clientInfo),
         onPressed: () {
                    Navigator.push(
                               context,
@@ -136,7 +138,7 @@ class UserListView extends StatelessWidget {
       ),
       SizedBox(width: 8),
       ElevatedButton(
-        child: Text('פתיחת קריאה'),
+        child: Text(AppLocalizations.of(context)!.openTicket),
         onPressed: () {
                          Navigator.push(
                               context,
