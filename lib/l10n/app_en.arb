@@ -3,7 +3,7 @@
   "@helloWorld": {
     "description": "The conventional newborn programmer greeting"
   },
-  "addUser": "add user"
+  "addUser": "add user",
  "clientInfo": "client info",
  "openTicket": "openTicket",
  "editClient": "edit Client info",

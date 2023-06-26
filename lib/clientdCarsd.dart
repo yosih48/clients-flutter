@@ -148,6 +148,12 @@ class UserListView extends StatelessWidget {
                           );
                         },
                       ),
+                      ElevatedButton(
+                        child: Text(AppLocalizations.of(context)!.openTicket),
+                        onPressed: () {
+                   Navigator.pushNamed(context, '/time');
+                        },
+                      ),
                     ],
                   ),
                 )),

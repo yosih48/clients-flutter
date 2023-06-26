@@ -20,13 +20,6 @@ import '../componenets/getTime.dart';
 import 'package:flutter/src/rendering/box.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-const List<String> list = <String>[
-  'סוג טיפול',
-  'טיפול מרחוק',
-  'מכירת ציוד',
-  'בית הלקוח',
-];
-
 // void createCall() {
 //   Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
 // // client.userList?.add(callNumberOne);
@@ -38,6 +31,13 @@ final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
+
+const List<String> list = <String>[
+  'סוג טיפול',
+  'טיפול מרחוק',
+  'מכירת ציוד',
+  'בית הלקוח',
+];
 
 class actions extends StatefulWidget {
   final Todo user;
@@ -224,8 +224,6 @@ class _callState extends State<call> {
     // }
   }
 
-
-
   void handleDropdownValueChange(String value) {
     setState(() {
       dropdownValue = value;
@@ -275,7 +273,7 @@ class _callState extends State<call> {
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(':זמן טיפול'),
                   // Text(AppLocalizations.of(context)!.openTicket),
@@ -313,7 +311,7 @@ class _callState extends State<call> {
               ),
               SizedBox(height: 8),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   GestureDetector(
                     onTap: () => _displayDialog(),
@@ -351,7 +349,7 @@ class _callState extends State<call> {
                 dropdownValue,
                 formattedTime,
                 sumHourValue,
-                  productList,
+                productList,
               );
             });
           },
@@ -400,7 +398,7 @@ Future<void> addCall(user, call, paid, type, hour, payment,
       //   'price': price,
       //   'discountedPrice': discountedPrice,
       // },
-            'products': productList
+      'products': productList
           .map((product) => {
                 'name': product.name,
                 'price': product.price,

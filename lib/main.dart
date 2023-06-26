@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'Constants/AppString.dart';
 import 'componenets/alertDialog.dart';
 import 'clientdCarsd.dart';
+import 'componenets/timePick.dart';
 import 'screens/actions.dart';
 import 'objects/clientsCalls.dart';
 import 'todoItem.dart';
@@ -38,7 +39,8 @@ class TodoApp extends StatelessWidget {
     return MaterialApp(
       routes: {
         // '/actions': (context) => actions(user: user),
-        '/date': (context) => HomePage()
+        '/date': (context) => HomePage(),
+        '/time': (context) => ScreenOne(),
       },
       title: 'Todo Manage',
          debugShowCheckedModeBanner: false,
