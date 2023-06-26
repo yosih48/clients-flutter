@@ -11,7 +11,8 @@
        "clientName": "שם לקוח",
        "clientEmail": " אימייל לקוח",
        "clientAddress":"כתובת לקוח",
-       "clientPhone": "טלפון לקוח"
+       "clientPhone": "טלפון לקוח",
+       "callsHistory": "היסטוריית קריאות"
        
 
 }

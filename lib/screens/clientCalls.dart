@@ -13,7 +13,7 @@ class CallsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Client Calls'),
+        title: Text(AppLocalizations.of(context)!.callsHistory),
       ),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
@@ -55,20 +55,24 @@ class CallsScreen extends StatelessWidget {
                   // padding: EdgeInsets.symmetric(horizontal: 20),
                   width: MediaQuery.of(context).size.width,
                   margin: EdgeInsets.only(top: 12),
+                    decoration: BoxDecoration(
+    border: Border.all(color: Colors.blueAccent)
+  ),
                   child: Container(
                     // padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       // borderRadius: BorderRadius.circular(8),
-                      color: Colors.blueAccent,
+                      // color: Colors.blueAccent,
                     ),
                     child: Row(
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text('callDate: $formattedDate '),
-                              Text(callDetails),
+                              Text(' $formattedDate '),
+                              // Text(callDetails),
                               SizedBox(
                                 height: 12,
                               ),
@@ -83,7 +87,7 @@ class CallsScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(callDetails),
                             ],
@@ -97,9 +101,9 @@ class CallsScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(' תשלום: $payment'),
+                              Text('  $payment'),
                             ],
                           ),
                         ),
@@ -111,7 +115,7 @@ class CallsScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text('שולם: $paid'),
                             ],
