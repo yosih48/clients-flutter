@@ -1,26 +1,13 @@
 // import 'package:clientsf/datePick.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
-import 'package:widget_bindings/widget_bindings.dart';
+
 import '../Constants/AppString.dart';
 import '../componenets/alertDialog.dart';
-import '../componenets/checkbox.dart';
-import '../componenets/getTime.dart';
-import '../componenets/datePick.dart';
 import '../componenets/parts.dart';
-import '../componenets/timePick.dart';
 import '../objects/clients.dart';
-import '../objects/clientsCalls.dart';
-import '../componenets/paymentCheckbox.dart';
-import '../componenets/getTime.dart';
-import 'package:flutter/src/rendering/box.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // void createCall() {
 //   Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
@@ -69,38 +56,38 @@ class _actionsState extends State<actions> {
 bool _checkboxValue = false;
 
 final TextEditingController _callDetailsController = TextEditingController();
-final TextEditingController timeController = TextEditingController();
-final TextEditingController minuteController = TextEditingController();
 final TextEditingController paimentController = TextEditingController();
+// old time method:
+// final TextEditingController timeController = TextEditingController();
+// final TextEditingController minuteController = TextEditingController();
 
 int getSumHourValue() {
   String sumHourString = paimentController.text;
   int sumHourValue = int.parse(sumHourString);
   return sumHourValue;
 }
+// old time method:
+// Duration getTimeFromController(
+//     TextEditingController controller, TextEditingController minuteController) {
+//   final hours = int.tryParse(controller.text) ?? 0;
+//   final minutes = int.tryParse(minuteController.text) ?? 0;
 
-Duration getTimeFromController(
-    TextEditingController controller, TextEditingController minuteController) {
-  final hours = int.tryParse(controller.text) ?? 0;
-  final minutes = int.tryParse(minuteController.text) ?? 0;
+//   return Duration(hours: hours, minutes: minutes);
+// }
 
-  return Duration(hours: hours, minutes: minutes);
-}
+// String formatDuration(Duration duration) {
+//   final hours = duration.inHours.remainder(24);
+//   final minutes = duration.inMinutes.remainder(60);
 
-String formatDuration(Duration duration) {
-  final hours = duration.inHours.remainder(24);
-  final minutes = duration.inMinutes.remainder(60);
+//   final formatter = NumberFormat('00');
 
-  final formatter = NumberFormat('00');
+//   final formattedTime =
+//       '${formatter.format(hours)}:${formatter.format(minutes)}}';
 
-  final formattedTime =
-      '${formatter.format(hours)}:${formatter.format(minutes)}}';
+//   return formattedTime;
+// }
 
-  return formattedTime;
-}
 
-// String _selectedTime = '';
-// int _selectedTimeInInt = 0;
 
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
@@ -152,7 +139,7 @@ class call extends StatefulWidget {
 }
 
 class _callState extends State<call> {
-    final _timeC = TextEditingController();
+  final _timeC = TextEditingController();
   TimeOfDay timeOfDay = TimeOfDay.now();
   Future<void> _displayDialog() async {
     return showDialog<void>(
@@ -201,27 +188,24 @@ class _callState extends State<call> {
       },
     );
   }
-    Future displayTimePicker(BuildContext context) async {
+
+  Future displayTimePicker(BuildContext context) async {
     var time = await showTimePicker(context: context, initialTime: timeOfDay);
 
     if (time != null) {
       setState(() {
         _timeC.text = "${time.hour}:${time.minute}";
       });
+      print(_timeC.text);
     }
   }
-
-
 
   String dropdownValue = '';
   List<ProductData> productList = [];
   void handleProductListChanged(List<ProductData> updatedList) {
-
     setState(() {
       productList = updatedList;
     });
-
-
   }
 
   void handleDropdownValueChange(String value) {
@@ -256,7 +240,6 @@ class _callState extends State<call> {
                   // ),
                 ],
               ),
-
               Column(
                 children: <Widget>[
                   Card(
@@ -297,9 +280,10 @@ class _callState extends State<call> {
                   ),
                 ],
               ),
-              TimeTextField(
-                  controller: timeController,
-                  controllerMinute: minuteController),
+              // old time method
+              // TimeTextField(
+              //     controller: timeController,
+              //     controllerMinute: minuteController),
               Row(
                 children: [
                   Text(
@@ -337,7 +321,6 @@ class _callState extends State<call> {
                   ),
                 ],
               ),
-        
               SizedBox(height: 8),
             ],
           ),
@@ -347,12 +330,14 @@ class _callState extends State<call> {
           onPressed: () {
             // someFunction();
             setState(() {
-              final time =
-                  getTimeFromController(timeController, minuteController);
+               // old time method
+              // final time =
+              //     getTimeFromController(timeController, minuteController);
 
-              final formattedTime = formatDuration(time);
+              // final formattedTime = formatDuration(time);
               // Use the 'time' duration as needed
               int sumHourValue = getSumHourValue();
+
               for (var product in productList) {
                 print('Product Name: ${product.name}');
                 print('Price: ${product.price}');
@@ -363,7 +348,8 @@ class _callState extends State<call> {
                 _callDetailsController.text,
                 _checkboxValue,
                 dropdownValue,
-                formattedTime,
+                // formattedTime,
+                _timeC.text,
                 sumHourValue,
                 productList,
               );
@@ -409,7 +395,6 @@ Future<void> addCall(user, call, paid, type, hour, payment,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'hour': hour,
       'payment': payment,
-
       'products': productList
           .map((product) => {
                 'name': product.name,
