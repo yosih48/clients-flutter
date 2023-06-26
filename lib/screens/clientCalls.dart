@@ -52,11 +52,11 @@ class CallsScreen extends StatelessWidget {
 
                 // );
                 return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  // padding: EdgeInsets.symmetric(horizontal: 20),
                   width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.only(bottom: 12),
+                  margin: EdgeInsets.only(top: 12),
                   child: Container(
-                    padding: EdgeInsets.all(16),
+                    // padding: EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       // borderRadius: BorderRadius.circular(8),
                       color: Colors.blueAccent,

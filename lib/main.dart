@@ -43,8 +43,8 @@ class TodoApp extends StatelessWidget {
         '/time': (context) => ScreenOne(),
       },
       title: 'Todo Manage',
-         debugShowCheckedModeBanner: false,
-        // localizationsDelegates: AppLocalizations.localizationsDelegates,
+      debugShowCheckedModeBanner: false,
+      // localizationsDelegates: AppLocalizations.localizationsDelegates,
       // supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: [
         AppLocalizations.delegate,
@@ -123,17 +123,12 @@ class _TodoListState extends State<MyHomePage> {
 
   Future<void> _displayDialog() async {
     return showDialog<void>(
-      
       context: context,
       // T: false,
       builder: (BuildContext context) {
-  
         return AlertDialog(
-          
           title: Text(
-           AppLocalizations.of(context)!.clientInfo,
-       
-           
+            AppLocalizations.of(context)!.clientInfo,
           ),
           // Text(AppLocalizations.of(context)!.helloWorld),
           // content: TextField(
@@ -141,48 +136,51 @@ class _TodoListState extends State<MyHomePage> {
           //   decoration: const InputDecoration(hintText: 'Type your todo'),
           //   autofocus: true,
           // ),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Text(AppLocalizations.of(context)!.helloWorld),
+          content: Container(
+            height: 300.0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text(AppLocalizations.of(context)!.helloWorld),
 
-              TextField(
-                controller: _textFieldController,
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.person),
-                 // Text(AppLocalizations.of(context)!.helloWorld),
-                  labelText: 'Name',
+                TextField(
+                  controller: _textFieldController,
+                  decoration: const InputDecoration(
+                    icon: const Icon(Icons.person),
+                    // Text(AppLocalizations.of(context)!.helloWorld),
+                    labelText: 'Name',
+                  ),
+                  autofocus: true,
                 ),
-                autofocus: true,
-              ),
-              TextField(
-                controller: _mailFieldController,
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.email),
-                  hintText: 'Enter a phone email',
-                  labelText: 'email',
+                TextField(
+                  controller: _mailFieldController,
+                  decoration: const InputDecoration(
+                    icon: const Icon(Icons.email),
+                    hintText: 'Enter a phone email',
+                    labelText: 'email',
+                  ),
+                  autofocus: true,
                 ),
-                autofocus: true,
-              ),
-              TextField(
-                controller: _phoneFieldController,
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.phone),
-                  hintText: 'Enter a phone number',
-                  labelText: 'Phone',
+                TextField(
+                  controller: _phoneFieldController,
+                  decoration: const InputDecoration(
+                    icon: const Icon(Icons.phone),
+                    hintText: 'Enter a phone number',
+                    labelText: 'Phone',
+                  ),
+                  autofocus: true,
                 ),
-                autofocus: true,
-              ),
-              TextField(
-                controller: _addressFieldController,
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.maps_home_work),
-                  hintText: 'Enter address',
-                  labelText: 'address',
+                TextField(
+                  controller: _addressFieldController,
+                  decoration: const InputDecoration(
+                    icon: const Icon(Icons.maps_home_work),
+                    hintText: 'Enter address',
+                    labelText: 'address',
+                  ),
+                  autofocus: true,
                 ),
-                autofocus: true,
-              ),
-            ],
+              ],
+            ),
           ),
           actions: <Widget>[
             OutlinedButton(

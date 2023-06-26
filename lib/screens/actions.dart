@@ -87,8 +87,6 @@ int getSumHourValue() {
 //   return formattedTime;
 // }
 
-
-
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
 
@@ -153,10 +151,13 @@ class _callState extends State<call> {
           //   decoration: const InputDecoration(hintText: 'Type your todo'),
           //   autofocus: true,
           // ),
-          content: Column(
-            children: [
-              ProductForm(onProductListChanged: handleProductListChanged),
-            ],
+          content: Container(
+            // height: 300.0,
+            child: Column(
+              children: [
+                ProductForm(onProductListChanged: handleProductListChanged),
+              ],
+            ),
           ),
           actions: <Widget>[
             OutlinedButton(
@@ -330,7 +331,7 @@ class _callState extends State<call> {
           onPressed: () {
             // someFunction();
             setState(() {
-               // old time method
+              // old time method
               // final time =
               //     getTimeFromController(timeController, minuteController);
 
