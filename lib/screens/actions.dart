@@ -1,6 +1,7 @@
 // import 'package:clientsf/datePick.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -13,6 +14,7 @@ import '../componenets/checkbox.dart';
 import '../componenets/getTime.dart';
 import '../componenets/datePick.dart';
 import '../componenets/parts.dart';
+import '../componenets/timePick.dart';
 import '../objects/clients.dart';
 import '../objects/clientsCalls.dart';
 import '../componenets/paymentCheckbox.dart';
@@ -150,6 +152,8 @@ class call extends StatefulWidget {
 }
 
 class _callState extends State<call> {
+    final _timeC = TextEditingController();
+  TimeOfDay timeOfDay = TimeOfDay.now();
   Future<void> _displayDialog() async {
     return showDialog<void>(
       context: context,
@@ -197,31 +201,27 @@ class _callState extends State<call> {
       },
     );
   }
+    Future displayTimePicker(BuildContext context) async {
+    var time = await showTimePicker(context: context, initialTime: timeOfDay);
+
+    if (time != null) {
+      setState(() {
+        _timeC.text = "${time.hour}:${time.minute}";
+      });
+    }
+  }
+
+
 
   String dropdownValue = '';
   List<ProductData> productList = [];
   void handleProductListChanged(List<ProductData> updatedList) {
-    // final List<Map<String, dynamic>> callsData = productList.map((product) {
-    //   return {
-    //     'name': product.name,
-    //     'price': product.price,
-    //     'discountedPrice': product.discountedPrice,
-    //   };
-    // }).toList();
 
-    // // Example: setState(() { products = productList; });
-    // for (var ProductData in callsData) {
-    //   print('Product List Updated:  ${ProductData['name']}');
-    // }
     setState(() {
       productList = updatedList;
     });
 
-    //      for (var product in productList) {
-    //   print('Product Name: ${product.name}');
-    //   print('Price: ${product.price}');
-    //   print('Discounted Price: ${product.discountedPrice}');
-    // }
+
   }
 
   void handleDropdownValueChange(String value) {
@@ -276,7 +276,25 @@ class _callState extends State<call> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(':זמן טיפול'),
-                  // Text(AppLocalizations.of(context)!.openTicket),
+                  SizedBox(width: 8.0),
+                  GestureDetector(
+                    onTap: () => displayTimePicker(context),
+                    // onTap: () {
+                    //   Navigator.of(context).pop();
+                    //   Future.delayed(Duration.zero, () {
+                    //     showTimePicker(
+                    //       context: context,
+                    //       initialTime: TimeOfDay.now(),
+                    //     ).then((selectedTime) {
+                    //       if (selectedTime != null) {
+                    //         print(
+                    //             'Selected time: ${selectedTime.format(context)}');
+                    //       }
+                    //     });
+                    //   });
+                    // },
+                    child: Text('בחר זמן'),
+                  ),
                 ],
               ),
               TimeTextField(
@@ -319,9 +337,7 @@ class _callState extends State<call> {
                   ),
                 ],
               ),
-              // ProductForm(
-              //   onProductListChanged: handleProductListChanged
-              // ),
+        
               SizedBox(height: 8),
             ],
           ),
@@ -393,11 +409,7 @@ Future<void> addCall(user, call, paid, type, hour, payment,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'hour': hour,
       'payment': payment,
-      //      'parts': {
-      //   'name': name,
-      //   'price': price,
-      //   'discountedPrice': discountedPrice,
-      // },
+
       'products': productList
           .map((product) => {
                 'name': product.name,

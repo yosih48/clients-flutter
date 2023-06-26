@@ -22,10 +22,6 @@ class _ScreenOneState extends State<ScreenOne> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text("Pickers"),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: buildUI(context),
@@ -34,6 +30,7 @@ class _ScreenOneState extends State<ScreenOne> {
   }
 
   Widget buildUI(BuildContext context) {
+    
     return ListView(
       shrinkWrap: true,
       children: [
@@ -43,6 +40,7 @@ class _ScreenOneState extends State<ScreenOne> {
         //       labelText: 'Date picker', border: OutlineInputBorder()),
         // ),
         // const SizedBox(height: 20),
+
         TextFormField(
           controller: _timeC,
           decoration: const InputDecoration(
@@ -54,6 +52,8 @@ class _ScreenOneState extends State<ScreenOne> {
         ElevatedButton(
             onPressed: () => displayTimePicker(context),
             child: const Text("Pick Time")),
+
+       
       ],
     );
   }
@@ -72,7 +72,6 @@ class _ScreenOneState extends State<ScreenOne> {
   //     });
   //   }
   // }
-
   Future displayTimePicker(BuildContext context) async {
     var time = await showTimePicker(context: context, initialTime: timeOfDay);
 
