@@ -83,13 +83,7 @@ class _TodoListState extends State<MyHomePage> {
   final TextEditingController _addressFieldController = TextEditingController();
 //  final IntTextEditingController _phoneFieldController =
 //       IntTextEditingController();
-  late String clientId = generateClientId();
-String generateClientId() {
-  // Implement your logic to generate a unique client ID
-  // This can be a randomly generated string, a combination of user input, or any other unique identifier generation method
-  // For simplicity, we will use a timestamp-based ID in this example
-  return DateTime.now().millisecondsSinceEpoch.toString();
-}
+
   void _addTodoItem(String name, String mail, String address
       // , int phone
       ) {
@@ -335,7 +329,7 @@ String generateClientId() {
       // itemCount:_todos.length ,
       // ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => displayDialog(context, clientId),
+        onPressed: () => displayDialog(context, null),
         tooltip: 'Add a Todo',
         child: const Icon(Icons.add),
       ),

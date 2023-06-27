@@ -83,19 +83,7 @@ Future<void> displayDialog(context,  id) async {
               ),
             ),
             onPressed: () {
-                    print(context);
-                // if(context == 'MyHomePage' ){
-                //   print('yes');
-                // }else{
-                //     print('no');
-                // }
-           
-print(context );
-if (context is MyHomePage) {
-  print('yes');
-} else {
-  print('no');
-}
+
               Navigator.of(context).pop();
             },
             child: const Text('Cancel'),
@@ -123,16 +111,21 @@ if (context is MyHomePage) {
             onPressed: () {
       
               Navigator.of(context).pop();
-
-            
-              // addUser( id,_textFieldController.text, _mailFieldController.text,
-              //     _addressFieldController.text, _phoneFieldController.text);
-
-              // _addTodoItem(_textFieldController.text,
-              //     _mailFieldController.text, _addressFieldController.text);
-
+  if(id != null){
+            print(id);
+            print('not null');
 updateUserb( id,_textFieldController.text, _mailFieldController.text,
                   _addressFieldController.text,_phoneFieldController.text);
+
+  }else{
+      print(id);
+      print('null');
+              addUser( _textFieldController.text, _mailFieldController.text,
+                  _addressFieldController.text, _phoneFieldController.text);
+
+  }
+
+
           
             },
             child: const Text('Add user'),
@@ -144,16 +137,14 @@ updateUserb( id,_textFieldController.text, _mailFieldController.text,
   );
 }
 CollectionReference clients = FirebaseFirestore.instance.collection('users');
-Future<void> addUser(id, name, email, address, phone) {
-  // String clientId = generateClientId();
+Future<void> addUser( name, email, address, phone) {
+  String clientId = generateClientId();
   // Call the user's CollectionReference to add a new user
   // print(id);
 
-  // if(id != null){
 
-  // }
-  return clients.doc(id).set({
-    'id': id,
+  return clients.doc(clientId ).set({
+    'id': clientId ,
     'name': name,
     'email': email,
     'address': address,
