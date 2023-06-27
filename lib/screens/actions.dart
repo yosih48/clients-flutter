@@ -223,7 +223,7 @@ class _callState extends State<call> {
           child: ListView(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   dropdown(onDropdownChanged: handleDropdownValueChange),
                   // ElevatedButton(
@@ -256,10 +256,15 @@ class _callState extends State<call> {
                       ))
                 ],
               ),
+              SizedBox(
+                height: 8.0,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(':זמן טיפול'),
+                  Text(
+                    'זמן טיפול:',
+                  ),
                   SizedBox(width: 8.0),
                   GestureDetector(
                     onTap: () => displayTimePicker(context),
@@ -277,7 +282,10 @@ class _callState extends State<call> {
                     //     });
                     //   });
                     // },
-                    child: Text('בחר זמן'),
+                    child: Text(
+                      'בחר זמן',
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ],
               ),
@@ -318,7 +326,10 @@ class _callState extends State<call> {
                 children: [
                   GestureDetector(
                     onTap: () => _displayDialog(),
-                    child: Text(':אספקת חלקים'),
+                    child: Text(
+                      'אספקת חלקים:',
+                      style: TextStyle(color: Colors.red),
+                    ),
                   ),
                 ],
               ),
@@ -354,6 +365,7 @@ class _callState extends State<call> {
                 sumHourValue,
                 productList,
               );
+              Navigator.of(context).pop();
             });
           },
         ),

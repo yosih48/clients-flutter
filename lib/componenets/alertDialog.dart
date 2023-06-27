@@ -3,7 +3,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import '../Constants/AppString.dart';
 
-
 void showAlertDialog(BuildContext context, String title, {String? subtitle}) {
   showDialog(
     context: context,
@@ -24,11 +23,11 @@ void showAlertDialog(BuildContext context, String title, {String? subtitle}) {
   );
 }
 
-showToast(String text){
+showToast(String text) {
   Fluttertoast.showToast(
       msg: text,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
       backgroundColor: Colors.blue[400],
       textColor: Colors.white,

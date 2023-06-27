@@ -15,5 +15,8 @@
        "clientEmail": "Enter Client email ",
        "clientAddress":"Enter Client address",
        "clientPhone": "Enter Client phone",
-        "callsHistory": "calls history"
+        "callsHistory": "calls history",
+           "addParts": "add parts",
+         
+           "addProduct":"dsdsd"
 }

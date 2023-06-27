@@ -60,6 +60,7 @@ class UserListView extends StatelessWidget {
                             InkWell(
                               onTap: () {
                                 // Handle the first option
+                                Navigator.of(context).pop();
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

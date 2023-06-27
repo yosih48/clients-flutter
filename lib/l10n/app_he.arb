@@ -12,7 +12,10 @@
        "clientEmail": " אימייל לקוח",
        "clientAddress":"כתובת לקוח",
        "clientPhone": "טלפון לקוח",
-       "callsHistory": "היסטוריית קריאות"
+       "callsHistory": "היסטוריית קריאות",
+       "addParts": "הוספת חלקים",
+       "addProduct":"הוסף מוצר"
+    
        
 
 }

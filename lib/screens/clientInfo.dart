@@ -54,7 +54,7 @@ final Todo user;
                 
                 child: GestureDetector(
                       onTap: () {
-                final phoneNumber = '+972543462331'; // Replace with the actual phone number
+                final phoneNumber = '${user.phone}'; // Replace with the actual phone number
                 _launchPhoneDialer(phoneNumber);
               },
                   child: ListTile(
