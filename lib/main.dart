@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'Constants/AppString.dart';
+import 'componenets/addClientDialof.dart';
 import 'componenets/alertDialog.dart';
 import 'clientdCarsd.dart';
 import 'componenets/timePick.dart';
@@ -82,7 +83,13 @@ class _TodoListState extends State<MyHomePage> {
   final TextEditingController _addressFieldController = TextEditingController();
 //  final IntTextEditingController _phoneFieldController =
 //       IntTextEditingController();
-
+  late String clientId = generateClientId();
+String generateClientId() {
+  // Implement your logic to generate a unique client ID
+  // This can be a randomly generated string, a combination of user input, or any other unique identifier generation method
+  // For simplicity, we will use a timestamp-based ID in this example
+  return DateTime.now().millisecondsSinceEpoch.toString();
+}
   void _addTodoItem(String name, String mail, String address
       // , int phone
       ) {
@@ -231,35 +238,35 @@ class _TodoListState extends State<MyHomePage> {
   //   );
   // }
 
-  CollectionReference clients = FirebaseFirestore.instance.collection('users');
-  Future<void> addUser(name, email, address, phone) {
-    String clientId = generateClientId();
-    // Call the user's CollectionReference to add a new user
-    print(name);
-    return clients.doc(clientId).set({
-      'id': clientId,
-      'name': name,
-      'email': email,
-      'address': address,
-      'phone': phone,
-    })
-        // .then((value) => print("User Added") )
-        .then((value) {
-      print("User Added");
-      showToast('נשמר בהצלחה');
-      _textFieldController.clear();
-      _mailFieldController.clear();
-      _phoneFieldController.clear();
-      _addressFieldController.clear();
-    }).catchError((error) => print("Failed to add user: $error"));
-  }
+  // CollectionReference clients = FirebaseFirestore.instance.collection('users');
+  // Future<void> addUser(name, email, address, phone) {
+  //   String clientId = generateClientId();
+  //   // Call the user's CollectionReference to add a new user
+  //   print(name);
+  //   return clients.doc(clientId).set({
+  //     'id': clientId,
+  //     'name': name,
+  //     'email': email,
+  //     'address': address,
+  //     'phone': phone,
+  //   })
+  //       // .then((value) => print("User Added") )
+  //       .then((value) {
+  //     print("User Added");
+  //     showToast('נשמר בהצלחה');
+  //     _textFieldController.clear();
+  //     _mailFieldController.clear();
+  //     _phoneFieldController.clear();
+  //     _addressFieldController.clear();
+  //   }).catchError((error) => print("Failed to add user: $error"));
+  // }
 
-  String generateClientId() {
-    // Implement your logic to generate a unique client ID
-    // This can be a randomly generated string, a combination of user input, or any other unique identifier generation method
-    // For simplicity, we will use a timestamp-based ID in this example
-    return DateTime.now().millisecondsSinceEpoch.toString();
-  }
+  // String generateClientId() {
+  //   // Implement your logic to generate a unique client ID
+  //   // This can be a randomly generated string, a combination of user input, or any other unique identifier generation method
+  //   // For simplicity, we will use a timestamp-based ID in this example
+  //   return DateTime.now().millisecondsSinceEpoch.toString();
+  // }
 
   void getDataFromFirestore() async {
     var snapshot = await FirebaseFirestore.instance.collection('users').get();
@@ -328,7 +335,7 @@ class _TodoListState extends State<MyHomePage> {
       // itemCount:_todos.length ,
       // ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _displayDialog(context),
+        onPressed: () => displayDialog(context, clientId),
         tooltip: 'Add a Todo',
         child: const Icon(Icons.add),
       ),

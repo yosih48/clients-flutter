@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
+import '../componenets/addClientDialof.dart';
 import '../objects/clients.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -12,16 +13,17 @@ final Todo user;
  const clientInfo({super.key, required this.user});
   @override
   Widget build(BuildContext context) {
+  
     return Scaffold(
-        backgroundColor: Colors.yellow,
+        backgroundColor: Colors.blue[50],
         body: Container(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              CircleAvatar(
-                radius: 50,
-                // backgroundImage: AssetImage('asset/images/avtar.png'),
-              ),
+              // CircleAvatar(
+              //   radius: 50,
+              //   // backgroundImage: AssetImage('asset/images/avtar.png'),
+              // ),
               SizedBox(
                 height: 10,
               ),
@@ -36,10 +38,10 @@ final Todo user;
               SizedBox(
                 height: 2,
               ),
-              Text(
-               ' flutter',
-                style: TextStyle(fontSize: 15, fontFamily: 'EBGaramond'),
-              ),
+              // Text(
+              //  ' flutter',
+              //   style: TextStyle(fontSize: 15, fontFamily: 'EBGaramond'),
+              // ),
               SizedBox(
                 height: 10,
                 width: 150,
@@ -104,7 +106,11 @@ final Todo user;
                   ),
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+    displayDialog(context, '${user.id}');
+                  // Navigator.of(context).pop();
+                   
+ 
+     
      
                 },
                 child: Text(AppLocalizations.of(context)!.editClient),

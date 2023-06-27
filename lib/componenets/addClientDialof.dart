@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../main.dart';
 import 'alertDialog.dart';
 
 
@@ -12,7 +13,8 @@ final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
 
-Future<void> _displayDialog(context) async {
+Future<void> displayDialog(context,  id) async {
+  // print(context);
   return showDialog<void>(
     context: context,
     // T: false,
@@ -81,6 +83,19 @@ Future<void> _displayDialog(context) async {
               ),
             ),
             onPressed: () {
+                    print(context);
+                // if(context == 'MyHomePage' ){
+                //   print('yes');
+                // }else{
+                //     print('no');
+                // }
+           
+print(context );
+if (context is MyHomePage) {
+  print('yes');
+} else {
+  print('no');
+}
               Navigator.of(context).pop();
             },
             child: const Text('Cancel'),
@@ -106,28 +121,39 @@ Future<void> _displayDialog(context) async {
               ),
             ),
             onPressed: () {
+      
               Navigator.of(context).pop();
-              addUser(_textFieldController.text, _mailFieldController.text,
-                  _addressFieldController.text, _phoneFieldController.text);
+
+            
+              // addUser( id,_textFieldController.text, _mailFieldController.text,
+              //     _addressFieldController.text, _phoneFieldController.text);
+
               // _addTodoItem(_textFieldController.text,
               //     _mailFieldController.text, _addressFieldController.text);
 
+updateUserb( id,_textFieldController.text, _mailFieldController.text,
+                  _addressFieldController.text,_phoneFieldController.text);
           
             },
             child: const Text('Add user'),
           ),
+ 
         ],
       );
     },
   );
 }
 CollectionReference clients = FirebaseFirestore.instance.collection('users');
-Future<void> addUser(name, email, address, phone) {
-  String clientId = generateClientId();
+Future<void> addUser(id, name, email, address, phone) {
+  // String clientId = generateClientId();
   // Call the user's CollectionReference to add a new user
-  print(name);
-  return clients.doc(clientId).set({
-    'id': clientId,
+  // print(id);
+
+  // if(id != null){
+
+  // }
+  return clients.doc(id).set({
+    'id': id,
     'name': name,
     'email': email,
     'address': address,
@@ -143,6 +169,68 @@ Future<void> addUser(name, email, address, phone) {
     _addressFieldController.clear();
   }).catchError((error) => print("Failed to add user: $error"));
 }
+
+// Future<void> updateUser(id, name, email, address, phone){
+// print(phone);
+// return clients.doc(id).update({
+// 'name': name,
+// 'email': email,
+// 'address': address,
+// 'phone': phone,
+
+// }).then((value){
+
+// print('user updated');
+//   showToast('עודכן בהצלחה');
+//       _textFieldController.clear();
+//     _mailFieldController.clear();
+//     _phoneFieldController.clear();
+//     _addressFieldController.clear();
+  
+
+// })
+// .catchError((error)=> print('${error} '));
+// }
+Future<void> updateUserb(id, name, email, address, phone) {
+  print(phone);
+
+  Map<String, dynamic> updatedData = {};
+
+  // Update 'name' field if a new value is provided and not empty
+  if (name != null && name.isNotEmpty) {
+    updatedData['name'] = name;
+  }
+
+  // Update 'email' field if a new value is provided and not empty
+  if (email != null && email.isNotEmpty) {
+    updatedData['email'] = email;
+  }
+
+  // Update 'address' field if a new value is provided and not empty
+  if (address != null && address.isNotEmpty) {
+    updatedData['address'] = address;
+  }
+
+  // Update 'phone' field if a new value is provided and not empty
+  if (phone != null && phone.isNotEmpty) {
+    updatedData['phone'] = phone;
+  }
+
+  return clients.doc(id).update(updatedData).then((value) {
+    print('User updated');
+      showToast('עודכן בהצלחה');
+      _textFieldController.clear();
+    _mailFieldController.clear();
+    _phoneFieldController.clear();
+    _addressFieldController.clear();
+  }).catchError((error) {
+    print('Error updating user: $error');
+  });
+}
+
+
+
+
 String generateClientId() {
   // Implement your logic to generate a unique client ID
   // This can be a randomly generated string, a combination of user input, or any other unique identifier generation method
