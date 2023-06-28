@@ -273,6 +273,8 @@ class _TodoListState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+
+        
       ),
 
 // option1

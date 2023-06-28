@@ -48,10 +48,8 @@ class UserListView extends StatelessWidget {
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title:
-                        Text(AppLocalizations.of(context)!.options,
-                      
-                        
+                        title: Text(
+                          AppLocalizations.of(context)!.options,
                         ),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -71,7 +69,8 @@ class UserListView extends StatelessWidget {
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(AppLocalizations.of(context)!.clientHistory),
+                                child: Text(AppLocalizations.of(context)!
+                                    .clientHistory),
                               ),
                             ),
                             // InkWell(
@@ -91,32 +90,31 @@ class UserListView extends StatelessWidget {
                   );
                 },
                 child: Card(
-                    child:
-                        // ListTile(
-                        //   title: Text(user.name),
-                        //   subtitle: Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       Text('Email: ${user.email}'),
-                        //       Text('Address: ${user.address}'),
-                        //       Text('phone: ${user.phone}'),
-                        //       ElevatedButton(
-                        //         onPressed: () {
-                        //           Navigator.push(
-                        //             context,
-                        //             MaterialPageRoute(
-                        //               builder: (context) => actions(
-                        //                 user: user,
-                        //               ),
-                        //             ),
-                        //           );
-                        //         },
-                        //         child: Text(AppStrings.openCall),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-                        ListTile(
+                    // child: ListTile(
+                    //   title: Text(user.name),
+                    //   subtitle: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Text('Email: ${user.email}'),
+                    //       Text('Address: ${user.address}'),
+                    //       Text('phone: ${user.phone}'),
+                    //       ElevatedButton(
+                    //         onPressed: () {
+                    //           Navigator.push(
+                    //             context,
+                    //             MaterialPageRoute(
+                    //               builder: (context) => actions(
+                    //                 user: user,
+                    //               ),
+                    //             ),
+                    //           );
+                    //         },
+                    //         child: Text(AppStrings.openCall),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    child: ListTile(
                   title: Text(user.name),
                   subtitle: Text('${user.phone}'),
                   trailing: Row(
@@ -149,7 +147,6 @@ class UserListView extends StatelessWidget {
                           );
                         },
                       ),
-       
                     ],
                   ),
                 )),

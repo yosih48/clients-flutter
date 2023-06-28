@@ -4,24 +4,71 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class CallsScreen extends StatelessWidget {
-  final Todo clientId;
+import '../componenets/dialogFilter.dart';
 
+class CallsScreen extends StatefulWidget {
+  final Todo clientId;
   CallsScreen({required this.clientId});
 
   @override
+  State<CallsScreen> createState() => _CallsScreenState();
+}
+
+class _CallsScreenState extends State<CallsScreen> {
+  String? selectedOption;
+
+  void handleOptionSelected(String option) {
+    setState(() {
+      selectedOption = option;
+      print(selectedOption);
+    });
+  }
+
+//  String showUnpaidOnly = selectedOption;
+  @override
   Widget build(BuildContext context) {
+    // print(showUnpaidOnly);
+    print(selectedOption);
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.callsHistory),
+        actions: [
+          PopupMenuButton<String>(
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'option1',
+                child: Text('סינון'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'option2',
+                child: Text('Option 2'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'option3',
+                child: Text('Option 3'),
+              ),
+            ],
+            icon: Icon(Icons.more_vert), // Three dots icon
+            onSelected: (String value) {
+              // Handle option selection here
+              // if (value == 'option1') {
+              filterDialog(context,
+              
+                  );
+              // }
+              print('Selected option: $value');
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(clientId.id)
+              .doc(widget.clientId.id)
               .collection('calls')
-              .orderBy('timestamp', descending: true)
+              .where('paid', isEqualTo: 'showUnpaidOnly')
+              // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
