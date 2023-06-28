@@ -293,6 +293,20 @@ class _callState extends State<call> {
               // TimeTextField(
               //     controller: timeController,
               //     controllerMinute: minuteController),
+              SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: paimentController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: InputDecoration(labelText: 'סהכ לתשלום'),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8),
               Row(
                 children: [
                   Text(
@@ -310,14 +324,14 @@ class _callState extends State<call> {
                           print(_checkboxValue);
                         });
                       }),
-                  Expanded(
-                    child: TextField(
-                      controller: paimentController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: InputDecoration(labelText: 'סהכ לתשלום'),
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: TextField(
+                  //     controller: paimentController,
+                  //     keyboardType: TextInputType.number,
+                  //     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  //     decoration: InputDecoration(labelText: 'סהכ לתשלום'),
+                  //   ),
+                  // ),
                 ],
               ),
               SizedBox(height: 8),
