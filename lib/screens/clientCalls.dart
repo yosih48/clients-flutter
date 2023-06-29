@@ -23,12 +23,78 @@ class _CallsScreenState extends State<CallsScreen> {
       print(selectedOption);
     });
   }
+  Future<void> _displayFilterDialog() async {
+    return showDialog<void>(
+      
+      context: context,
+      // T: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          
+          title: const Text('filter'),
+          // content: TextField(
+          //   controller: _textFieldController,
+          //   decoration: const InputDecoration(hintText: 'Type your todo'),
+          //   autofocus: true,
+          // ),
+          content: Container(
+            height: 300.0,
+            child: Column(
+              children: [
+              RadioButtonExample(onOptionSelected:handleOptionSelected),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // handleProductListChanged(productList);
+                setState(() {});
+              },
+              child: const Text('הוספה'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //  String showUnpaidOnly = selectedOption;
   @override
   Widget build(BuildContext context) {
     // print(showUnpaidOnly);
-    print(selectedOption);
+    // print(selectedOption);
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.callsHistory),
@@ -36,7 +102,7 @@ class _CallsScreenState extends State<CallsScreen> {
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
-                value: 'option1',
+                value: 'filterPaid',
                 child: Text('סינון'),
               ),
               const PopupMenuItem<String>(
@@ -52,11 +118,11 @@ class _CallsScreenState extends State<CallsScreen> {
             onSelected: (String value) {
               // Handle option selection here
               // if (value == 'option1') {
-              filterDialog(context,
-              
+              _displayFilterDialog(
+           
                   );
               // }
-              print('Selected option: $value');
+              // print('Selected option: $value');
             },
           ),
         ],
