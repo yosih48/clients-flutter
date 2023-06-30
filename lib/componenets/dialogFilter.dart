@@ -29,7 +29,7 @@ class _RadioButtonExampleState extends State<RadioButtonExample> {
                       onChanged: (SingingCharacter? value) {
                         setState(() {
                            _character = value;
-                          // selectedOption = 'ddd';
+                           widget.onOptionSelected(_character.toString().split('.').last);
                         });
                       },
                     ),
@@ -42,7 +42,7 @@ class _RadioButtonExampleState extends State<RadioButtonExample> {
                       onChanged: (SingingCharacter? value) {
                         setState(() {
                            _character = value;
-                          // selectedOption = 'ddd';
+                         widget.onOptionSelected(_character.toString().split('.').last);
                         });
                       },
                     ),
@@ -55,7 +55,7 @@ class _RadioButtonExampleState extends State<RadioButtonExample> {
                       onChanged: (SingingCharacter? value) {
                         setState(() {
                            _character = value;
-                          // selectedOption = 'ddd';
+                     widget.onOptionSelected(_character.toString().split('.').last);
                         });
                       },
                     ),

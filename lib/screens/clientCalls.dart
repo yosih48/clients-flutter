@@ -15,14 +15,35 @@ class CallsScreen extends StatefulWidget {
 }
 
 class _CallsScreenState extends State<CallsScreen> {
-  String? selectedOption;
+  // String? selectedOption;
 
-  void handleOptionSelected(String option) {
-    setState(() {
-      selectedOption = option;
-      print(selectedOption);
-    });
-  }
+bool onRadioButtonSelected(String character) {
+  // Do something with the selected character
+  print('Selected character: $character');
+//  getValue('$character');
+ getValue(arg:'$character');
+ late bool paid;
+    if('$character' == 'lafayette'){
+ paid = true;
+ }else{
+  paid = false;
+ }
+  return paid;
+  
+}
+
+bool getValue({String arg = 'true'}){
+  bool paid = true;
+  String  showUnpaidOnly = arg;
+  print('showUnpaidOnly : ${showUnpaidOnly}'  );
+   if(showUnpaidOnly == 'lafayette'){
+ paid = true;
+ }else{
+  paid = false;
+ }
+  return paid;
+}
+
   Future<void> _displayFilterDialog() async {
     return showDialog<void>(
       
@@ -41,7 +62,12 @@ class _CallsScreenState extends State<CallsScreen> {
             height: 300.0,
             child: Column(
               children: [
-              RadioButtonExample(onOptionSelected:handleOptionSelected),
+              RadioButtonExample(onOptionSelected:onRadioButtonSelected),
+        //       RadioButtonExample(
+        //   onOptionSelected: (character) {
+        //     selectedCharacter = character;
+        //   },
+        // ),
               ],
             ),
           ),
@@ -90,10 +116,11 @@ class _CallsScreenState extends State<CallsScreen> {
 
 
 
-//  String showUnpaidOnly = selectedOption;
+ String showUnpaidOnly = 'lafayette';
+
   @override
   Widget build(BuildContext context) {
-    // print(showUnpaidOnly);
+    print(showUnpaidOnly);
     // print(selectedOption);
     return Scaffold(
       appBar: AppBar(
@@ -128,12 +155,13 @@ class _CallsScreenState extends State<CallsScreen> {
         ],
       ),
       body: SafeArea(
+
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
               .doc(widget.clientId.id)
               .collection('calls')
-              .where('paid', isEqualTo: 'showUnpaidOnly')
+              .where('paid', isEqualTo: true)
               // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:
