@@ -17,15 +17,16 @@ class CallsScreen extends StatefulWidget {
 }
 
 class _CallsScreenState extends State<CallsScreen> {
-  ValueNotifier<String> _selectedCharacterNotifier =
-      ValueNotifier<String>('both');
+  ValueNotifier<String> _selectedCharacterNotifier = ValueNotifier<String>('');
+
+  String? selectedCharacter;
 
   bool? _getFilterValue() {
-    final String selectedCharacter = _selectedCharacterNotifier.value;
+    final String selectedValue = _selectedCharacterNotifier.value;
 
-    if (selectedCharacter == 'true') {
+    if (selectedValue == 'true') {
       return true;
-    } else if (selectedCharacter == 'false') {
+    } else if (selectedValue == 'false') {
       return false;
     } else {
       return null;
@@ -38,6 +39,13 @@ class _CallsScreenState extends State<CallsScreen> {
     super.dispose();
   }
 
+  void onRadioButtonSelected(String character) {
+    setState(() {
+      selectedCharacter =
+          character; // Set selectedCharacter value when a radio button is selected
+    });
+  }
+
   void _displayFilterDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -47,35 +55,44 @@ class _CallsScreenState extends State<CallsScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              RadioListTile<String>(
+              ListTile(
                 title: const Text('True'),
-                value: 'true',
-                groupValue: _selectedCharacterNotifier.value,
-                onChanged: (String? value) {
-                  setState(() {
-                    _selectedCharacterNotifier.value = value!;
-                  });
-                },
+                leading: Radio<String>(
+                  value: 'true',
+                  groupValue: _selectedCharacterNotifier.value,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedCharacterNotifier.value = value!;
+                      selectedCharacter = value;
+                    });
+                  },
+                ),
               ),
-              RadioListTile<String>(
+              ListTile(
                 title: const Text('False'),
-                value: 'false',
-                groupValue: _selectedCharacterNotifier.value,
-                onChanged: (String? value) {
-                  setState(() {
-                    _selectedCharacterNotifier.value = value!;
-                  });
-                },
+                leading: Radio<String>(
+                  value: 'false',
+                  groupValue: _selectedCharacterNotifier.value,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedCharacterNotifier.value = value!;
+                      selectedCharacter = value;
+                    });
+                  },
+                ),
               ),
-              RadioListTile<String>(
+              ListTile(
                 title: const Text('Both'),
-                value: 'both',
-                groupValue: _selectedCharacterNotifier.value,
-                onChanged: (String? value) {
-                  setState(() {
-                    _selectedCharacterNotifier.value = value!;
-                  });
-                },
+                leading: Radio<String>(
+                  value: 'both',
+                  groupValue: _selectedCharacterNotifier.value,
+                  onChanged: (String? value) {
+                    setState(() {
+                      _selectedCharacterNotifier.value = value!;
+                      selectedCharacter = value;
+                    });
+                  },
+                ),
               ),
             ],
           ),
