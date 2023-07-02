@@ -10,11 +10,11 @@ class RadioButtonExample extends StatefulWidget {
   @override
   _RadioButtonExampleState createState() => _RadioButtonExampleState();
 }
-enum SingingCharacter { lafayette, jefferson , bush}
+enum SingingCharacter {  trueValue, falseValue, nullValue }
 class _RadioButtonExampleState extends State<RadioButtonExample> {
   // Variable to hold the selected value
    String selectedOption = 'ggg';
-   SingingCharacter? _character = SingingCharacter.lafayette;
+   SingingCharacter? _character = SingingCharacter.trueValue;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class _RadioButtonExampleState extends State<RadioButtonExample> {
                   ListTile(
                     title: Text('lafayette'),
                     leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.lafayette,
+                      value: SingingCharacter.trueValue,
                       groupValue: _character,
                       onChanged: (SingingCharacter? value) {
                         setState(() {
@@ -37,7 +37,7 @@ class _RadioButtonExampleState extends State<RadioButtonExample> {
                     ListTile(
                     title: Text('jefferson'),
                     leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.jefferson,
+                      value: SingingCharacter.falseValue,
                       groupValue: _character,
                       onChanged: (SingingCharacter? value) {
                         setState(() {
@@ -50,7 +50,7 @@ class _RadioButtonExampleState extends State<RadioButtonExample> {
                   ListTile(
                     title: Text('bush'),
                     leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.bush,
+                      value: SingingCharacter.nullValue,
                       groupValue: _character,
                       onChanged: (SingingCharacter? value) {
                         setState(() {

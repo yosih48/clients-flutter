@@ -17,7 +17,8 @@ class CallsScreen extends StatefulWidget {
 }
 
 class _CallsScreenState extends State<CallsScreen> {
-  ValueNotifier<bool> _selectedCharacterNotifier = ValueNotifier<bool>(true);
+  ValueNotifier<SingingCharacter> _selectedCharacterNotifier =
+      ValueNotifier<SingingCharacter>(SingingCharacter.nullValue);
 
   @override
   @override
@@ -51,7 +52,7 @@ class _CallsScreenState extends State<CallsScreen> {
                     if (character == 'lafayette') {
                       selectedCharacter = 'false';
                     } else if (character == 'bush') {
-                      selectedCharacter = 'false';
+                      selectedCharacter = 'true';
                     } else if (character == 'jefferson') {
                       selectedCharacter = 'null';
                     }
@@ -82,7 +83,7 @@ class _CallsScreenState extends State<CallsScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 // print(selectedCharacter);
-                onRadioButtonSelected(selectedCharacter!);
+                // onRadioButtonSelected(selectedCharacter!);
                 // handleProductListChanged(productList);
                 setState(() {
                   selectedCharacter = selectedCharacter;
@@ -92,9 +93,9 @@ class _CallsScreenState extends State<CallsScreen> {
                       selectedCharacter?.toLowerCase() != "false";
 
                   print(' newBoolValue ${newBoolValue}');
-                  _selectedCharacterNotifier.value = newBoolValue;
-                  // _selectedCharacterNotifier.value =
-                  // !_selectedCharacterNotifier.value;
+                  // _selectedCharacterNotifier.value = newBoolValue;
+                  _selectedCharacterNotifier.value =
+                      SingingCharacter.falseValue;
 
                   print('setState2 ${_selectedCharacterNotifier.value}');
                   print(_selectedCharacterNotifier.value.runtimeType);
@@ -153,7 +154,14 @@ class _CallsScreenState extends State<CallsScreen> {
               .collection('calls')
               // .where('paid', isEqualTo: _selectedCharacterNotifier.value)
               .where('paid',
-                  isEqualTo: _selectedCharacterNotifier.value ? true : null)
+                  // isEqualTo: _selectedCharacterNotifier.value ? true : null)
+                  isEqualTo: _selectedCharacterNotifier.value ==
+                          SingingCharacter.trueValue
+                      ? true
+                      : _selectedCharacterNotifier.value ==
+                              SingingCharacter.falseValue
+                          ? false
+                          : null)
               // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:
