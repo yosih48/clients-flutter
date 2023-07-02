@@ -17,91 +17,80 @@ class CallsScreen extends StatefulWidget {
 }
 
 class _CallsScreenState extends State<CallsScreen> {
-  ValueNotifier<SingingCharacter> _selectedCharacterNotifier =
-      ValueNotifier<SingingCharacter>(SingingCharacter.nullValue);
+  ValueNotifier<String> _selectedCharacterNotifier =
+      ValueNotifier<String>('both');
 
-  @override
+  bool? _getFilterValue() {
+    final String selectedCharacter = _selectedCharacterNotifier.value;
+
+    if (selectedCharacter == 'true') {
+      return true;
+    } else if (selectedCharacter == 'false') {
+      return false;
+    } else {
+      return null;
+    }
+  }
+
   @override
   void dispose() {
     _selectedCharacterNotifier.dispose();
     super.dispose();
   }
 
-  void onRadioButtonSelected(String character) {}
-
-  String? selectedCharacter;
-
   void _displayFilterDialog(BuildContext context) {
     showDialog(
       context: context,
-      // T: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('filter'),
-          // content: TextField(
-          //   controller: _textFieldController,
-          //   decoration: const InputDecoration(hintText: 'Type your todo'),
-          //   autofocus: true,
-          // ),
-          content: Container(
-            height: 300.0,
-            child: Column(
-              children: [
-                RadioButtonExample(
-                  onOptionSelected: (character) {
-                    if (character == 'lafayette') {
-                      selectedCharacter = 'false';
-                    } else if (character == 'bush') {
-                      selectedCharacter = 'true';
-                    } else if (character == 'jefferson') {
-                      selectedCharacter = 'null';
-                    }
-                  },
-                ),
-              ],
-            ),
+          title: const Text('Filter'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<String>(
+                title: const Text('True'),
+                value: 'true',
+                groupValue: _selectedCharacterNotifier.value,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedCharacterNotifier.value = value!;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('False'),
+                value: 'false',
+                groupValue: _selectedCharacterNotifier.value,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedCharacterNotifier.value = value!;
+                  });
+                },
+              ),
+              RadioListTile<String>(
+                title: const Text('Both'),
+                value: 'both',
+                groupValue: _selectedCharacterNotifier.value,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedCharacterNotifier.value = value!;
+                  });
+                },
+              ),
+            ],
           ),
           actions: <Widget>[
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+            TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                // print(selectedCharacter);
               },
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
               onPressed: () {
                 Navigator.of(context).pop();
-                // print(selectedCharacter);
-                // onRadioButtonSelected(selectedCharacter!);
-                // handleProductListChanged(productList);
-                setState(() {
-                  selectedCharacter = selectedCharacter;
-                  print('setState ${selectedCharacter}');
-
-                  bool newBoolValue =
-                      selectedCharacter?.toLowerCase() != "false";
-
-                  print(' newBoolValue ${newBoolValue}');
-                  // _selectedCharacterNotifier.value = newBoolValue;
-                  _selectedCharacterNotifier.value =
-                      SingingCharacter.falseValue;
-
-                  print('setState2 ${_selectedCharacterNotifier.value}');
-                  print(_selectedCharacterNotifier.value.runtimeType);
-                });
               },
-              child: const Text('הוספה'),
+              child: const Text('Apply'),
             ),
           ],
         );
@@ -155,13 +144,7 @@ class _CallsScreenState extends State<CallsScreen> {
               // .where('paid', isEqualTo: _selectedCharacterNotifier.value)
               .where('paid',
                   // isEqualTo: _selectedCharacterNotifier.value ? true : null)
-                  isEqualTo: _selectedCharacterNotifier.value ==
-                          SingingCharacter.trueValue
-                      ? true
-                      : _selectedCharacterNotifier.value ==
-                              SingingCharacter.falseValue
-                          ? false
-                          : null)
+                  isEqualTo: _getFilterValue())
               // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:

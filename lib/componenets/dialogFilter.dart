@@ -10,7 +10,7 @@ class RadioButtonExample extends StatefulWidget {
   @override
   _RadioButtonExampleState createState() => _RadioButtonExampleState();
 }
-enum SingingCharacter {  trueValue, falseValue, nullValue }
+enum SingingCharacter {  both, trueValue, falseValue }
 class _RadioButtonExampleState extends State<RadioButtonExample> {
   // Variable to hold the selected value
    String selectedOption = 'ggg';
@@ -50,7 +50,7 @@ class _RadioButtonExampleState extends State<RadioButtonExample> {
                   ListTile(
                     title: Text('bush'),
                     leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.nullValue,
+                      value: SingingCharacter.both,
                       groupValue: _character,
                       onChanged: (SingingCharacter? value) {
                         setState(() {
