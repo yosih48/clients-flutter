@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clientsf/objects/clients.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,43 +17,25 @@ class CallsScreen extends StatefulWidget {
 }
 
 class _CallsScreenState extends State<CallsScreen> {
-  // String? selectedOption;
+  ValueNotifier<bool> _selectedCharacterNotifier = ValueNotifier<bool>(true);
 
-bool onRadioButtonSelected(String character) {
-  // Do something with the selected character
-  print('Selected character: $character');
-//  getValue('$character');
- getValue(arg:'$character');
- late bool paid;
-    if('$character' == 'lafayette'){
- paid = true;
- }else{
-  paid = false;
- }
-  return paid;
-  
-}
+  @override
+  @override
+  void dispose() {
+    _selectedCharacterNotifier.dispose();
+    super.dispose();
+  }
 
-bool getValue({String arg = 'true'}){
-  bool paid = true;
-  String  showUnpaidOnly = arg;
-  print('showUnpaidOnly : ${showUnpaidOnly}'  );
-   if(showUnpaidOnly == 'lafayette'){
- paid = true;
- }else{
-  paid = false;
- }
-  return paid;
-}
+  void onRadioButtonSelected(String character) {}
 
-  Future<void> _displayFilterDialog() async {
-    return showDialog<void>(
-      
+  String? selectedCharacter;
+
+  void _displayFilterDialog(BuildContext context) {
+    showDialog(
       context: context,
       // T: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          
           title: const Text('filter'),
           // content: TextField(
           //   controller: _textFieldController,
@@ -62,12 +46,17 @@ bool getValue({String arg = 'true'}){
             height: 300.0,
             child: Column(
               children: [
-              RadioButtonExample(onOptionSelected:onRadioButtonSelected),
-        //       RadioButtonExample(
-        //   onOptionSelected: (character) {
-        //     selectedCharacter = character;
-        //   },
-        // ),
+                RadioButtonExample(
+                  onOptionSelected: (character) {
+                    if (character == 'lafayette') {
+                      selectedCharacter = 'false';
+                    } else if (character == 'bush') {
+                      selectedCharacter = 'false';
+                    } else if (character == 'jefferson') {
+                      selectedCharacter = 'null';
+                    }
+                  },
+                ),
               ],
             ),
           ),
@@ -80,6 +69,7 @@ bool getValue({String arg = 'true'}){
               ),
               onPressed: () {
                 Navigator.of(context).pop();
+                // print(selectedCharacter);
               },
               child: const Text('Cancel'),
             ),
@@ -91,8 +81,24 @@ bool getValue({String arg = 'true'}){
               ),
               onPressed: () {
                 Navigator.of(context).pop();
+                // print(selectedCharacter);
+                onRadioButtonSelected(selectedCharacter!);
                 // handleProductListChanged(productList);
-                setState(() {});
+                setState(() {
+                  selectedCharacter = selectedCharacter;
+                  print('setState ${selectedCharacter}');
+
+                  bool newBoolValue =
+                      selectedCharacter?.toLowerCase() != "false";
+
+                  print(' newBoolValue ${newBoolValue}');
+                  _selectedCharacterNotifier.value = newBoolValue;
+                  // _selectedCharacterNotifier.value =
+                  // !_selectedCharacterNotifier.value;
+
+                  print('setState2 ${_selectedCharacterNotifier.value}');
+                  print(_selectedCharacterNotifier.value.runtimeType);
+                });
               },
               child: const Text('הוספה'),
             ),
@@ -102,25 +108,12 @@ bool getValue({String arg = 'true'}){
     );
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- String showUnpaidOnly = 'lafayette';
+  String showUnpaidOnly = 'lafayette';
 
   @override
   Widget build(BuildContext context) {
-    print(showUnpaidOnly);
+    // print(showUnpaidOnly);
+
     // print(selectedOption);
     return Scaffold(
       appBar: AppBar(
@@ -145,9 +138,7 @@ bool getValue({String arg = 'true'}){
             onSelected: (String value) {
               // Handle option selection here
               // if (value == 'option1') {
-              _displayFilterDialog(
-           
-                  );
+              _displayFilterDialog(context);
               // }
               // print('Selected option: $value');
             },
@@ -155,13 +146,14 @@ bool getValue({String arg = 'true'}){
         ],
       ),
       body: SafeArea(
-
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
               .doc(widget.clientId.id)
               .collection('calls')
-              .where('paid', isEqualTo: true)
+              // .where('paid', isEqualTo: _selectedCharacterNotifier.value)
+              .where('paid',
+                  isEqualTo: _selectedCharacterNotifier.value ? true : null)
               // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:
