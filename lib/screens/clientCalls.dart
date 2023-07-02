@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:clientsf/objects/clients.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +18,26 @@ class CallsScreen extends StatefulWidget {
 }
 
 class _CallsScreenState extends State<CallsScreen> {
-  ValueNotifier<bool> _selectedCharacterNotifier = ValueNotifier<bool>(true);
+  ValueNotifier<String?> _selectedCharacterNotifier = ValueNotifier<String?>('');
 
-  @override
+   bool? _getFilterValue() {
+ 
+
+    if (_selectedCharacterNotifier.value == 'jefferson') {
+      return true;
+    } else if (_selectedCharacterNotifier.value == 'lafayette') {
+      return false;
+    } else {
+      return null;
+    }
+  }
   @override
   void dispose() {
     _selectedCharacterNotifier.dispose();
     super.dispose();
   }
 
-  void onRadioButtonSelected(String character) {}
+  void onRadioButtonSelected(String? character) {}
 
   String? selectedCharacter;
 
@@ -48,13 +59,8 @@ class _CallsScreenState extends State<CallsScreen> {
               children: [
                 RadioButtonExample(
                   onOptionSelected: (character) {
-                    if (character == 'lafayette') {
-                      selectedCharacter = 'false';
-                    } else if (character == 'bush') {
-                      selectedCharacter = 'false';
-                    } else if (character == 'jefferson') {
-                      selectedCharacter = 'null';
-                    }
+           
+                    selectedCharacter = character;
                   },
                 ),
               ],
@@ -82,22 +88,24 @@ class _CallsScreenState extends State<CallsScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 // print(selectedCharacter);
-                onRadioButtonSelected(selectedCharacter!);
+                onRadioButtonSelected(selectedCharacter?? 'ff');
                 // handleProductListChanged(productList);
                 setState(() {
-                  selectedCharacter = selectedCharacter;
+                  _selectedCharacterNotifier.value  =
+                //  selectedCharacter?? 'bush';
+                 selectedCharacter;
                   print('setState ${selectedCharacter}');
+print(_selectedCharacterNotifier.value);
+                  // bool newBoolValue =
+                  //     selectedCharacter?.toLowerCase() != "false";
 
-                  bool newBoolValue =
-                      selectedCharacter?.toLowerCase() != "false";
+                  // print(' newBoolValue ${newBoolValue}');
+                  // _selectedCharacterNotifier.value = newBoolValue;
+                  // // _selectedCharacterNotifier.value =
+                  // // !_selectedCharacterNotifier.value;
 
-                  print(' newBoolValue ${newBoolValue}');
-                  _selectedCharacterNotifier.value = newBoolValue;
-                  // _selectedCharacterNotifier.value =
-                  // !_selectedCharacterNotifier.value;
-
-                  print('setState2 ${_selectedCharacterNotifier.value}');
-                  print(_selectedCharacterNotifier.value.runtimeType);
+                  // print('setState2 ${_selectedCharacterNotifier.value}');
+                  // print(_selectedCharacterNotifier.value.runtimeType);
                 });
               },
               child: const Text('הוספה'),
@@ -153,7 +161,7 @@ class _CallsScreenState extends State<CallsScreen> {
               .collection('calls')
               // .where('paid', isEqualTo: _selectedCharacterNotifier.value)
               .where('paid',
-                  isEqualTo: _selectedCharacterNotifier.value ? true : null)
+                  isEqualTo: _getFilterValue())
               // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:
