@@ -8,6 +8,9 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../componenets/dialogFilter.dart';
 
+
+
+
 class CallsScreen extends StatefulWidget {
   final Todo clientId;
   CallsScreen({required this.clientId});
@@ -15,18 +18,21 @@ class CallsScreen extends StatefulWidget {
   @override
   State<CallsScreen> createState() => _CallsScreenState();
 }
+enum SingingCharacter {  both, trueValue, falseValue }
 
 class _CallsScreenState extends State<CallsScreen> {
   ValueNotifier<String> _selectedCharacterNotifier = ValueNotifier<String>('');
 
   String? selectedCharacter;
 
+     SingingCharacter? selectedValue = SingingCharacter.both;
   bool? _getFilterValue() {
-    final String selectedValue = _selectedCharacterNotifier.value;
+    // final String selectedValue = _selectedCharacterNotifier.value;
+    // final String selectedValue = _selectedCharacterNotifier.value;
 
-    if (selectedValue == 'true') {
+    if (selectedValue == SingingCharacter.trueValue) {
       return true;
-    } else if (selectedValue == 'false') {
+    } else if (selectedValue == SingingCharacter.falseValue) {
       return false;
     } else {
       return null;
@@ -55,45 +61,88 @@ class _CallsScreenState extends State<CallsScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                title: const Text('True'),
-                leading: Radio<String>(
-                  value: 'true',
-                  groupValue: _selectedCharacterNotifier.value,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedCharacterNotifier.value = value!;
-                      selectedCharacter = value;
-                    });
-                  },
-                ),
-              ),
-              ListTile(
-                title: const Text('False'),
-                leading: Radio<String>(
-                  value: 'false',
-                  groupValue: _selectedCharacterNotifier.value,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedCharacterNotifier.value = value!;
-                      selectedCharacter = value;
-                    });
-                  },
-                ),
-              ),
-              ListTile(
-                title: const Text('Both'),
-                leading: Radio<String>(
-                  value: 'both',
-                  groupValue: _selectedCharacterNotifier.value,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedCharacterNotifier.value = value!;
-                      selectedCharacter = value;
-                    });
-                  },
-                ),
-              ),
+              // ListTile(
+              //   title: const Text('True'),
+              //   leading: Radio<String>(
+              //     value: 'true',
+              //     groupValue: _selectedCharacterNotifier.value,
+              //     onChanged: (String? value) {
+              //       setState(() {
+              //         _selectedCharacterNotifier.value = value!;
+              //         selectedCharacter = value;
+              //       });
+              //     },
+              //   ),
+              // ),
+              //B
+                         ListTile(
+                    title: Text('true'),
+                    leading: Radio<SingingCharacter>(
+                      value: SingingCharacter.trueValue,
+                      groupValue: selectedValue,
+                      onChanged: (SingingCharacter? value) {
+                        setState(() {
+                            selectedValue = value;
+                        print( selectedValue);
+                        });
+                      },
+                    ),
+                  ),
+              // ListTile(
+              //   title: const Text('False'),
+              //   leading: Radio<String>(
+              //     value: 'false',
+              //     groupValue: _selectedCharacterNotifier.value,
+              //     onChanged: (String? value) {
+              //       setState(() {
+              //         _selectedCharacterNotifier.value = value!;
+              //         selectedCharacter = value;
+              //       });
+              //     },
+              //   ),
+              // ),
+              //b
+                             ListTile(
+                    title: Text('False'),
+                    leading: Radio<SingingCharacter>(
+                      value: SingingCharacter.falseValue,
+                      groupValue: selectedValue,
+                      onChanged: (SingingCharacter? value) {
+                        setState(() {
+                            selectedValue = value;
+                        
+                        });
+                      },
+                    ),
+                  ),
+              // ListTile(
+              //   title: const Text('Both'),
+              //   leading: Radio<String>(
+              //     value: 'both',
+              //     groupValue: _selectedCharacterNotifier.value,
+              //     onChanged: (String? value) {
+              //       setState(() {
+              //         _selectedCharacterNotifier.value = value!;
+              //         selectedCharacter = value;
+              //       });
+              //     },
+              //   ),
+              // ),
+              //b
+                                 ListTile(
+                    title: Text('both'),
+                    leading: Radio<SingingCharacter>(
+                      value: SingingCharacter.both,
+                      groupValue: selectedValue,
+                      onChanged: (SingingCharacter? value) {
+                        setState(() {
+                          print(value);
+                            selectedValue = value;
+                        
+                        });
+                      },
+                    ),
+                  ),
             ],
           ),
           actions: <Widget>[
