@@ -10,6 +10,7 @@
  "callType": "call type",
  "callTime": "call time",
    "clientHistory": "call history",
+           "filterPaid": "paid",
    "options": "options",
          "clientName": "Enter Client name",
        "clientEmail": "Enter Client email ",

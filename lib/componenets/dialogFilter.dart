@@ -10,58 +10,62 @@ class RadioButtonExample extends StatefulWidget {
   @override
   _RadioButtonExampleState createState() => _RadioButtonExampleState();
 }
-enum SingingCharacter { lafayette, jefferson , bush}
+
+enum SingingCharacter { notpaid, paid, both }
+
 class _RadioButtonExampleState extends State<RadioButtonExample> {
   // Variable to hold the selected value
-   String selectedOption = 'ggg';
-   SingingCharacter? _character = SingingCharacter.lafayette;
+
+  // SingingCharacter? _character = SingingCharacter.both;
+  SingingCharacter? _character;
 
   @override
   Widget build(BuildContext context) {
     return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ListTile(
-                    title: Text('lafayette'),
-                    leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.lafayette,
-                      groupValue: _character,
-                      onChanged: (SingingCharacter? value) {
-                        setState(() {
-                           _character = value;
-                           widget.onOptionSelected(_character.toString().split('.').last);
-                        });
-                      },
-                    ),
-                  ),
-                    ListTile(
-                    title: Text('jefferson'),
-                    leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.jefferson,
-                      groupValue: _character,
-                      onChanged: (SingingCharacter? value) {
-                        setState(() {
-                           _character = value;
-                         widget.onOptionSelected(_character.toString().split('.').last);
-                        });
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    title: Text('bush'),
-                    leading: Radio<SingingCharacter>(
-                      value: SingingCharacter.bush,
-                      groupValue: _character,
-                      onChanged: (SingingCharacter? value) {
-                        setState(() {
-                           _character = value;
-                     widget.onOptionSelected(_character.toString().split('.').last);
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              );
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ListTile(
+          title: Text('ללא סינון'),
+          leading: Radio<SingingCharacter>(
+            value: SingingCharacter.both,
+            groupValue: _character,
+            onChanged: (SingingCharacter? value) {
+              setState(() {
+                _character = value;
+                widget.onOptionSelected(_character.toString().split('.').last);
+              });
+            },
+          ),
+        ),
+        ListTile(
+          // title: Text(AppLocalizations.of(context)!.filterPaid),
+          title: Text('לא שולם'),
+          leading: Radio<SingingCharacter>(
+            value: SingingCharacter.notpaid,
+            groupValue: _character,
+            onChanged: (SingingCharacter? value) {
+              setState(() {
+                _character = value;
+                widget.onOptionSelected(_character.toString().split('.').last);
+              });
+            },
+          ),
+        ),
+        ListTile(
+          title: Text('שולם'),
+          leading: Radio<SingingCharacter>(
+            value: SingingCharacter.paid,
+            groupValue: _character,
+            onChanged: (SingingCharacter? value) {
+              setState(() {
+                _character = value;
+                widget.onOptionSelected(_character.toString().split('.').last);
+              });
+            },
+          ),
+        ),
+      ],
+    );
   }
 }
 

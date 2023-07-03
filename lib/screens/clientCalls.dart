@@ -18,19 +18,19 @@ class CallsScreen extends StatefulWidget {
 }
 
 class _CallsScreenState extends State<CallsScreen> {
-  ValueNotifier<String?> _selectedCharacterNotifier = ValueNotifier<String?>('');
+  ValueNotifier<String?> _selectedCharacterNotifier =
+      ValueNotifier<String?>('');
 
-   bool? _getFilterValue() {
- 
-
-    if (_selectedCharacterNotifier.value == 'jefferson') {
+  bool? _getFilterValue() {
+    if (_selectedCharacterNotifier.value == 'paid') {
       return true;
-    } else if (_selectedCharacterNotifier.value == 'lafayette') {
+    } else if (_selectedCharacterNotifier.value == 'notpaid') {
       return false;
     } else {
       return null;
     }
   }
+
   @override
   void dispose() {
     _selectedCharacterNotifier.dispose();
@@ -54,12 +54,11 @@ class _CallsScreenState extends State<CallsScreen> {
           //   autofocus: true,
           // ),
           content: Container(
-            height: 300.0,
+            height: 200.0,
             child: Column(
               children: [
                 RadioButtonExample(
                   onOptionSelected: (character) {
-           
                     selectedCharacter = character;
                   },
                 ),
@@ -88,14 +87,14 @@ class _CallsScreenState extends State<CallsScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 // print(selectedCharacter);
-                onRadioButtonSelected(selectedCharacter?? 'ff');
+                onRadioButtonSelected(selectedCharacter ?? 'ff');
                 // handleProductListChanged(productList);
                 setState(() {
-                  _selectedCharacterNotifier.value  =
-                //  selectedCharacter?? 'bush';
-                 selectedCharacter;
+                  _selectedCharacterNotifier.value =
+                      //  selectedCharacter?? 'bush';
+                      selectedCharacter;
                   print('setState ${selectedCharacter}');
-print(_selectedCharacterNotifier.value);
+                  print(_selectedCharacterNotifier.value);
                   // bool newBoolValue =
                   //     selectedCharacter?.toLowerCase() != "false";
 
@@ -160,8 +159,7 @@ print(_selectedCharacterNotifier.value);
               .doc(widget.clientId.id)
               .collection('calls')
               // .where('paid', isEqualTo: _selectedCharacterNotifier.value)
-              .where('paid',
-                  isEqualTo: _getFilterValue())
+              .where('paid', isEqualTo: _getFilterValue())
               // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:

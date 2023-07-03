@@ -32,7 +32,6 @@ class actions extends StatefulWidget {
   final Todo user;
   const actions({super.key, required this.user});
   // const actions({Key? key, required this.userId}) : super(key: key);
-
   @override
   State<actions> createState() => _actionsState();
 }
@@ -62,8 +61,12 @@ final TextEditingController paimentController = TextEditingController();
 // final TextEditingController minuteController = TextEditingController();
 
 int getSumHourValue() {
+  int sumHourValue = 0;
+
   String sumHourString = paimentController.text;
-  int sumHourValue = int.parse(sumHourString);
+  if (sumHourString != '') {
+    sumHourValue = int.parse(sumHourString);
+  }
   return sumHourValue;
 }
 // old time method:
@@ -369,17 +372,41 @@ class _callState extends State<call> {
                 print('Price: ${product.price}');
                 print('Discounted Price: ${product.discountedPrice}');
               }
-              addCall(
-                widget.user,
-                _callDetailsController.text,
-                _checkboxValue,
-                dropdownValue,
-                // formattedTime,
-                _timeC.text,
-                sumHourValue,
-                productList,
-              );
-              Navigator.of(context).pop();
+              if (_callDetailsController.text != '' &&
+                  _timeC.text != '' &&
+                  sumHourValue != '') {
+                addCall(
+                  widget.user,
+                  _callDetailsController.text,
+                  _checkboxValue,
+                  dropdownValue,
+                  // formattedTime,
+                  _timeC.text,
+                  sumHourValue,
+                  productList,
+                );
+                void resetForm() {
+                  // Clear text fields
+                  _callDetailsController.text = '';
+                  _timeC.text = '';
+
+                  // Reset checkbox value
+                  _checkboxValue = false;
+
+                  // Reset dropdown value
+                  dropdownValue = '';
+
+                  // Reset other variables as needed
+                  sumHourValue = 0;
+                  productList.clear();
+                }
+
+                resetForm();
+
+                Navigator.of(context).pop();
+              } else {
+                showToast('חסרים פרטים');
+              }
             });
           },
         ),
