@@ -231,29 +231,37 @@ class _CallsScreenState extends State<CallsScreen> {
                     ),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FutureBuilder<double>(
-                      future: fetchDataFromFirestore(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return CircularProgressIndicator(); // Show a loading indicator while waiting for the data
-                        }
+                Container(
+                  margin: EdgeInsets.only(top: 16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FutureBuilder<double>(
+                        future: fetchDataFromFirestore(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return CircularProgressIndicator(); // Show a loading indicator while waiting for the data
+                          }
 
-                        if (snapshot.hasError) {
+                          if (snapshot.hasError) {
+                            return Text(
+                                'Error: ${snapshot.error}'); // Show an error message if there's an error
+                          }
+
+                          double totalPayment = snapshot.data ?? 0.0;
+
                           return Text(
-                              'Error: ${snapshot.error}'); // Show an error message if there's an error
-                        }
-
-                        double totalPayment = snapshot.data ?? 0.0;
-
-                        return Text(
-                            'יתרה לחיוב: ${totalPayment.toStringAsFixed(2)}');
-                      },
-                    ),
-                  ],
+                            'יתרה לחיוב: ${totalPayment.toStringAsFixed(2)}',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.red),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 Expanded(
                   child: ListView.builder(
