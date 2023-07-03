@@ -21,6 +21,30 @@ class _CallsScreenState extends State<CallsScreen> {
   ValueNotifier<String?> _selectedCharacterNotifier =
       ValueNotifier<String?>('');
 
+  Future<double> fetchDataFromFirestore() async {
+    Map<String, dynamic> dataMap = {};
+
+    // Reference to the collection in Firestore
+    CollectionReference collectionRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(widget.clientId.id)
+        .collection('calls');
+
+    // Get the documents from the collection
+    QuerySnapshot querySnapshot = await collectionRef.get();
+    double totalPayment = querySnapshot.docs.fold(0,
+        (double previousValue, QueryDocumentSnapshot<Object?> element) {
+      final payment = element['payment'];
+      final paid = element['paid'];
+
+      return previousValue +
+          (paid == false && payment != null ? payment.toDouble() : 0);
+    });
+    print(totalPayment);
+
+    return totalPayment;
+  }
+
   bool? _getFilterValue() {
     if (_selectedCharacterNotifier.value == 'paid') {
       return true;
@@ -42,6 +66,7 @@ class _CallsScreenState extends State<CallsScreen> {
   String? selectedCharacter;
 
   void _displayFilterDialog(BuildContext context) {
+    fetchDataFromFirestore();
     showDialog(
       context: context,
       // T: false,
@@ -93,6 +118,7 @@ class _CallsScreenState extends State<CallsScreen> {
                   _selectedCharacterNotifier.value =
                       //  selectedCharacter?? 'bush';
                       selectedCharacter;
+
                   print('setState ${selectedCharacter}');
                   print(_selectedCharacterNotifier.value);
                   // bool newBoolValue =
@@ -116,6 +142,7 @@ class _CallsScreenState extends State<CallsScreen> {
   }
 
   String showUnpaidOnly = 'lafayette';
+  // double totalPayment = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -204,6 +231,30 @@ class _CallsScreenState extends State<CallsScreen> {
                     ),
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FutureBuilder<double>(
+                      future: fetchDataFromFirestore(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Show a loading indicator while waiting for the data
+                        }
+
+                        if (snapshot.hasError) {
+                          return Text(
+                              'Error: ${snapshot.error}'); // Show an error message if there's an error
+                        }
+
+                        double totalPayment = snapshot.data ?? 0.0;
+
+                        return Text(
+                            'יתרה לחיוב: ${totalPayment.toStringAsFixed(2)}');
+                      },
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: calls.length,
@@ -225,7 +276,28 @@ class _CallsScreenState extends State<CallsScreen> {
                       } else {
                         sum = "לא";
                       }
-                      // print(paid);
+
+                      // totalPayment = calls.fold(0, (double previousValue,
+                      //     QueryDocumentSnapshot<Object?> element) {
+                      //   final payment = element['payment'];
+                      //   final paid = element['paid'];
+                      //   return previousValue +
+                      //       (paid == false && payment != null
+                      //           ? payment.toDouble()
+                      //           : 0);
+                      // });
+
+                      // for (var call in calls) {
+                      //   final payment = call['payment'];
+                      //   final paid = call['paid'];
+
+                      //   if (payment != null && paid == false) {
+                      //     totalPayment += payment;
+                      //   }
+                      // }
+
+                      // print('Total payment: $totalPayment');
+                      // print(payment);
 
                       // );
                       return Container(

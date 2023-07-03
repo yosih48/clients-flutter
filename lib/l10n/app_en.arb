@@ -20,5 +20,6 @@
            "addParts": "add parts",
          
            "addProduct":"dsdsd",
-           "filtering": "filter"
+           "filtering": "filter",
+           "ramainingBalance": "ramaining balance"
 }

@@ -73,16 +73,16 @@ class UserListView extends StatelessWidget {
                                     .clientHistory),
                               ),
                             ),
-                            // InkWell(
-                            //   onTap: () {
-                            //     // Handle the second option
-                            //     Navigator.of(context).pop();
-                            //   },
-                            //   child: Padding(
-                            //     padding: EdgeInsets.symmetric(vertical: 8.0),
-                            //     child: Text('Option 2'),
-                            //   ),
-                            // ),
+                            InkWell(
+                              onTap: () {
+                                // Handle the second option
+                                Navigator.of(context).pop();
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text('יתרת חובה'),
+                              ),
+                            ),
                           ],
                         ),
                       );
