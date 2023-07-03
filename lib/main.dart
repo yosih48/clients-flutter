@@ -1,5 +1,6 @@
 import 'package:clientsf/screens/AppStarter.dart';
 import 'package:clientsf/screens/PhoneLogin.dart';
+import 'package:clientsf/screens/callsInfo.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -42,6 +43,7 @@ class TodoApp extends StatelessWidget {
         // '/actions': (context) => actions(user: user),
         '/date': (context) => HomePage(),
         '/time': (context) => ScreenOne(),
+        '/callinfo': (context) => ClientServiceScreen(),
       },
       title: 'Todo Manage',
       debugShowCheckedModeBanner: false,

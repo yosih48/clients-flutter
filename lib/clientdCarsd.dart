@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Constants/AppString.dart';
 import 'objects/clients.dart';
 import 'screens/actions.dart';
+import 'screens/callsinfo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserListView extends StatelessWidget {
@@ -76,7 +77,16 @@ class UserListView extends StatelessWidget {
                             InkWell(
                               onTap: () {
                                 // Handle the second option
-                                Navigator.of(context).pop();
+                                // Navigator.of(context).pop();
+                                // Navigator.pushNamed(context, '/actions');
+                                       Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>  ClientServiceScreen(
+                                   
+                                    ),
+                                  ),
+                                );
                               },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 8.0),
