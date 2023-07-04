@@ -21,5 +21,11 @@
          
            "addProduct":"dsdsd",
            "filtering": "filter",
-           "ramainingBalance": "ramaining balance"
+           "ramainingBalance": "ramaining balance",
+            "products": "Products",
+            "PaymentAmount" : "Payment Amount",
+            "Description": "call Description",
+             "TypeofService": " "Type of Service",
+             "PaymentStatus" : "Payment Status"
+            
 }

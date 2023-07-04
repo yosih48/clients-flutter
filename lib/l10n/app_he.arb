@@ -17,7 +17,12 @@
        "addParts": "הוספת חלקים",
        "addProduct":"הוסף מוצר",
         "filtering": "סינון",
-        "ramainingBalance": "יתרת חובה"
+        "ramainingBalance": "יתרת חובה",
+        "products": "מוצרים",
+        "PaymentAmount" : "סה"כ לתשלום",
+         "Description": "תיאור קריאה",
+         "TypeofService": "סיווג קריאה",
+          "PaymentStatus" : "סטטוס תשלום"
     
        
 

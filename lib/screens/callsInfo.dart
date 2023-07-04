@@ -52,130 +52,78 @@ class ClientServiceScreen extends StatelessWidget {
             ),
             Text(
               '${call['paid']}',
-              style: TextStyle(fontSize: 16, color: Colors.green),
+              style: TextStyle(
+                fontSize: 16,
+                color: call['paid'] ? Colors.green : Colors.red,
+              ),
             ),
             SizedBox(height: 16),
-            //       Column(
-            //   children: products.map((product) {
-            //     final productName = product['name'];
-            //     final productPrice = product['price'];
-            //     final productDiscountedPrice = product['discountedPrice'];
-
-            //     return ListTile(
-            //       title: Text(productName),
-            //       subtitle: Text(
-            //         'Price: $productPrice, Discounted Price: $productDiscountedPrice',
-            //       ),
-            //     );
-            //   }).toList(),
-            //       ),
-            // Text(
-            //   'Purchased Products:',
-            //   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            // ),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       flex: 3,
-            //       child: Text(
-            //         'Product',
-            //         style: TextStyle(fontSize: 16),
-            //       ),
-            //     ),
-            //     Expanded(
-            //       flex: 2,
-            //       child: Text(
-            //         'Price',
-            //         style: TextStyle(fontSize: 16),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // SizedBox(height: 8),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       flex: 3,
-            //       child: Text(
-            //         'Shower Head',
-            //         style: TextStyle(fontSize: 16),
-            //       ),
-            //     ),
-            //     Expanded(
-            //       flex: 2,
-            //       child: Text(
-            //         '\$20',
-            //         style: TextStyle(fontSize: 16),
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       flex: 3,
-            //       child: Text(
-            //         'Faucet',
-            //         style: TextStyle(fontSize: 16),
-            //       ),
-            //     ),
-            //     Expanded(
-            //       flex: 2,
-            //       child: Text(
-            //         '\$30',
-            //         style: TextStyle(fontSize: 16),
-            //       ),
-            //     ),
-            //   ],
-            // ),
+     
             Text(
               'Purchased Products:',
+              // AppLocalizations.of(context)!.PaymentStatus,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 12.0,
             ),
             Row(
               children: [
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    'Product',
-                    style: TextStyle(fontSize: 16),
+                if (products.isNotEmpty)
+                  Expanded(
+                    flex: 3,
+                    child: Text(
+                      'Product',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
+                SizedBox(
+                  height: 8.0,
                 ),
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    'Price',
-                    style: TextStyle(fontSize: 16),
+                if (products.isNotEmpty)
+                  Expanded(
+                    flex: 5,
+                    child: Text(
+                      'Price',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
               ],
             ),
-            SizedBox(height: 8),
-            Column(
-              children: products.map((product) {
-                final productName = product['name'];
-                final productPrice = product['price'];
+            // SizedBox(height: 8),
+            if (products.isEmpty)
+              Text(
+                '-',
+                style: TextStyle(fontSize: 16),
+              ),
+            if (products.isNotEmpty)
+              Column(
+                children: products.map((product) {
+                  final productName = product['name'];
+                  final productPrice = product['price'];
 
-                return Row(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Text(
-                        productName,
-                        style: TextStyle(fontSize: 16),
+                  return Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          productName,
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        '\$$productPrice',
-                        style: TextStyle(fontSize: 16),
+                      Expanded(
+                        flex: 5,
+                        child: Text(
+                          '\$$productPrice',
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
+                    ],
+                  );
+                }).toList(),
+              ),
             SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
