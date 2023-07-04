@@ -74,25 +74,25 @@ class UserListView extends StatelessWidget {
                                     .clientHistory),
                               ),
                             ),
-                            InkWell(
-                              onTap: () {
-                                // Handle the second option
-                                // Navigator.of(context).pop();
-                                // Navigator.pushNamed(context, '/actions');
-                                       Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>  ClientServiceScreen(
-                                   
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text('יתרת חובה'),
-                              ),
-                            ),
+                            // InkWell(
+                            //   onTap: () {
+                            //     // Handle the second option
+                            //     // Navigator.of(context).pop();
+                            //     // Navigator.pushNamed(context, '/actions');
+                            //            Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (context) =>  ClientServiceScreen(
+
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            //   child: Padding(
+                            //     padding: EdgeInsets.symmetric(vertical: 8.0),
+                            //     child: Text('יתרת חובה'),
+                            //   ),
+                            // ),
                           ],
                         ),
                       );

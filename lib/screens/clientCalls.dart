@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../componenets/dialogFilter.dart';
+import 'callsInfo.dart';
 
 class CallsScreen extends StatefulWidget {
   final Todo clientId;
@@ -308,82 +309,99 @@ class _CallsScreenState extends State<CallsScreen> {
                       // print(payment);
 
                       // );
-                      return Container(
-                        // padding: EdgeInsets.symmetric(horizontal: 20),
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.only(top: 12),
-                        decoration: BoxDecoration(
-                            // border: Border.bo(color: Colors.blueAccent)
-                            border: Border(
-                                bottom: BorderSide(
-                                    color: Colors.blueAccent,
-                                    width: 1.0,
-                                    style: BorderStyle.solid))),
-
+                      return InkWell(
+                        onTap: () {
+                          // Handle the second option
+                          // Navigator.of(context).pop();
+                          // Navigator.pushNamed(context, '/actions');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ClientServiceScreen( call: call),
+                            ),
+                          );
+                        },
                         child: Container(
-                          // padding: EdgeInsets.all(16),
+                          // padding: EdgeInsets.symmetric(horizontal: 20),
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.only(top: 12),
                           decoration: BoxDecoration(
-                              // borderRadius: BorderRadius.circular(8),
-                              // color: Colors.blueAccent,
-                              ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(' $formattedDate '),
-                                    // Text(callDetails),
-                                    SizedBox(
-                                      height: 12,
-                                    ),
-                                  ],
+                              // border: Border.bo(color: Colors.blueAccent)
+                              border: Border(
+                                  bottom: BorderSide(
+                                      color: Colors.blueAccent,
+                                      width: 1.0,
+                                      style: BorderStyle.solid))),
+
+                          child: Container(
+                            // padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                                // borderRadius: BorderRadius.circular(8),
+                                // color: Colors.blueAccent,
                                 ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                height: 60,
-                                width: 0.5,
-                                color: Colors.grey[200]!.withOpacity(0.7),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(callDetails),
-                                  ],
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(' $formattedDate '),
+                                      // Text(callDetails),
+                                      SizedBox(
+                                        height: 12,
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                height: 60,
-                                width: 0.5,
-                                color: Colors.grey[200]!.withOpacity(0.7),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text('  $payment'),
-                                  ],
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  height: 60,
+                                  width: 0.5,
+                                  color: Colors.grey[200]!.withOpacity(0.7),
                                 ),
-                              ),
-                              Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
-                                height: 60,
-                                width: 0.5,
-                                color: Colors.grey[200]!.withOpacity(0.7),
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(' $sum'),
-                                  ],
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(callDetails),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  height: 60,
+                                  width: 0.5,
+                                  color: Colors.grey[200]!.withOpacity(0.7),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text('  $payment'),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  height: 60,
+                                  width: 0.5,
+                                  color: Colors.grey[200]!.withOpacity(0.7),
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(' $sum'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

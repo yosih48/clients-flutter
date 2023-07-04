@@ -43,7 +43,7 @@ class TodoApp extends StatelessWidget {
         // '/actions': (context) => actions(user: user),
         '/date': (context) => HomePage(),
         '/time': (context) => ScreenOne(),
-        '/callinfo': (context) => ClientServiceScreen(),
+        // '/callinfo': (context) => ClientServiceScreen(),
       },
       title: 'Todo Manage',
       debugShowCheckedModeBanner: false,
@@ -275,8 +275,6 @@ class _TodoListState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-
-        
       ),
 
 // option1
