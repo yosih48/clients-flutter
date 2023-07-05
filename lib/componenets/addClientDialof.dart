@@ -86,7 +86,9 @@ Future<void> displayDialog(context,  id) async {
 
               Navigator.of(context).pop();
             },
-            child: const Text('Cancel'),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+            ),
           ),
           // ElevatedButton(
           //   style: ElevatedButton.styleFrom(
@@ -128,7 +130,9 @@ updateUserb( id,_textFieldController.text, _mailFieldController.text,
 
           
             },
-            child: const Text('Add user'),
+            child: Text(
+              AppLocalizations.of(context)!.addUser,
+            ),
           ),
  
         ],

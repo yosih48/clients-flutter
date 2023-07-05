@@ -1,5 +1,6 @@
 {
     "helloWorld": "שלום עולם",
+    "clients": "לקוחות"
     "addUser": "הוסף לקוח",
     "clientInfo": "פרטי לקוח",
     "openTicket": "פתיחת קריאה",
@@ -19,10 +20,19 @@
         "filtering": "סינון",
         "ramainingBalance": "יתרת חובה",
         "products": "מוצרים",
-        "PaymentAmount" : "סה"כ לתשלום",
-         "Description": "תיאור קריאה",
-         "TypeofService": "סיווג קריאה",
-          "PaymentStatus" : "סטטוס תשלום"
+        "paymentAmount": "סהכ לתשלום",
+         "description": "תיאור קריאה",
+         "calldescription": "תיאור טיפול",
+         "typeofService": "סיווג קריאה",
+          "paymentStatus" : "סטטוס תשלום",
+          "product": "שם מוצר",
+           "productPrice": "מחיר",
+           "callDetails": "פרטי קריאה",
+            "date": "תאריך",
+            "paid": "שולם",
+            "cancel": "ביטול",
+            "add": "הוספה"
+            
     
        
 

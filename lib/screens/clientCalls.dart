@@ -208,13 +208,13 @@ class _CallsScreenState extends State<CallsScreen> {
                   children: [
                     SizedBox(width: 12.0),
                     Text(
-                      'תאריך',
+                      AppLocalizations.of(context)!.date,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     SizedBox(width: 32.0),
                     Text(
-                      'תאור קריאה',
+                      AppLocalizations.of(context)!.callDetails,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -226,7 +226,7 @@ class _CallsScreenState extends State<CallsScreen> {
                     ),
                     SizedBox(width: 48.0),
                     Text(
-                      'שולם',
+                      AppLocalizations.of(context)!.paid,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -317,7 +317,8 @@ class _CallsScreenState extends State<CallsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ClientServiceScreen( call: call),
+                              builder: (context) =>
+                                  ClientServiceScreen(call: call),
                             ),
                           );
                         },

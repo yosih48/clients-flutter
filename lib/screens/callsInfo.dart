@@ -12,7 +12,9 @@ class ClientServiceScreen extends StatelessWidget {
     List<dynamic> products = call['products'];
     return Scaffold(
       appBar: AppBar(
-        title: Text('Client Service Details'),
+        title: Text(
+          AppLocalizations.of(context)!.callDetails,
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -20,7 +22,7 @@ class ClientServiceScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Type of Service:',
+              AppLocalizations.of(context)!.typeofService,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -29,7 +31,7 @@ class ClientServiceScreen extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              'Description:',
+              AppLocalizations.of(context)!.description,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -38,7 +40,7 @@ class ClientServiceScreen extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              'Payment Amount:',
+              AppLocalizations.of(context)!.paymentAmount,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -47,7 +49,7 @@ class ClientServiceScreen extends StatelessWidget {
             ),
             SizedBox(height: 16),
             Text(
-              'Payment Status:',
+              AppLocalizations.of(context)!.paymentStatus,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -58,10 +60,10 @@ class ClientServiceScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16),
-     
+
             Text(
-              'Purchased Products:',
-              // AppLocalizations.of(context)!.PaymentStatus,
+              // 'Purchased Products:',
+              AppLocalizations.of(context)!.products,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(
@@ -73,7 +75,7 @@ class ClientServiceScreen extends StatelessWidget {
                   Expanded(
                     flex: 3,
                     child: Text(
-                      'Product',
+                      AppLocalizations.of(context)!.product,
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
@@ -85,7 +87,7 @@ class ClientServiceScreen extends StatelessWidget {
                   Expanded(
                     flex: 5,
                     child: Text(
-                      'Price',
+                      AppLocalizations.of(context)!.productPrice,
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),

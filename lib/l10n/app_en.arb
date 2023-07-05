@@ -4,6 +4,7 @@
     "description": "The conventional newborn programmer greeting"
   },
   "addUser": "add user",
+   "clients": "clients"
  "clientInfo": "client info",
  "openTicket": "openTicket",
  "editClient": "edit Client info",
@@ -18,14 +19,22 @@
        "clientPhone": "Enter Client phone",
         "callsHistory": "calls history",
            "addParts": "add parts",
-         
+          "calldescription": "call description",
            "addProduct":"dsdsd",
            "filtering": "filter",
            "ramainingBalance": "ramaining balance",
             "products": "Products",
-            "PaymentAmount" : "Payment Amount",
-            "Description": "call Description",
-             "TypeofService": " "Type of Service",
-             "PaymentStatus" : "Payment Status"
+            "paymentAmount": "Payment Amount",
+            "description": "call Description",
+             "typeofService":  "Type of Service",
+             "paymentStatus": "Payment Status",
+               "product": "product name",
+               "productPrice": "price",
+                  "callDetails": "call details",
+                  "date": "date",
+                   "paid": "paid",
+                    "cancel": "cancel",
+                     "add": "add"
+                    
             
 }
