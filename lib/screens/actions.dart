@@ -201,6 +201,10 @@ class _callState extends State<call> {
         _timeC.text = "${time.hour}:${time.minute}";
       });
       print(_timeC.text);
+    } else {
+      _timeC.text = '0.00';
+
+      //  double firstNumber = 0:00;
     }
   }
 
@@ -345,20 +349,31 @@ class _callState extends State<call> {
           onPressed: () {
             // someFunction();
             setState(() {
-              // old time method
-              // final time =
-              //     getTimeFromController(timeController, minuteController);
-
-              // final formattedTime = formatDuration(time);
-              // Use the 'time' duration as needed
+     
               int sumHourValue = getSumHourValue();
+              int? firstNumber = 0;
+              if (_timeC.text.isNotEmpty) {
+                firstNumber = int.tryParse(_timeC.text.substring(0, 1));
+              
+              }
+
+              double totalSum = 0;
 
               for (var product in productList) {
-                print('Product Name: ${product.name}');
-                print('Price: ${product.price}');
-                print('Discounted Price: ${product.discountedPrice}');
+                // print('Product Name: ${product.name}');
+                // print('Price: ${product.price}');
+                // print('Discounted Price: ${product.discountedPrice}');
+                totalSum += product.price!;
               }
-              print(dropdownValue);
+              //זמן קריאה
+              // print('first number of time ${firstNumber}');
+              //סהכ מחיר חלקים
+              // print('total price products  ${totalSum}');
+
+              // print(sumHourValue.runtimeType);
+
+              double sumPayment = sumHourValue.toDouble() + totalSum;
+              print('total payment  ${sumPayment}');
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
                   sumHourValue != '' &&
@@ -370,7 +385,7 @@ class _callState extends State<call> {
                   dropdownValue,
                   // formattedTime,
                   _timeC.text,
-                  sumHourValue,
+                  sumPayment,
                   productList,
                 );
                 void resetForm() {
