@@ -271,22 +271,8 @@ class _callState extends State<call> {
                   SizedBox(width: 8.0),
                   GestureDetector(
                     onTap: () => displayTimePicker(context),
-                    // onTap: () {
-                    //   Navigator.of(context).pop();
-                    //   Future.delayed(Duration.zero, () {
-                    //     showTimePicker(
-                    //       context: context,
-                    //       initialTime: TimeOfDay.now(),
-                    //     ).then((selectedTime) {
-                    //       if (selectedTime != null) {
-                    //         print(
-                    //             'Selected time: ${selectedTime.format(context)}');
-                    //       }
-                    //     });
-                    //   });
-                    // },
                     child: Text(
-                      'בחר זמן',
+                      _timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן',
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
