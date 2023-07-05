@@ -160,14 +160,14 @@ class _CallsScreenState extends State<CallsScreen> {
                 value: 'filterPaid',
                 child: Text('סינון'),
               ),
-              const PopupMenuItem<String>(
-                value: 'option2',
-                child: Text('Option 2'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'option3',
-                child: Text('Option 3'),
-              ),
+              // const PopupMenuItem<String>(
+              //   value: 'option2',
+              //   child: Text('Option 2'),
+              // ),
+              // const PopupMenuItem<String>(
+              //   value: 'option3',
+              //   child: Text('Option 3'),
+              // ),
             ],
             icon: Icon(Icons.more_vert), // Three dots icon
             onSelected: (String value) {

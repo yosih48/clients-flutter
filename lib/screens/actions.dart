@@ -358,9 +358,11 @@ class _callState extends State<call> {
                 print('Price: ${product.price}');
                 print('Discounted Price: ${product.discountedPrice}');
               }
+              print(dropdownValue);
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
-                  sumHourValue != '') {
+                  sumHourValue != '' &&
+                  dropdownValue != '') {
                 addCall(
                   widget.user,
                   _callDetailsController.text,
