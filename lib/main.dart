@@ -1,10 +1,11 @@
 import 'package:clientsf/screens/AppStarter.dart';
 import 'package:clientsf/screens/PhoneLogin.dart';
 import 'package:clientsf/screens/callsInfo.dart';
+import 'package:clientsf/screens/settings.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:flutter/material.dart';
 import 'Constants/AppString.dart';
 import 'componenets/addClientDialof.dart';
 import 'componenets/alertDialog.dart';
@@ -43,6 +44,7 @@ class TodoApp extends StatelessWidget {
         // '/actions': (context) => actions(user: user),
         '/date': (context) => HomePage(),
         '/time': (context) => ScreenOne(),
+        // '/settings': (context) => SettingsPage2(),
         // '/callinfo': (context) => ClientServiceScreen(),
       },
       title: 'Todo Manage',
@@ -275,6 +277,60 @@ class _TodoListState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 8.0,
+                    left: 4.0,
+                    child: Text(
+                      "App Making.co",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  )
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                image: DecorationImage(
+                  image: NetworkImage(
+                    "https://appmaking.co/wp-content/uploads/2021/08/android-drawer-bg.jpeg",
+                  ),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.account_box),
+              title: Text("About"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.grid_3x3_outlined),
+              title: Text("settings"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => settings()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.contact_mail),
+              title: Text("Contact"),
+              onTap: () {},
+            )
+          ],
+        ),
       ),
 
 // option1
