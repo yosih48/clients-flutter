@@ -143,6 +143,8 @@ updateUserb( id,_textFieldController.text, _mailFieldController.text,
 CollectionReference clients = FirebaseFirestore.instance.collection('users');
 Future<void> addUser( name, email, address, phone) {
   String clientId = generateClientId();
+   CollectionReference usersCollection =
+      FirebaseFirestore.instance.collection('users');
   // Call the user's CollectionReference to add a new user
   // print(id);
 
