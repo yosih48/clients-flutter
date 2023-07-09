@@ -15,7 +15,7 @@ class AppStarter extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-           localizationsDelegates: [
+      localizationsDelegates: [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -29,11 +29,10 @@ class AppStarter extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
 
-      home: const TodoApp(),
+      // home: const TodoApp(),
       // home: ProductForm(),
-  
 
-      // home: PhoneLoginPage(),
+      home: PhoneLoginPage(),
     );
   }
 }
