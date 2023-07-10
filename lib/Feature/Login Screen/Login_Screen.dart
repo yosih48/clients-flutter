@@ -1,3 +1,6 @@
+// ignore_for_file: await_only_futures
+
+import 'package:clientsf/componenets/auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../Core/Animation/Fade_Animation.dart';
@@ -38,6 +41,8 @@ class _LoginScreenState extends State<LoginScreen> {
       // User login successful, you can now handle the successful login
       // and navigate to the next screen if needed.
       print('User logged in: ${userCredential.user?.email}');
+
+
       Navigator.push(
         context,
         MaterialPageRoute(

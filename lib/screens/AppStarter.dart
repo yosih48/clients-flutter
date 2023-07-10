@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:rest_api/Screens/UserListScreen.dart';
 
 import '../Feature/Login Screen/Login_Screen.dart';
+import '../componenets/auth.dart';
 import '../componenets/parts.dart';
 import '../main.dart';
 import 'PhoneLogin.dart';
@@ -34,7 +35,21 @@ class AppStarter extends StatelessWidget {
       // home: ProductForm(),
 
       // home: PhoneLoginPage(),
-      home: LoginScreen(),
+      // home: LoginScreen(),
+            home: FutureBuilder<bool>(
+    future: Future.delayed(Duration.zero, () => isUserAuthenticated()),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SplashScreen();
+          } else {
+            if (snapshot.data == true) {
+              return const TodoApp();
+            } else {
+              return LoginScreen();
+            }
+          }
+        },
+      ),
     );
   }
 }
