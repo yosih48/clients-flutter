@@ -2,18 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../main.dart';
 import 'alertDialog.dart';
-
-
 
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
 
-Future<void> displayDialog(context,  id) async {
+Future<void> displayDialog(context, id) async {
   // print(context);
   return showDialog<void>(
     context: context,
@@ -83,7 +81,6 @@ Future<void> displayDialog(context,  id) async {
               ),
             ),
             onPressed: () {
-
               Navigator.of(context).pop();
             },
             child: Text(
@@ -111,62 +108,85 @@ Future<void> displayDialog(context,  id) async {
               ),
             ),
             onPressed: () {
-      
               Navigator.of(context).pop();
-  if(id != null){
-            print(id);
-            print('not null');
-updateUserb( id,_textFieldController.text, _mailFieldController.text,
-                  _addressFieldController.text,_phoneFieldController.text);
-
-  }else{
-      print(id);
-      print('null');
-              addUser( _textFieldController.text, _mailFieldController.text,
-                  _addressFieldController.text, _phoneFieldController.text);
-
-  }
-
-
-          
+              if (id != null) {
+                print(id);
+                print('not null');
+                updateUserb(
+                    id,
+                    _textFieldController.text,
+                    _mailFieldController.text,
+                    _addressFieldController.text,
+                    _phoneFieldController.text);
+              } else {
+                print(id);
+                print('null');
+                addUser(_textFieldController.text, _mailFieldController.text,
+                    _addressFieldController.text, _phoneFieldController.text);
+              }
             },
             child: Text(
               AppLocalizations.of(context)!.addUser,
             ),
           ),
- 
         ],
       );
     },
   );
 }
+
 CollectionReference clients = FirebaseFirestore.instance.collection('users');
-Future<void> addUser( name, email, address, phone) {
+Future<void> addUser(name, email, address, phone) async {
+  User? user = FirebaseAuth.instance.currentUser;
   String clientId = generateClientId();
-   CollectionReference usersCollection =
-      FirebaseFirestore.instance.collection('users');
-  // Call the user's CollectionReference to add a new user
-  // print(id);
+  if (user != null) {
+    CollectionReference userCollection =
+        FirebaseFirestore.instance.collection('users');
+    DocumentReference userDoc =
+        userCollection.doc(user.uid).collection('user_data').doc();
 
+    //  CollectionReference usersCollection =
+    //     FirebaseFirestore.instance.collection('users');
+    // Call the user's CollectionReference to add a new user
+    // print(id);
+    try {
+      await userDoc.set({
+        'name': name,
+        'email': email,
+        'address': address,
+        'phone': phone,
+      });
 
-  return clients.doc(clientId ).set({
-    'id': clientId ,
-    'name': name,
-    'email': email,
-    'address': address,
-    'phone': phone,
-  })
-      // .then((value) => print("User Added") )
-      .then((value) {
-    print("User Added");
-    showToast('נשמר בהצלחה');
-    _textFieldController.clear();
-    _mailFieldController.clear();
-    _phoneFieldController.clear();
-    _addressFieldController.clear();
-  }).catchError((error) => print("Failed to add user: $error"));
+      print("User data added to Firestore");
+      showToast('נשמר בהצלחה');
+      _textFieldController.clear();
+      _mailFieldController.clear();
+      _phoneFieldController.clear();
+      _addressFieldController.clear();
+    } catch (error) {
+      print("Failed to add user data to Firestore: $error");
+    }
+
+    // return clients.doc(clientId).set({
+    //   'id': clientId,
+    //   'name': name,
+    //   'email': email,
+    //   'address': address,
+    //   'phone': phone,
+    // })
+    //     // .then((value) => print("User Added") )
+    //     .then((value) {
+    //   print("User Added");
+    //   showToast('נשמר בהצלחה');
+    //   _textFieldController.clear();
+    //   _mailFieldController.clear();
+    //   _phoneFieldController.clear();
+    //   _addressFieldController.clear();
+    // }).catchError((error) => print("Failed to add user: $error"));
+  } else {
+    print("User is not authenticated");
+  }
 }
-
 // Future<void> updateUser(id, name, email, address, phone){
 // print(phone);
 // return clients.doc(id).update({
@@ -183,7 +203,6 @@ Future<void> addUser( name, email, address, phone) {
 //     _mailFieldController.clear();
 //     _phoneFieldController.clear();
 //     _addressFieldController.clear();
-  
 
 // })
 // .catchError((error)=> print('${error} '));
@@ -215,8 +234,8 @@ Future<void> updateUserb(id, name, email, address, phone) {
 
   return clients.doc(id).update(updatedData).then((value) {
     print('User updated');
-      showToast('עודכן בהצלחה');
-      _textFieldController.clear();
+    showToast('עודכן בהצלחה');
+    _textFieldController.clear();
     _mailFieldController.clear();
     _phoneFieldController.clear();
     _addressFieldController.clear();
@@ -224,9 +243,6 @@ Future<void> updateUserb(id, name, email, address, phone) {
     print('Error updating user: $error');
   });
 }
-
-
-
 
 String generateClientId() {
   // Implement your logic to generate a unique client ID

@@ -15,7 +15,11 @@ class UserListView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        stream: FirebaseFirestore.instance.collection('users')
+        .doc(FirebaseAuth.instance.currentUser!
+                .uid) // Fetch the authenticated user's document
+            .collection('user_data') // Fetch the user-specific collection
+        .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
@@ -24,6 +28,21 @@ class UserListView extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Text('Loading...');
           }
+          //     final Map<String, dynamic> userData = snapshot.data!.data()!;
+          // final List<Todo> todos = userData.entries.map((entry) {
+          //   final Map<String, dynamic> data =
+          //       entry.value as Map<String, dynamic>;
+          //   return Todo(
+          //     id: entry.key,
+          //     name: data['name'],
+          //     email: data['email'],
+          //     address: data['address'],
+          //     phone: data['phone'],
+          //     completed: false,
+          //   );
+          // }).toList();
+        
+
 
           final List users =
               snapshot.data!.docs.map((QueryDocumentSnapshot doc) {

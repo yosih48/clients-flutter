@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../Constants/AppString.dart';
 import '../componenets/alertDialog.dart';
 import '../componenets/parts.dart';
@@ -30,6 +30,7 @@ const List<String> list = <String>[
 
 class actions extends StatefulWidget {
   final Todo user;
+
   const actions({super.key, required this.user});
   // const actions({Key? key, required this.userId}) : super(key: key);
   @override
@@ -349,12 +350,10 @@ class _callState extends State<call> {
           onPressed: () {
             // someFunction();
             setState(() {
-     
               int sumHourValue = getSumHourValue();
               int? firstNumber = 0;
               if (_timeC.text.isNotEmpty) {
                 firstNumber = int.tryParse(_timeC.text.substring(0, 1));
-              
               }
 
               double totalSum = 0;
@@ -371,23 +370,24 @@ class _callState extends State<call> {
               // print('total price products  ${totalSum}');
 
               // print(sumHourValue.runtimeType);
-
+              print('userID  ${widget.user.id}');
+              // User? user = FirebaseAuth.instance.currentUser;
+              // print('mainuser  ${user!.uid}');
               double sumPayment = sumHourValue.toDouble() + totalSum;
-              print('total payment  ${sumPayment}');
+              // print('total payment  ${sumPayment}');
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
                   sumHourValue != '' &&
                   dropdownValue != '') {
                 addCall(
-                  widget.user,
-                  _callDetailsController.text,
-                  _checkboxValue,
-                  dropdownValue,
-                  // formattedTime,
-                  _timeC.text,
-                  sumPayment,
-                  productList,
-                );
+                    widget.user,
+                    _callDetailsController.text,
+                    _checkboxValue,
+                    dropdownValue,
+                    // formattedTime,
+                    _timeC.text,
+                    sumPayment,
+                    productList);
                 void resetForm() {
                   // Clear text fields
                   _callDetailsController.text = '';
@@ -439,9 +439,16 @@ class _callState extends State<call> {
 //       .catchError((error) => print("Failed to add call: $error"));
 
 // }
-Future<void> addCall(user, call, paid, type, hour, payment,
+Future<void> addCall(client, call, paid, type, hour, payment,
     List<ProductData> productList) async {
-  final clientRef = FirebaseFirestore.instance.collection('users').doc(user.id);
+  User? user = FirebaseAuth.instance.currentUser;
+  print('userID  ${client.id}');
+  print('nainuserID  ${user}');
+  final clientRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user!.uid)
+      .collection('user_data')
+      .doc(client.id);
   final callsRef = clientRef.collection('calls');
 
   try {
@@ -467,3 +474,35 @@ Future<void> addCall(user, call, paid, type, hour, payment,
     print("Failed to add call: $error");
   }
 }
+// Future<void> addCallForClient(userId, clientId, call, paid, type, hour, payment,
+//     List<ProductData> productList) async {
+//   final callsRef = FirebaseFirestore.instance
+//       .collection('users')
+//       .doc(userId)
+//       .collection('user_data')
+//       .doc(clientId)
+//       .collection('calls');
+
+//   try {
+//     await callsRef.add({
+//       'call': call,
+//       'paid': paid,
+//       'type': type,
+//       'timestamp': DateTime.now().millisecondsSinceEpoch,
+//       'hour': hour,
+//       'payment': payment,
+//       'products': productList
+//           .map((product) => {
+//                 'name': product.name,
+//                 'price': product.price,
+//                 'discountedPrice': product.discountedPrice,
+//               })
+//           .toList(),
+//     });
+
+//     print("Call added");
+//     showToast('נשמר בהצלחה');
+//   } catch (error) {
+//     print("Failed to add call: $error");
+//   }
+// }

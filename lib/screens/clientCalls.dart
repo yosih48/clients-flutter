@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:clientsf/objects/clients.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
@@ -23,11 +24,14 @@ class _CallsScreenState extends State<CallsScreen> {
       ValueNotifier<String?>('');
 
   Future<double> fetchDataFromFirestore() async {
+    print('clientcalls clientid ${widget.clientId.id}');
     Map<String, dynamic> dataMap = {};
 
     // Reference to the collection in Firestore
     CollectionReference collectionRef = FirebaseFirestore.instance
         .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('user_data')
         .doc(widget.clientId.id)
         .collection('calls');
 
@@ -184,6 +188,8 @@ class _CallsScreenState extends State<CallsScreen> {
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .collection('user_data')
               .doc(widget.clientId.id)
               .collection('calls')
               // .where('paid', isEqualTo: _selectedCharacterNotifier.value)
