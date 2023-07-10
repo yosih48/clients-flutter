@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:rest_api/Screens/UserListScreen.dart';
@@ -6,6 +8,7 @@ import '../Feature/Login Screen/Login_Screen.dart';
 import '../componenets/auth.dart';
 import '../componenets/parts.dart';
 import '../main.dart';
+import '../objects/clients.dart';
 import 'PhoneLogin.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -36,11 +39,53 @@ class AppStarter extends StatelessWidget {
 
       // home: PhoneLoginPage(),
       // home: LoginScreen(),
-            home: FutureBuilder<bool>(
-    future: Future.delayed(Duration.zero, () => isUserAuthenticated()),
+    //         home: FutureBuilder<bool>(
+    // future: Future.delayed(Duration.zero, () => isUserAuthenticated()),
+    //     builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.waiting) {
+    //         return Scaffold(
+    //     body: Center(
+    //       child: CircularProgressIndicator(),
+    //     ),
+    //   );
+    //       } else {
+    //         if (snapshot.data == true) {
+    //           print('snapshot   ${snapshot}');
+    //           return TodoApp();
+    //         } else {
+    //           print('snapshotdata   ${snapshot.data}');
+    //           return LoginScreen();
+    //         }
+    //       }
+    //     },
+    //   ),
+// home: StreamBuilder<User?>(
+//   stream: FirebaseAuth.instance.authStateChanges(),
+//   builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
+//     if (snapshot.connectionState == ConnectionState.waiting) {
+//       return Scaffold(
+//         body: Center(
+//           child: CircularProgressIndicator(),
+//         ),
+//       );
+//     } else {
+//       if (snapshot.hasData) {
+//         return TodoApp();
+//       } else {
+//         return LoginScreen();
+//       }
+//     }
+//   },
+// ),
+      home: FutureBuilder<bool>(
+        future: Future.delayed(Duration.zero, () => isUserAuthenticated()),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return TodoApp();
+            return Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
           } else {
             if (snapshot.data == true) {
               return const TodoApp();
@@ -51,5 +96,8 @@ class AppStarter extends StatelessWidget {
         },
       ),
     );
+
+
+    
   }
 }

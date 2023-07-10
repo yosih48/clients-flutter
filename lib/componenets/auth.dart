@@ -14,6 +14,6 @@ Future<String?> getAuthToken() async {
 
 // Function to check if the user is authenticated
 bool isUserAuthenticated() {
-  String authToken = getAuthToken() as String;
+  Future<String?> authToken = getAuthToken();
   return authToken != null;
 }
