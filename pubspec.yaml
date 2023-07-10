@@ -51,6 +51,7 @@ dependencies:
   build_web_compilers: ^3.2.3
   flutter_localizations:
     sdk: flutter
+  shared_preferences: ^2.2.0
  
 
 dev_dependencies:
