@@ -2,6 +2,7 @@
 
 import 'package:clientsf/componenets/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Core/Animation/Fade_Animation.dart';
 import '../../Core/Colors/Hex_Color.dart';
@@ -31,7 +32,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
+  // function to save token
+//   Future<void> saveAuthToken(String token) async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   await prefs.setString('authToken', token);
+// }
+
+// login function
   Future<void> login() async {
+    print('dsdsd');
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -41,14 +50,19 @@ class _LoginScreenState extends State<LoginScreen> {
       // User login successful, you can now handle the successful login
       // and navigate to the next screen if needed.
       print('User logged in: ${userCredential.user?.email}');
+          // Retrieve the user token
+    String userToken = await userCredential.user!.getIdToken();
+    print('User token: $userToken');
+       // Save the authentication token
+    await saveAuthToken(userToken);
 
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => TodoApp(),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => TodoApp(),
+      //   ),
+      // );
     } catch (e) {
       // Handle login errors here (e.g., display an error message)
       print('Login error: $e');

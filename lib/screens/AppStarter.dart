@@ -40,7 +40,7 @@ class AppStarter extends StatelessWidget {
     future: Future.delayed(Duration.zero, () => isUserAuthenticated()),
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SplashScreen();
+            return TodoApp();
           } else {
             if (snapshot.data == true) {
               return const TodoApp();

@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Function to save the authentication token
-void saveAuthToken(String token) async {
+  Future<void> saveAuthToken(String token) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setString('authToken', token);
 }
