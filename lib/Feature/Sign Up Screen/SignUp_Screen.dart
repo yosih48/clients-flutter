@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../Core/Animation/Fade_Animation.dart';
 import '../../Core/Colors/Hex_Color.dart';
+import '../../componenets/alertDialog.dart';
 import '../Login Screen/Login_Screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -37,6 +38,7 @@ class _SignupScreenState extends State<SignupScreen> {
       // User sign-up successful, you can now handle the successful registration
       // and navigate to the next screen if needed.
       print('User signed up: ${userCredential.user?.email}');
+          showToast('נרשמת בהצלחה');
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -46,6 +48,7 @@ class _SignupScreenState extends State<SignupScreen> {
     } catch (e) {
       // Handle sign-up errors here (e.g., display an error message)
       print('Sign-up error: $e');
+      showToast('שגיאת הרשמה');
     }
   }
 
