@@ -6,9 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Constants/AppString.dart';
+import 'Feature/Login Screen/Login_Screen.dart';
 import 'componenets/addClientDialof.dart';
 import 'componenets/alertDialog.dart';
 import 'clientdCarsd.dart';
+import 'componenets/auth.dart';
 import 'componenets/timePick.dart';
 import 'screens/actions.dart';
 import 'objects/clientsCalls.dart';
@@ -29,7 +31,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   // runApp(const TodoApp());
-  runApp(const AppStarter());
+  runApp( AppStarter());
 }
 
 class TodoApp extends StatelessWidget {
@@ -275,6 +277,37 @@ class _TodoListState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          PopupMenuButton<String>(
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'disconnect',
+                child: Text('התנתק'),
+              ),
+              // const PopupMenuItem<String>(
+              //   value: 'option2',
+              //   child: Text('Option 2'),
+              // ),
+              // const PopupMenuItem<String>(
+              //   value: 'option3',
+              //   child: Text('Option 3'),
+              // ),
+            ],
+            icon: Icon(Icons.more_vert), // Three dots icon
+            onSelected: (String value) async {
+              await removeAuthToken();
+               String? userToken = await getAuthToken();
+              print('User token out: $userToken');
+              
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
 
 // option1

@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 // login function
   Future<void> login() async {
-    print('dsdsd');
+
     try {
       UserCredential userCredential =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -57,12 +57,12 @@ class _LoginScreenState extends State<LoginScreen> {
     await saveAuthToken(userToken);
 
 
-      // Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => TodoApp(),
-      //   ),
-      // );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TodoApp(),
+        ),
+      );
     } catch (e) {
       // Handle login errors here (e.g., display an error message)
       print('Login error: $e');

@@ -17,3 +17,13 @@ bool isUserAuthenticated() {
   Future<String?> authToken = getAuthToken();
   return authToken != null;
 }
+
+Future<void> removeAuthToken() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('authToken');
+}
+
+Future<bool> checkAuthToken() async {
+  String? token = await getAuthToken();
+  return token != null && token.isNotEmpty;
+}

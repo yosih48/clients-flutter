@@ -37,6 +37,12 @@ class _SignupScreenState extends State<SignupScreen> {
       // User sign-up successful, you can now handle the successful registration
       // and navigate to the next screen if needed.
       print('User signed up: ${userCredential.user?.email}');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ),
+      );
     } catch (e) {
       // Handle sign-up errors here (e.g., display an error message)
       print('Sign-up error: $e');
