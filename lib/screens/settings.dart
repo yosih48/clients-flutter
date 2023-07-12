@@ -1,4 +1,4 @@
-import 'dart:html';
+// import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  double hourlyRate = 0.0; // Add this variable
   TextStyle headingStyle = const TextStyle(
       fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red);
 
@@ -59,10 +60,34 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: Text("Environment"),
                 subtitle: Text("Production"),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+              Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Account", style: headingStyle),
+                  Text("שווי שעת עבודה", style: headingStyle),
+                  SizedBox(height: 10),
+                  Row(
+                   
+                    children: [
+                      Text(
+                        hourlyRate.toStringAsFixed(
+                            2), // Display the current value of hourlyRate
+                        style: TextStyle(fontSize: 16),
+                      ),
+                  Slider(
+                    value: hourlyRate,
+                    min: 0,
+                    max: 400,
+                    divisions: 100,
+                    onChanged: (newValue) {
+                      setState(() {
+                        hourlyRate = newValue;
+                        // print(hourlyRate);
+                      });
+                    },
+                  ),
+                    ],
+                  ),
+             
                 ],
               ),
               const ListTile(

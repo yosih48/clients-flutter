@@ -34,7 +34,8 @@
                   "date": "date",
                    "paid": "paid",
                     "cancel": "cancel",
-                     "add": "add"
+                     "add": "add",
+                     "signout": "sign out"
                     
             
 }

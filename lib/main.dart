@@ -32,7 +32,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   // runApp(const TodoApp());
-  runApp( AppStarter());
+  runApp(AppStarter());
 }
 
 class TodoApp extends StatelessWidget {
@@ -278,42 +278,39 @@ class _TodoListState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        
-        // actions: [
-          
-        //   PopupMenuButton<String>(
-        //     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        //       const PopupMenuItem<String>(
-        //         value: 'disconnect',
-        //         child: Text('התנתק'),
-        //       ),
-        //       // const PopupMenuItem<String>(
-        //       //   value: 'option2',
-        //       //   child: Text('Option 2'),
-        //       // ),
-        //       // const PopupMenuItem<String>(
-        //       //   value: 'option3',
-        //       //   child: Text('Option 3'),
-        //       // ),
-        //     ],
-        //     icon: Icon(Icons.more_vert), // Three dots icon
-        //     onSelected: (String value) async {
-        //       await removeAuthToken();
-        //        String? userToken = await getAuthToken();
-        //       print('User token out: $userToken');
-              
-        //       Navigator.pushReplacement(
-        //         context,
-        //         MaterialPageRoute(
-        //           builder: (context) => LoginScreen(),
-        //         ),
-        //       );
-        //     },
-        //   ),
-        // ],
-        
+        actions: [
+          PopupMenuButton<String>(
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'disconnect',
+                child: Text('התנתק'),
+              ),
+              // const PopupMenuItem<String>(
+              //   value: 'option2',
+              //   child: Text('Option 2'),
+              // ),
+              // const PopupMenuItem<String>(
+              //   value: 'option3',
+              //   child: Text('Option 3'),
+              // ),
+            ],
+            icon: Icon(Icons.more_vert), // Three dots icon
+            onSelected: (String value) async {
+              await removeAuthToken();
+              String? userToken = await getAuthToken();
+              print('User token out: $userToken');
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-          drawer: Drawer(
+      drawer: Drawer(
         child: ListView(
           children: [
             DrawerHeader(
@@ -361,8 +358,20 @@ class _TodoListState extends State<MyHomePage> {
             ),
             ListTile(
               leading: Icon(Icons.contact_mail),
-              title: Text("Contact"),
-              onTap: () {},
+              // title: Text(AppLocalizations.of(context)!.signout),
+              title: Text('התנתק'),
+              onTap: () async{
+                       await removeAuthToken();
+              String? userToken = await getAuthToken();
+              print('User token out: $userToken');
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginScreen(),
+                ),
+              );
+              },
             )
           ],
         ),
