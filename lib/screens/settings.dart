@@ -1,5 +1,6 @@
 // import 'dart:html';
 
+import 'package:clientsf/singelton/AppSingelton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -61,33 +62,33 @@ class _SettingsPageState extends State<SettingsPage> {
                 subtitle: Text("Production"),
               ),
               Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("שווי שעת עבודה", style: headingStyle),
                   SizedBox(height: 10),
                   Row(
-                   
                     children: [
                       Text(
                         hourlyRate.toStringAsFixed(
                             2), // Display the current value of hourlyRate
                         style: TextStyle(fontSize: 16),
                       ),
-                  Slider(
-                    value: hourlyRate,
-                    min: 0,
-                    max: 400,
-                    divisions: 100,
-                    onChanged: (newValue) {
-                      setState(() {
-                        hourlyRate = newValue;
-                        // print(hourlyRate);
-                      });
-                    },
-                  ),
+                      Slider(
+                        value: hourlyRate,
+                        min: 0,
+                        max: 400,
+                        divisions: 100,
+                        onChanged: (newValue) {
+                          setState(() {
+                            hourlyRate = newValue;
+                            AppSingelton().hourlyRate =newValue;
+                            // print(hourlyRate);
+                            print(AppSingelton().hourlyRate);
+                          });
+                        },
+                      ),
                     ],
                   ),
-             
                 ],
               ),
               const ListTile(

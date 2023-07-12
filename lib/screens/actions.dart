@@ -8,6 +8,7 @@ import '../Constants/AppString.dart';
 import '../componenets/alertDialog.dart';
 import '../componenets/parts.dart';
 import '../objects/clients.dart';
+import '../singelton/AppSingelton.dart';
 
 // void createCall() {
 //   Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
@@ -373,8 +374,11 @@ class _callState extends State<call> {
               print('userID  ${widget.user.id}');
               // User? user = FirebaseAuth.instance.currentUser;
               // print('mainuser  ${user!.uid}');
+
               double sumPayment = sumHourValue.toDouble() + totalSum;
-              // print('total payment  ${sumPayment}');
+              print('total payment  ${sumPayment}');
+              print('sigelton  ${AppSingelton().hourlyRate}');
+              print('call time ${_timeC.text}');
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
                   sumHourValue != '' &&
