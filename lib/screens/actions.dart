@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Constants/AppString.dart';
 import '../componenets/alertDialog.dart';
 import '../componenets/parts.dart';
@@ -39,11 +40,10 @@ class actions extends StatefulWidget {
 }
 
 class _actionsState extends State<actions> {
-  void initState() {
-    print(widget.user.id);
-  }
+
 
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('חיובים'),
@@ -103,7 +103,7 @@ class dropdown extends StatefulWidget {
 
 class _dropdownState extends State<dropdown> {
   String dropdownValue = list.first;
-  // String defalutValue = 'dsds';
+
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +134,8 @@ class _dropdownState extends State<dropdown> {
 }
 
 class call extends StatefulWidget {
+
+  
   final Todo user;
   const call({super.key, required this.user});
 
@@ -142,6 +144,24 @@ class call extends StatefulWidget {
 }
 
 class _callState extends State<call> {
+
+    int hourlyRate = 0;
+  void initState() {
+    print(widget.user.id);
+     getPrefs();
+  }
+   getPrefs()async {
+  // The async keyword is placed before the SharedPreferences class.
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+
+         setState(() {
+      hourlyRate = prefs.getInt('newValue') ?? 0;
+    });
+ print( ' void share ${hourlyRate}');
+}
+
+
+
   final _timeC = TextEditingController();
   TimeOfDay timeOfDay = TimeOfDay.now();
   Future<void> _displayDialog() async {
@@ -357,26 +377,29 @@ class _callState extends State<call> {
                 firstNumber = int.tryParse(_timeC.text.substring(0, 1));
               }
 
-              double totalSum = 0;
-
-              for (var product in productList) {
+// sum poduct price
+              double sumProduct = 0;
+            for (var product in productList) {
                 // print('Product Name: ${product.name}');
                 // print('Price: ${product.price}');
                 // print('Discounted Price: ${product.discountedPrice}');
-                totalSum += product.price!;
+                sumProduct += product.price!;
               }
               //זמן קריאה
               // print('first number of time ${firstNumber}');
-              //סהכ מחיר חלקים
-              // print('total price products  ${totalSum}');
+          
 
               // print(sumHourValue.runtimeType);
-              print('userID  ${widget.user.id}');
-              // User? user = FirebaseAuth.instance.currentUser;
-              // print('mainuser  ${user!.uid}');
+              // print('userID  ${widget.user.id}');
+          
+          // price per hour
+  int hourCharge = hourlyRate *( firstNumber! + 1);
+  // calculate total price
+              double sumPayment = sumHourValue.toDouble() + sumProduct + hourCharge;
 
-              double sumPayment = sumHourValue.toDouble() + totalSum;
+              print('charge per hour  ${ hourCharge}');
               print('total payment  ${sumPayment}');
+              print('hour first number  ${firstNumber}');
               print('sigelton  ${AppSingelton().hourlyRate}');
               print('call time ${_timeC.text}');
               if (_callDetailsController.text != '' &&

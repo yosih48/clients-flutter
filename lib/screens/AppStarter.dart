@@ -1,3 +1,4 @@
+import 'package:clientsf/singelton/AppSingelton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class AppStarter extends StatefulWidget {
 }
 
 class _AppStarterState extends State<AppStarter> {
+ 
   // This widget is the root of your application.
   late Future<bool> _checkToken;
 

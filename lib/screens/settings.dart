@@ -4,6 +4,7 @@ import 'package:clientsf/singelton/AppSingelton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -13,7 +14,10 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  double hourlyRate = 0.0; // Add this variable
+    int hourlyRate = 0;
+
+
+
   TextStyle headingStyle = const TextStyle(
       fontSize: 16, fontWeight: FontWeight.w600, color: Colors.red);
 
@@ -27,6 +31,17 @@ class _SettingsPageState extends State<SettingsPage> {
     color: CupertinoColors.inactiveGray,
   );
   TextStyle descStyleIOS = const TextStyle(color: CupertinoColors.inactiveGray);
+  @override
+  void initState()  {
+    super.initState();
+    Future<SharedPreferences> prefs = SharedPreferences.getInstance();
+
+    // Use a FutureBuilder widget to build the UI.
+    prefs.then((value) {
+      hourlyRate = value.getInt('hourlyRate') ?? 0;
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,17 +89,19 @@ class _SettingsPageState extends State<SettingsPage> {
                         style: TextStyle(fontSize: 16),
                       ),
                       Slider(
-                        value: hourlyRate,
+                        value: hourlyRate.toDouble(),
                         min: 0,
                         max: 400,
                         divisions: 100,
-                        onChanged: (newValue) {
+                        onChanged: (newValue) async {
+                             double newHourlyRate = newValue;
                           setState(() {
-                            hourlyRate = newValue;
-                            AppSingelton().hourlyRate =newValue;
+                            hourlyRate = newHourlyRate.toInt();
                             // print(hourlyRate);
-                            print(AppSingelton().hourlyRate);
+                            // print(AppSingelton().hourlyRate);
                           });
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setInt('newValue', newValue.toInt());
                         },
                       ),
                     ],
