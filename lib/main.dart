@@ -1,6 +1,7 @@
 import 'package:clientsf/screens/AppStarter.dart';
 import 'package:clientsf/screens/PhoneLogin.dart';
 import 'package:clientsf/screens/callsInfo.dart';
+import 'package:clientsf/screens/settings.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -278,38 +279,38 @@ class _TodoListState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         
-        actions: [
+        // actions: [
           
-          PopupMenuButton<String>(
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'disconnect',
-                child: Text('התנתק'),
-              ),
-              // const PopupMenuItem<String>(
-              //   value: 'option2',
-              //   child: Text('Option 2'),
-              // ),
-              // const PopupMenuItem<String>(
-              //   value: 'option3',
-              //   child: Text('Option 3'),
-              // ),
-            ],
-            icon: Icon(Icons.more_vert), // Three dots icon
-            onSelected: (String value) async {
-              await removeAuthToken();
-               String? userToken = await getAuthToken();
-              print('User token out: $userToken');
+        //   PopupMenuButton<String>(
+        //     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        //       const PopupMenuItem<String>(
+        //         value: 'disconnect',
+        //         child: Text('התנתק'),
+        //       ),
+        //       // const PopupMenuItem<String>(
+        //       //   value: 'option2',
+        //       //   child: Text('Option 2'),
+        //       // ),
+        //       // const PopupMenuItem<String>(
+        //       //   value: 'option3',
+        //       //   child: Text('Option 3'),
+        //       // ),
+        //     ],
+        //     icon: Icon(Icons.more_vert), // Three dots icon
+        //     onSelected: (String value) async {
+        //       await removeAuthToken();
+        //        String? userToken = await getAuthToken();
+        //       print('User token out: $userToken');
               
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
-                ),
-              );
-            },
-          ),
-        ],
+        //       Navigator.pushReplacement(
+        //         context,
+        //         MaterialPageRoute(
+        //           builder: (context) => LoginScreen(),
+        //         ),
+        //       );
+        //     },
+        //   ),
+        // ],
         
       ),
           drawer: Drawer(
@@ -352,10 +353,10 @@ class _TodoListState extends State<MyHomePage> {
               leading: Icon(Icons.grid_3x3_outlined),
               title: Text("settings"),
               onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(builder: (context) => settings()),
-                // );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
               },
             ),
             ListTile(
