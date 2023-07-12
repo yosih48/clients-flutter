@@ -277,7 +277,9 @@ class _TodoListState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        
         actions: [
+          
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
@@ -308,6 +310,61 @@ class _TodoListState extends State<MyHomePage> {
             },
           ),
         ],
+        
+      ),
+          drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Stack(
+                children: [
+                  Positioned(
+                    bottom: 8.0,
+                    left: 4.0,
+                    child: Text(
+                      "App Making.co",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  )
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                image: DecorationImage(
+                  image: NetworkImage(
+                    "https://appmaking.co/wp-content/uploads/2021/08/android-drawer-bg.jpeg",
+                  ),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text("Home"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.account_box),
+              title: Text("About"),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(Icons.grid_3x3_outlined),
+              title: Text("settings"),
+              onTap: () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => settings()),
+                // );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.contact_mail),
+              title: Text("Contact"),
+              onTap: () {},
+            )
+          ],
+        ),
       ),
 
 // option1
