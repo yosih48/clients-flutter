@@ -339,14 +339,7 @@ class _callState extends State<call> {
                           print(_checkboxValue);
                         });
                       }),
-                  // Expanded(
-                  //   child: TextField(
-                  //     controller: paimentController,
-                  //     keyboardType: TextInputType.number,
-                  //     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  //     decoration: InputDecoration(labelText: 'סהכ לתשלום'),
-                  //   ),
-                  // ),
+         
                 ],
               ),
               SizedBox(height: 8),
@@ -385,8 +378,7 @@ class _callState extends State<call> {
                 // print('Discounted Price: ${product.discountedPrice}');
                 sumProduct += product.price!;
               }
-              //זמן קריאה
-              // print('first number of time ${firstNumber}');
+  
           
 
               // print(sumHourValue.runtimeType);
@@ -400,7 +392,7 @@ class _callState extends State<call> {
               print('charge per hour  ${ hourCharge}');
               print('total payment  ${sumPayment}');
               print('hour first number  ${firstNumber}');
-              print('sigelton  ${AppSingelton().hourlyRate}');
+              // print('sigelton  ${AppSingelton().hourlyRate}');
               print('call time ${_timeC.text}');
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
@@ -446,26 +438,7 @@ class _callState extends State<call> {
   }
 }
 
-// CollectionReference clients = FirebaseFirestore.instance.collection('users');
 
-// Future<void> addCall( user, call, paid, type) {
-//   print(user.id);
-//   // Call the user's CollectionReference to add a new user
-//   return clients
-//       .doc(user.id)
-//       .update({
-//         'calls': {
-//           'call': call,
-//           'paid': paid,
-//           'type': type,
-//         },
-//       })
-
-//       .then((value) => print("call Added"))
-
-//       .catchError((error) => print("Failed to add call: $error"));
-
-// }
 Future<void> addCall(client, call, paid, type, hour, payment,
     List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
@@ -501,35 +474,6 @@ Future<void> addCall(client, call, paid, type, hour, payment,
     print("Failed to add call: $error");
   }
 }
-// Future<void> addCallForClient(userId, clientId, call, paid, type, hour, payment,
-//     List<ProductData> productList) async {
-//   final callsRef = FirebaseFirestore.instance
-//       .collection('users')
-//       .doc(userId)
-//       .collection('user_data')
-//       .doc(clientId)
-//       .collection('calls');
 
-//   try {
-//     await callsRef.add({
-//       'call': call,
-//       'paid': paid,
-//       'type': type,
-//       'timestamp': DateTime.now().millisecondsSinceEpoch,
-//       'hour': hour,
-//       'payment': payment,
-//       'products': productList
-//           .map((product) => {
-//                 'name': product.name,
-//                 'price': product.price,
-//                 'discountedPrice': product.discountedPrice,
-//               })
-//           .toList(),
-//     });
 
-//     print("Call added");
-//     showToast('נשמר בהצלחה');
-//   } catch (error) {
-//     print("Failed to add call: $error");
-//   }
-// }
+
