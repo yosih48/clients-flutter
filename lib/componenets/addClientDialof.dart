@@ -208,7 +208,14 @@ Future<void> addUser(name, email, address, phone) async {
 // .catchError((error)=> print('${error} '));
 // }
 Future<void> updateUserb(id, name, email, address, phone) {
+  User? user = FirebaseAuth.instance.currentUser;
+  CollectionReference userCollection =
+      FirebaseFirestore.instance.collection('users');
+  DocumentReference userDoc =
+      userCollection.doc(user!.uid).collection('user_data').doc();
   print(phone);
+  print(user!.uid);
+  print(id);
 
   Map<String, dynamic> updatedData = {};
 
@@ -232,7 +239,12 @@ Future<void> updateUserb(id, name, email, address, phone) {
     updatedData['phone'] = phone;
   }
 
-  return clients.doc(id).update(updatedData).then((value) {
+  return clients
+      .doc(user!.uid)
+      .collection('user_data')
+      .doc(id)
+      .update(updatedData)
+      .then((value) {
     print('User updated');
     showToast('עודכן בהצלחה');
     _textFieldController.clear();
