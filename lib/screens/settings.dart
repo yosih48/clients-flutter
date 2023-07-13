@@ -74,22 +74,23 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ],
               ),
-              const ListTile(
-                leading: Icon(Icons.language),
-                title: Text("Language"),
-                subtitle: Text("English"),
-              ),
-              const Divider(),
-              const ListTile(
-                leading: Icon(Icons.cloud),
-                title: Text("Environment"),
-                subtitle: Text("Production"),
-              ),
+              // const ListTile(
+              //   leading: Icon(Icons.language),
+              //   title: Text("Language"),
+              //   subtitle: Text("English"),
+              // ),
+              // const Divider(),
+              // const ListTile(
+              //   leading: Icon(Icons.cloud),
+              //   title: Text("Environment"),
+              //   subtitle: Text("Production"),
+              // ),
+              SizedBox(height: 16.0),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("שווי שעת עבודה", style: headingStyle),
-                  SizedBox(height: 10),
+                  SizedBox(height: 6.0),
                   Row(
                     children: [
                       Text(

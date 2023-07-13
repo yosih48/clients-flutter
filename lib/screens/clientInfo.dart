@@ -79,7 +79,8 @@ class clientInfo extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  openGoogleMaps('latitude,longitude');
+                  // openGoogleMaps('latitude,longitude');
+                  openWaze('${user.address}');
                 },
                 child: Card(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -131,6 +132,7 @@ void sendEmail(String emailAddress) async {
     throw 'Could not launch email';
   }
 }
+
 // email option2
 void launchEmailSubmission(String emailAddress) async {
   final Uri params = Uri(
@@ -156,7 +158,8 @@ void openWaze(String address) async {
   if (await canLaunch(wazeUri.toString())) {
     await launch(wazeUri.toString());
   } else {
-    throw 'Could not launch Waze';
+    openGoogleMaps(address);
+    // throw 'Could not launch Waze';
   }
 }
 

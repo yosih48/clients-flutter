@@ -298,12 +298,14 @@ class _TodoListState extends State<MyHomePage> {
             onSelected: (String value) async {
               await removeAuthToken();
               String? userToken = await getAuthToken();
-              print('User token out: $userToken');
+              // print('User token out: $userToken');
 
               Navigator.pushReplacement(
+              // Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => LoginScreen(),
+                  // builder: (context) => SettingsPage(),
                 ),
               );
             },
@@ -328,12 +330,12 @@ class _TodoListState extends State<MyHomePage> {
               ),
               decoration: BoxDecoration(
                 color: Colors.blue,
-                image: DecorationImage(
-                  image: NetworkImage(
-                    "https://appmaking.co/wp-content/uploads/2021/08/android-drawer-bg.jpeg",
-                  ),
-                  fit: BoxFit.fill,
-                ),
+                // image: DecorationImage(
+                //   image: NetworkImage(
+                //     "https://appmaking.co/wp-content/uploads/2021/08/android-drawer-bg.jpeg",
+                //   ),
+                //   fit: BoxFit.fill,
+                // ),
               ),
             ),
             ListTile(
@@ -360,17 +362,17 @@ class _TodoListState extends State<MyHomePage> {
               leading: Icon(Icons.contact_mail),
               // title: Text(AppLocalizations.of(context)!.signout),
               title: Text('התנתק'),
-              onTap: () async{
-                       await removeAuthToken();
-              String? userToken = await getAuthToken();
-              print('User token out: $userToken');
+              onTap: () async {
+                await removeAuthToken();
+                String? userToken = await getAuthToken();
+                print('User token out: $userToken');
 
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
-                ),
-              );
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(),
+                  ),
+                );
               },
             )
           ],

@@ -16,6 +16,13 @@
             // "deviceId": "Android SDK built for x86"
             "deviceId": "Android SDK built for x86"
         },
+                     {
+            "name": "clients11",
+            "request": "launch",
+            "type": "dart",
+            // "deviceId": "Android SDK built for x86"
+            "deviceId": "sdk gphone64 x86 64"
+        },
         
         {
             "name": "clientsf (profile mode)",

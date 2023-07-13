@@ -1,3 +1,4 @@
+import 'package:clientsf/componenets/editCallDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -130,6 +131,7 @@ class ClientServiceScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Handle edit button click
+                 editCallDialog(context);
               },
               child: Text('Edit'),
             ),
