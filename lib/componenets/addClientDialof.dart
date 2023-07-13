@@ -213,9 +213,9 @@ Future<void> updateUserb(id, name, email, address, phone) {
       FirebaseFirestore.instance.collection('users');
   DocumentReference userDoc =
       userCollection.doc(user!.uid).collection('user_data').doc();
-  print(phone);
-  print(user!.uid);
-  print(id);
+  // print(phone);
+  // print(user!.uid);
+  // print(id);
 
   Map<String, dynamic> updatedData = {};
 
