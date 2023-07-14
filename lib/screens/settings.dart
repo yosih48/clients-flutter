@@ -31,7 +31,10 @@ class _SettingsPageState extends State<SettingsPage> {
   TextStyle descStyleIOS = const TextStyle(color: CupertinoColors.inactiveGray);
   Future<void> getStoredHourlyRate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int storedValue = prefs.getInt('newValue') ?? 0;
+    // int storedValue = prefs.getInt('newValue') ?? 0;
+     int storedValue = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
+    //  print(storedValue);
+    //  print(AppSingelton().userID);
     setState(() {
       hourlyRate = storedValue;
     });
@@ -40,15 +43,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    // Future<SharedPreferences> prefs = SharedPreferences.getInstance();
 
-    // // Use a FutureBuilder widget to build the UI.
-    // prefs.then((value) {
-    //   hourlyRate = value.getInt('hourlyRate') ?? 0;
-    //   setState(() {
-
-    //   });
-    // });
     getStoredHourlyRate();
   }
 
@@ -112,7 +107,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           });
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
-                          prefs.setInt('newValue', newValue.toInt());
+                          // prefs.setInt('newValue', newValue.toInt());
+                           prefs.setInt('${AppSingelton().userID}_newValue', newValue.toInt());
                         },
                       ),
                     ],

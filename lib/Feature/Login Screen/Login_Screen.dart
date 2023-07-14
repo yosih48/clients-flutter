@@ -1,6 +1,7 @@
 // ignore_for_file: await_only_futures
 
 import 'package:clientsf/componenets/auth.dart';
+import 'package:clientsf/screens/AppStarter.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -60,7 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => TodoApp(),
+          // builder: (context) => TodoApp(),
+          builder: (context) => AppStarter(),
         ),
       );
     } catch (e) {

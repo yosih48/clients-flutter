@@ -24,11 +24,14 @@ class _AppStarterState extends State<AppStarter> {
  
   // This widget is the root of your application.
   late Future<bool> _checkToken;
-
+ User? user = FirebaseAuth.instance.currentUser;
   @override
   void initState() {
     super.initState();
     _checkToken = checkAuthToken();
+    print('appStarter ${user!.uid}');
+    AppSingelton().userID = '${user!.uid}';
+      // print(AppSingelton().userID );
   }
 
 

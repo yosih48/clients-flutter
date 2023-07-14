@@ -155,7 +155,8 @@ class _callState extends State<call> {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
          setState(() {
-      hourlyRate = prefs.getInt('newValue') ?? 0;
+      // hourlyRate = prefs.getInt('newValue') ?? 0;
+      hourlyRate = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
     });
  print( ' void share ${hourlyRate}');
 }
