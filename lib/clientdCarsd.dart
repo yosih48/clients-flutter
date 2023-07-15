@@ -57,130 +57,187 @@ class UserListView extends StatelessWidget {
             );
           }).toList();
 
-          return ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (BuildContext context, int index) {
-              final user = users[index];
-
-              return GestureDetector(
-                onLongPress: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text(
-                          AppLocalizations.of(context)!.options,
-                        ),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                // Handle the first option
-                                Navigator.of(context).pop();
+          return ListTileTheme(
+                   contentPadding: const EdgeInsets.all(15),
+          iconColor: Colors.red,
+          textColor: Colors.black54,
+          tileColor: Colors.yellow[100],
+          style: ListTileStyle.list,
+          dense: true,
+            child: ListView.builder(
+              itemCount: users.length,
+              itemBuilder: (BuildContext context, int index) {
+                final user = users[index];
+          
+                return GestureDetector(
+                  onLongPress: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text(
+                            AppLocalizations.of(context)!.options,
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  // Handle the first option
+                                  Navigator.of(context).pop();
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CallsScreen(clientId: user),
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Text(AppLocalizations.of(context)!
+                                      .clientHistory),
+                                ),
+                              ),
+                              // InkWell(
+                              //   onTap: () {
+                              //     // Handle the second option
+                              //     // Navigator.of(context).pop();
+                              //     // Navigator.pushNamed(context, '/actions');
+                              //            Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder: (context) =>  ClientServiceScreen(
+          
+                              //         ),
+                              //       ),
+                              //     );
+                              //   },
+                              //   child: Padding(
+                              //     padding: EdgeInsets.symmetric(vertical: 8.0),
+                              //     child: Text('יתרת חובה'),
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                   // style 1
+                  child: Card(
+                 margin: const EdgeInsets.all(10),
+              
+                      child: ListTile(
+                    title: Text(user.name),
+                    subtitle: Text('${user.phone}'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+            IconButton(onPressed: () {         Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => clientInfo(
+                                  user: user,
+                                ),
+                              ),
+                            );}, icon: const Icon(Icons.edit)),
+            IconButton(
+                          onPressed: () {
                                 Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        CallsScreen(clientId: user),
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text(AppLocalizations.of(context)!
-                                    .clientHistory),
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => actions(
+                                  user: user,
+                                ),
                               ),
-                            ),
-                            // InkWell(
-                            //   onTap: () {
-                            //     // Handle the second option
-                            //     // Navigator.of(context).pop();
-                            //     // Navigator.pushNamed(context, '/actions');
-                            //            Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) =>  ClientServiceScreen(
-
-                            //         ),
-                            //       ),
-                            //     );
-                            //   },
-                            //   child: Padding(
-                            //     padding: EdgeInsets.symmetric(vertical: 8.0),
-                            //     child: Text('יתרת חובה'),
-                            //   ),
-                            // ),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-                child: Card(
-                    // child: ListTile(
-                    //   title: Text(user.name),
-                    //   subtitle: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       Text('Email: ${user.email}'),
-                    //       Text('Address: ${user.address}'),
-                    //       Text('phone: ${user.phone}'),
-                    //       ElevatedButton(
-                    //         onPressed: () {
-                    //           Navigator.push(
-                    //             context,
-                    //             MaterialPageRoute(
-                    //               builder: (context) => actions(
-                    //                 user: user,
-                    //               ),
-                    //             ),
-                    //           );
-                    //         },
-                    //         child: Text(AppStrings.openCall),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-                    child: ListTile(
-                  title: Text(user.name),
-                  subtitle: Text('${user.phone}'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ElevatedButton(
-                        child: Text(AppLocalizations.of(context)!.clientInfo),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => clientInfo(
-                                user: user,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      SizedBox(width: 8),
-                      ElevatedButton(
-                        child: Text(AppLocalizations.of(context)!.openTicket),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => actions(
-                                user: user,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                )),
-              );
-            },
+                            );
+                          }, icon: const Icon(Icons.add_box)),
+                        // ElevatedButton(
+                        //   child: Text(AppLocalizations.of(context)!.clientInfo),
+                        //   onPressed: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => clientInfo(
+                        //           user: user,
+                        //         ),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
+                        SizedBox(width: 8),
+                        // ElevatedButton(
+                        //   child: Text(AppLocalizations.of(context)!.openTicket),
+                        //   onPressed: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => actions(
+                        //           user: user,
+                        //         ),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
+                      ],
+                    ),
+                  )),
+              //             // style 2
+              //             child: Card(
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(16.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text(
+              //           user.name,
+              //           style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              //         ),
+              //         Text(
+              //           '${user.phone}',
+              //           style: TextStyle(fontSize: 16.0),
+              //         ),
+              //         Row(
+              //           mainAxisSize: MainAxisSize.min,
+              //           children: [
+              //             ElevatedButton(
+              //               child: Text(AppLocalizations.of(context)!.clientInfo),
+              //               onPressed: () {
+              //                 Navigator.push(
+              //                   context,
+              //                   MaterialPageRoute(
+              //                     builder: (context) => clientInfo(
+              //                       user: user,
+              //                     ),
+              //                   ),
+              //                 );
+              //               },
+              //             ),
+              //             SizedBox(width: 8),
+              //             ElevatedButton(
+              //               child: Text(AppLocalizations.of(context)!.openTicket),
+              //               onPressed: () {
+              //                 Navigator.push(
+              //                   context,
+              //                   MaterialPageRoute(
+              //                     builder: (context) => actions(
+              //                       user: user,
+              //                     ),
+              //                   ),
+              //                 );
+              //               },
+              //             ),
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+                );
+              },
+            ),
           );
         },
       ),
