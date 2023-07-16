@@ -42,12 +42,14 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {
-        // '/actions': (context) => actions(user: user),
-        '/date': (context) => HomePage(),
-        '/time': (context) => ScreenOne(),
-        // '/callinfo': (context) => ClientServiceScreen(),
-      },
+      // routes: {
+      //   // '/actions': (context) => actions(user: user),
+      //   // '/': (context) => TodoApp(),
+      //   '/date': (context) => HomePage(),
+      //   '/time': (context) => ScreenOne(),
+      //   // '/action': (context) => actions(),
+      //   // '/callinfo': (context) => ClientServiceScreen(),
+      // },
       title: 'Todo Manage',
       debugShowCheckedModeBanner: false,
       // localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -301,7 +303,7 @@ class _TodoListState extends State<MyHomePage> {
               // print('User token out: $userToken');
 
               Navigator.pushReplacement(
-              // Navigator.push(
+                // Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => LoginScreen(),

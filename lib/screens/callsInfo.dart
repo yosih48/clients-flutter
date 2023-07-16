@@ -2,14 +2,18 @@ import 'package:clientsf/componenets/editCallDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../objects/clients.dart';
 import '../objects/clientsCalls.dart';
 
 class ClientServiceScreen extends StatelessWidget {
   final Map<String, dynamic> call;
-  const ClientServiceScreen({super.key, required this.call});
+  final user;
+  const ClientServiceScreen(
+      {super.key, required this.call, required this.user});
   @override
   Widget build(BuildContext context) {
     print(call); // Print the call map
+    // print('userID ${user}'); // Print the call map
     List<dynamic> products = call['products'];
     return Scaffold(
       appBar: AppBar(
@@ -131,7 +135,16 @@ class ClientServiceScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 // Handle edit button click
-                 editCallDialog(context);
+                //  editCallDialog(context);
+                Navigator.pushReplacementNamed(context, '/action', arguments: {
+                  'id': call['id'],
+                  'call': call['call'],
+                  'type': call['type'],
+                  'paid': call['paid'],
+                  'payment': call['payment'],
+                  'usera': user,
+                  'fromScreen1': true
+                });
               },
               child: Text('Edit'),
             ),

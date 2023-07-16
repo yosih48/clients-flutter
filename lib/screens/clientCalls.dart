@@ -275,10 +275,11 @@ class _CallsScreenState extends State<CallsScreen> {
                     itemCount: calls.length,
                     itemBuilder: (BuildContext context, int index) {
                       final call = calls[index].data() as Map<String, dynamic>;
-                      // print(call['call']);
+                      // print(call['id']);
                       // print(call['timestamp']);
                       final callDetails = call['call'];
                       final type = call['type'];
+                      final id = call['id'];
                       final paid = call['paid'];
                       final hour = call['hour'];
                       final timestamp = call['timestamp'];
@@ -323,8 +324,8 @@ class _CallsScreenState extends State<CallsScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ClientServiceScreen(call: call),
+                              builder: (context) => ClientServiceScreen(
+                                  call: call, user: widget.clientId.id),
                             ),
                           );
                         },

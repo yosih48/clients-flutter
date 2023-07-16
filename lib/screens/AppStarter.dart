@@ -13,6 +13,8 @@ import '../objects/clients.dart';
 import 'PhoneLogin.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'actions.dart';
+
 class AppStarter extends StatefulWidget {
   const AppStarter({super.key});
 
@@ -40,6 +42,14 @@ class _AppStarterState extends State<AppStarter> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+         routes: {
+        // '/actions': (context) => actions(user: user),
+        // '/': (context) => TodoApp(),
+        // '/date': (context) => HomePage(),
+        // '/time': (context) => ScreenOne(),
+        '/action': (context) => actions(),
+        // '/callinfo': (context) => ClientServiceScreen(),
+      },
       title: 'Flutter Demo',
       localizationsDelegates: [
         AppLocalizations.delegate,

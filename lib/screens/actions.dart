@@ -31,24 +31,51 @@ const List<String> list = <String>[
 ];
 
 class actions extends StatefulWidget {
-  final Todo user;
+  final Todo? user;
 
-  const actions({super.key, required this.user});
+  const actions({super.key, this.user});
   // const actions({Key? key, required this.userId}) : super(key: key);
   @override
   State<actions> createState() => _actionsState();
 }
 
 class _actionsState extends State<actions> {
+  // late String usera;
+  //   @override
+  // void initState() {
+  //   super.initState();
 
+  //   // Retrieve the 'user' value from the arguments
+  //   final arguments =
+  //       ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+  //    usera = (arguments?['usera'] )!;
+  //      print(usera);
+  // }
 
   Widget build(BuildContext context) {
-    
+    final arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    // usera = (arguments?['usera'] as String?)!;
+    bool navigatedFromScreen1 = (arguments?['fromScreen1'] as bool? ?? false);
+
+    // print(usera);
+    // print('navigatedFromScreen1  ${navigatedFromScreen1}');
+    Map data = {};
+    if (navigatedFromScreen1) {
+      data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+      print(data['call']);
+    }
+    print(data);
+    // data = data.isNotEmpty
+    //     ? data
+    //     : ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     return Scaffold(
       appBar: AppBar(
         title: Text('חיובים'),
       ),
       // body: call(context),
+      // body: call(user: widget.user!),
+      // body: call(user: usera),
       body: call(user: widget.user),
     );
   }
@@ -104,7 +131,6 @@ class dropdown extends StatefulWidget {
 class _dropdownState extends State<dropdown> {
   String dropdownValue = list.first;
 
-
   @override
   Widget build(BuildContext context) {
     return DropdownButton<String>(
@@ -134,34 +160,30 @@ class _dropdownState extends State<dropdown> {
 }
 
 class call extends StatefulWidget {
-
-  
-  final Todo user;
-  const call({super.key, required this.user});
+  final user;
+  const call({super.key, this.user});
 
   @override
   State<call> createState() => _callState();
 }
 
 class _callState extends State<call> {
-
-    int hourlyRate = 0;
+  int hourlyRate = 0;
   void initState() {
-    print(widget.user.id);
-     getPrefs();
+    // print(widget.user.id);
+    getPrefs();
   }
-   getPrefs()async {
-  // The async keyword is placed before the SharedPreferences class.
-  SharedPreferences prefs = await SharedPreferences.getInstance();
 
-         setState(() {
+  getPrefs() async {
+    // The async keyword is placed before the SharedPreferences class.
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
       // hourlyRate = prefs.getInt('newValue') ?? 0;
       hourlyRate = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
     });
- print( ' void share ${hourlyRate}');
-}
-
-
+    print(' void share ${hourlyRate}');
+  }
 
   final _timeC = TextEditingController();
   TimeOfDay timeOfDay = TimeOfDay.now();
@@ -340,7 +362,6 @@ class _callState extends State<call> {
                           print(_checkboxValue);
                         });
                       }),
-         
                 ],
               ),
               SizedBox(height: 8),
@@ -373,24 +394,23 @@ class _callState extends State<call> {
 
 // sum poduct price
               double sumProduct = 0;
-            for (var product in productList) {
+              for (var product in productList) {
                 // print('Product Name: ${product.name}');
                 // print('Price: ${product.price}');
                 // print('Discounted Price: ${product.discountedPrice}');
                 sumProduct += product.price!;
               }
-  
-          
 
               // print(sumHourValue.runtimeType);
               // print('userID  ${widget.user.id}');
-          
-          // price per hour
-  int hourCharge = hourlyRate *( firstNumber! + 1);
-  // calculate total price
-              double sumPayment = sumHourValue.toDouble() + sumProduct + hourCharge;
 
-              print('charge per hour  ${ hourCharge}');
+              // price per hour
+              int hourCharge = hourlyRate * (firstNumber! + 1);
+              // calculate total price
+              double sumPayment =
+                  sumHourValue.toDouble() + sumProduct + hourCharge;
+
+              print('charge per hour  ${hourCharge}');
               print('total payment  ${sumPayment}');
               print('hour first number  ${firstNumber}');
               // print('sigelton  ${AppSingelton().hourlyRate}');
@@ -439,7 +459,6 @@ class _callState extends State<call> {
   }
 }
 
-
 Future<void> addCall(client, call, paid, type, hour, payment,
     List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
@@ -453,7 +472,12 @@ Future<void> addCall(client, call, paid, type, hour, payment,
   final callsRef = clientRef.collection('calls');
 
   try {
-    await callsRef.add({
+    final callDoc =
+        callsRef.doc(); // Create a new document with an auto-generated ID
+    final callId = callDoc.id;
+
+    await callDoc.set({
+      'id': callId,
       'call': call,
       'paid': paid,
       'type': type,
