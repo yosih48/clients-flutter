@@ -11,12 +11,7 @@ import '../componenets/parts.dart';
 import '../objects/clients.dart';
 import '../singelton/AppSingelton.dart';
 
-// void createCall() {
-//   Calls callNumberOne = Calls(call: 'call one', paid: true, type: 'big');
-// // client.userList?.add(callNumberOne);
-//   print(callNumberOne);
-//   _callDetailsController.clear();
-// }
+
 
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
@@ -40,17 +35,7 @@ class actions extends StatefulWidget {
 }
 
 class _actionsState extends State<actions> {
-  // late String usera;
-  //   @override
-  // void initState() {
-  //   super.initState();
 
-  //   // Retrieve the 'user' value from the arguments
-  //   final arguments =
-  //       ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-  //    usera = (arguments?['usera'] )!;
-  //      print(usera);
-  // }
 
   Widget build(BuildContext context) {
     final arguments =
@@ -65,7 +50,7 @@ class _actionsState extends State<actions> {
       data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
       print(data['call']);
     }
-    print(data);
+    print(data['id']);
     // data = data.isNotEmpty
     //     ? data
     //     : ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
@@ -73,10 +58,10 @@ class _actionsState extends State<actions> {
       appBar: AppBar(
         title: Text('חיובים'),
       ),
-      // body: call(context),
+  
       // body: call(user: widget.user!),
-      // body: call(user: usera),
-      body: call(user: widget.user),
+   
+      body: call(user: widget.user, data: data),
     );
   }
 }
@@ -161,7 +146,8 @@ class _dropdownState extends State<dropdown> {
 
 class call extends StatefulWidget {
   final user;
-  const call({super.key, this.user});
+  final data;
+  const call({super.key, this.user, required this.data});
 
   @override
   State<call> createState() => _callState();
@@ -183,6 +169,7 @@ class _callState extends State<call> {
       hourlyRate = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
     });
     print(' void share ${hourlyRate}');
+  print('widget.data   ${widget.data}');
   }
 
   final _timeC = TextEditingController();
@@ -415,10 +402,14 @@ class _callState extends State<call> {
               print('hour first number  ${firstNumber}');
               // print('sigelton  ${AppSingelton().hourlyRate}');
               print('call time ${_timeC.text}');
+
+              print('dataEmpty ${widget.data}');
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
                   sumHourValue != '' &&
                   dropdownValue != '') {
+                    if(widget.data.isEmpty){
+print('empty');
                 addCall(
                     widget.user,
                     _callDetailsController.text,
@@ -428,6 +419,18 @@ class _callState extends State<call> {
                     _timeC.text,
                     sumPayment,
                     productList);
+                    }else{
+                    updateUser(     
+                       widget.data['usera'],
+                     widget.data['id'],
+                       _callDetailsController.text,
+                       _checkboxValue,
+                        dropdownValue,
+                         sumPayment);
+
+                    }
+                
+                  
                 void resetForm() {
                   // Clear text fields
                   _callDetailsController.text = '';
@@ -500,5 +503,65 @@ Future<void> addCall(client, call, paid, type, hour, payment,
   }
 }
 
+Future<void> updateUser(clientID, callID, callDetails, paid, type, payment) async{
+  User? user = FirebaseAuth.instance.currentUser;
+  CollectionReference userCollection =
+      FirebaseFirestore.instance.collection('users');
+  final clientRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc(user!.uid)
+      .collection('user_data')
+      .doc(clientID);
+  final callsRef = clientRef.collection('calls');
+  // print(phone);
+  // print(user!.uid);
+  // print(id);
 
+  Map<String, dynamic> updatedData = {};
+
+  // Update 'name' field if a new value is provided and not empty
+  if (callDetails != null && callDetails.isNotEmpty) {
+    updatedData['callDetails'] = callDetails;
+  }
+
+  // Update 'email' field if a new value is provided and not empty
+  // if ( paid != null &&  paid.isNotEmpty) {
+  //   updatedData[' paid'] =  paid;
+  // }
+
+  // Update 'address' field if a new value is provided and not empty
+  if ( type != null &&  type.isNotEmpty) {
+    updatedData[' type'] =  type;
+  }
+
+  // Update 'phone' field if a new value is provided and not empty
+  // if (payment != null && payment.isNotEmpty) {
+  //   updatedData['payment'] = payment;
+  // }
+
+try{
+   final callDoc = callsRef.doc(callID);
+   await callDoc.update({
+      'call': callDetails,
+      'paid': paid,
+      'type': type,
+      // 'hour': hour,
+      'payment': payment,
+      // 'products': productList
+      //     .map((product) => {
+      //           'name': product.name,
+      //           'price': product.price,
+      //           'discountedPrice': product.discountedPrice,
+      //         })
+      //     .toList(),
+    });
+
+  print("Call Updated");
+    showToast('עודכן בהצלחה');
+
+
+}catch (error) {
+    print("Failed to update call: $error");
+  }
+}
 
