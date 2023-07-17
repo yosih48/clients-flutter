@@ -11,8 +11,6 @@ import '../componenets/parts.dart';
 import '../objects/clients.dart';
 import '../singelton/AppSingelton.dart';
 
-
-
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
@@ -35,8 +33,6 @@ class actions extends StatefulWidget {
 }
 
 class _actionsState extends State<actions> {
-
-
   Widget build(BuildContext context) {
     final arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
@@ -58,9 +54,9 @@ class _actionsState extends State<actions> {
       appBar: AppBar(
         title: Text('חיובים'),
       ),
-  
+
       // body: call(user: widget.user!),
-   
+
       body: call(user: widget.user, data: data),
     );
   }
@@ -68,56 +64,44 @@ class _actionsState extends State<actions> {
 
 bool _checkboxValue = false;
 
-final TextEditingController _callDetailsController = TextEditingController();
-final TextEditingController paimentController = TextEditingController();
 // old time method:
 // final TextEditingController timeController = TextEditingController();
 // final TextEditingController minuteController = TextEditingController();
 
-int getSumHourValue() {
-  int sumHourValue = 0;
+// int getSumHourValue() {
+//   int sumHourValue = 0;
 
-  String sumHourString = paimentController.text;
-  if (sumHourString != '') {
-    sumHourValue = int.parse(sumHourString);
-  }
-  return sumHourValue;
-}
-// old time method:
-// Duration getTimeFromController(
-//     TextEditingController controller, TextEditingController minuteController) {
-//   final hours = int.tryParse(controller.text) ?? 0;
-//   final minutes = int.tryParse(minuteController.text) ?? 0;
-
-//   return Duration(hours: hours, minutes: minutes);
-// }
-
-// String formatDuration(Duration duration) {
-//   final hours = duration.inHours.remainder(24);
-//   final minutes = duration.inMinutes.remainder(60);
-
-//   final formatter = NumberFormat('00');
-
-//   final formattedTime =
-//       '${formatter.format(hours)}:${formatter.format(minutes)}}';
-
-//   return formattedTime;
+//   String sumHourString = paimentController.text;
+//   if (sumHourString != '') {
+//     sumHourValue = int.parse(sumHourString);
+//   }
+//   return sumHourValue;
 // }
 
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
-
-  const dropdown({Key? key, required this.onDropdownChanged}) : super(key: key);
+  final Map<dynamic, dynamic> data;
+  const dropdown(
+      {Key? key, required this.onDropdownChanged, required this.data})
+      : super(key: key);
 
   @override
   State<dropdown> createState() => _dropdownState();
 }
 
 class _dropdownState extends State<dropdown> {
-  String dropdownValue = list.first;
+  String dropdownValue = '';
+  // String dropdownValue = list.first;
+  @override
+  void initState() {
+    super.initState();
+    dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
+    //  widget.onDropdownChanged(dropdownValue);
+  }
 
   @override
   Widget build(BuildContext context) {
+    print(dropdownValue);
     return DropdownButton<String>(
       value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
@@ -169,11 +153,12 @@ class _callState extends State<call> {
       hourlyRate = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
     });
     print(' void share ${hourlyRate}');
-  print('widget.data   ${widget.data}');
+    print('widget.data   ${widget.data}');
   }
 
   final _timeC = TextEditingController();
   TimeOfDay timeOfDay = TimeOfDay.now();
+
   Future<void> _displayDialog() async {
     return showDialog<void>(
       context: context,
@@ -240,7 +225,15 @@ class _callState extends State<call> {
     }
   }
 
-  String dropdownValue = '';
+  String _dropdownValue = '';
+  void handleDropdownValueChange(String value) {
+    print('handleDropdown ${value}');
+    setState(() {
+      _dropdownValue = value;
+    });
+    print('handleDropdown ${value}');
+  }
+
   List<ProductData> productList = [];
   void handleProductListChanged(List<ProductData> updatedList) {
     setState(() {
@@ -248,14 +241,32 @@ class _callState extends State<call> {
     });
   }
 
-  void handleDropdownValueChange(String value) {
-    setState(() {
-      dropdownValue = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    // String dropdownValue = '';
+    // void handleDropdownValueChange(String value) {
+    //   print('handleDropdown ${value}');
+    //   setState(() {
+    //     dropdownValue = value;
+    //   });
+    //   print('handleDropdown ${value}');
+    // }
+
+    String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
+    final TextEditingController _callDetailsController =
+        TextEditingController(text: callDetails);
+    final TextEditingController paimentController = TextEditingController();
+
+    int getSumHourValue() {
+      int sumHourValue = 0;
+
+      String sumHourString = paimentController.text;
+      if (sumHourString != '') {
+        sumHourValue = int.parse(sumHourString);
+      }
+      return sumHourValue;
+    }
+
     return Column(
       children: [
         Expanded(
@@ -264,7 +275,11 @@ class _callState extends State<call> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  dropdown(onDropdownChanged: handleDropdownValueChange),
+                  dropdown(
+                    onDropdownChanged: handleDropdownValueChange,
+                    data: widget.data,
+                  ),
+
                   // ElevatedButton(
                   //   child: Text('תאריך קריאה'),
                   //   onPressed: () {
@@ -289,6 +304,10 @@ class _callState extends State<call> {
                         child: TextField(
                           controller: _callDetailsController,
                           maxLines: 8, //or null
+                          onChanged: (value) {
+                            // Update the callDetails variable whenever the user changes the text
+                            callDetails = value;
+                          },
                           decoration: InputDecoration.collapsed(
                               hintText: "תיאור טיפול"),
                         ),
@@ -397,6 +416,7 @@ class _callState extends State<call> {
               double sumPayment =
                   sumHourValue.toDouble() + sumProduct + hourCharge;
 
+              print('dropdownValue ${_dropdownValue}');
               print('charge per hour  ${hourCharge}');
               print('total payment  ${sumPayment}');
               print('hour first number  ${firstNumber}');
@@ -407,30 +427,28 @@ class _callState extends State<call> {
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
                   sumHourValue != '' &&
-                  dropdownValue != '') {
-                    if(widget.data.isEmpty){
-print('empty');
-                addCall(
-                    widget.user,
-                    _callDetailsController.text,
-                    _checkboxValue,
-                    dropdownValue,
-                    // formattedTime,
-                    _timeC.text,
-                    sumPayment,
-                    productList);
-                    }else{
-                    updateUser(     
-                       widget.data['usera'],
-                     widget.data['id'],
-                       _callDetailsController.text,
-                       _checkboxValue,
-                        dropdownValue,
-                         sumPayment);
+                  _dropdownValue != '') {
+                if (widget.data.isEmpty) {
+                  print('empty');
+                  addCall(
+                      widget.user,
+                      _callDetailsController.text,
+                      _checkboxValue,
+                      _dropdownValue,
+                      // formattedTime,
+                      _timeC.text,
+                      sumPayment,
+                      productList);
+                } else {
+                  updateUser(
+                      widget.data['usera'],
+                      widget.data['id'],
+                      _callDetailsController.text,
+                      _checkboxValue,
+                      _dropdownValue,
+                      sumPayment);
+                }
 
-                    }
-                
-                  
                 void resetForm() {
                   // Clear text fields
                   _callDetailsController.text = '';
@@ -440,7 +458,7 @@ print('empty');
                   _checkboxValue = false;
 
                   // Reset dropdown value
-                  dropdownValue = '';
+                  _dropdownValue = '';
 
                   // Reset other variables as needed
                   sumHourValue = 0;
@@ -503,7 +521,8 @@ Future<void> addCall(client, call, paid, type, hour, payment,
   }
 }
 
-Future<void> updateUser(clientID, callID, callDetails, paid, type, payment) async{
+Future<void> updateUser(
+    clientID, callID, callDetails, paid, type, payment) async {
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -530,8 +549,8 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, payment) asyn
   // }
 
   // Update 'address' field if a new value is provided and not empty
-  if ( type != null &&  type.isNotEmpty) {
-    updatedData[' type'] =  type;
+  if (type != null && type.isNotEmpty) {
+    updatedData[' type'] = type;
   }
 
   // Update 'phone' field if a new value is provided and not empty
@@ -539,9 +558,9 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, payment) asyn
   //   updatedData['payment'] = payment;
   // }
 
-try{
-   final callDoc = callsRef.doc(callID);
-   await callDoc.update({
+  try {
+    final callDoc = callsRef.doc(callID);
+    await callDoc.update({
       'call': callDetails,
       'paid': paid,
       'type': type,
@@ -556,12 +575,9 @@ try{
       //     .toList(),
     });
 
-  print("Call Updated");
+    print("Call Updated");
     showToast('עודכן בהצלחה');
-
-
-}catch (error) {
+  } catch (error) {
     print("Failed to update call: $error");
   }
 }
-
