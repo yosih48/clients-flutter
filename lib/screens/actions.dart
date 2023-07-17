@@ -64,19 +64,7 @@ class _actionsState extends State<actions> {
 
 bool _checkboxValue = false;
 
-// old time method:
-// final TextEditingController timeController = TextEditingController();
-// final TextEditingController minuteController = TextEditingController();
 
-// int getSumHourValue() {
-//   int sumHourValue = 0;
-
-//   String sumHourString = paimentController.text;
-//   if (sumHourString != '') {
-//     sumHourValue = int.parse(sumHourString);
-//   }
-//   return sumHourValue;
-// }
 
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
@@ -91,12 +79,12 @@ class dropdown extends StatefulWidget {
 
 class _dropdownState extends State<dropdown> {
   String dropdownValue = '';
-  // String dropdownValue = list.first;
+ 
   @override
   void initState() {
     super.initState();
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
-    //  widget.onDropdownChanged(dropdownValue);
+   
   }
 
   @override
@@ -227,7 +215,7 @@ class _callState extends State<call> {
 
   String _dropdownValue = '';
   void handleDropdownValueChange(String value) {
-    print('handleDropdown ${value}');
+  
     setState(() {
       _dropdownValue = value;
     });
@@ -243,14 +231,7 @@ class _callState extends State<call> {
 
   @override
   Widget build(BuildContext context) {
-    // String dropdownValue = '';
-    // void handleDropdownValueChange(String value) {
-    //   print('handleDropdown ${value}');
-    //   setState(() {
-    //     dropdownValue = value;
-    //   });
-    //   print('handleDropdown ${value}');
-    // }
+
 
     String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
