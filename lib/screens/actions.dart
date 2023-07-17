@@ -64,8 +64,6 @@ class _actionsState extends State<actions> {
 
 bool _checkboxValue = false;
 
-
-
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
   final Map<dynamic, dynamic> data;
@@ -79,12 +77,11 @@ class dropdown extends StatefulWidget {
 
 class _dropdownState extends State<dropdown> {
   String dropdownValue = '';
- 
+
   @override
   void initState() {
     super.initState();
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
-   
   }
 
   @override
@@ -126,9 +123,12 @@ class call extends StatefulWidget {
 }
 
 class _callState extends State<call> {
+  // bool _checkboxValue = false;
+
   int hourlyRate = 0;
   void initState() {
-    // print(widget.user.id);
+    super.initState();
+    _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
     getPrefs();
   }
 
@@ -215,7 +215,6 @@ class _callState extends State<call> {
 
   String _dropdownValue = '';
   void handleDropdownValueChange(String value) {
-  
     setState(() {
       _dropdownValue = value;
     });
@@ -231,8 +230,6 @@ class _callState extends State<call> {
 
   @override
   Widget build(BuildContext context) {
-
-
     String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
