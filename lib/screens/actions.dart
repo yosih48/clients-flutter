@@ -203,15 +203,17 @@ class _callState extends State<call> {
 
   Future displayTimePicker(BuildContext context) async {
     _timeC.text = '';
+    widget.data.remove('hour');
     var time = await showTimePicker(context: context, initialTime: timeOfDay);
     // print(widget.data);
-    print('time  ${time}');
+    // print('time  ${time}');
     setState(() {
       // if (widget.data.isNotEmpty) {
       //   _timeC.text = widget.data['hour'];
       //   print('NotEmpty  ${_timeC.text}');
       // } else {
       // print('Empty  ${_timeC.text}');
+
       if (time != null) {
         print('bot Empty  ${time}');
         _timeC.text = "${time.hour}:${time.minute}";
@@ -219,8 +221,16 @@ class _callState extends State<call> {
         print(' Empty  ${time}');
         _timeC.text = '0.00';
       }
+
       // }
     });
+    //     if (widget.data.isNotEmpty) {
+    //   _timeC.text = widget.data['hour'];
+    // } else if (time != null) {
+    //   _timeC.text = "${time.hour}:${time.minute}";
+    // } else {
+    //   _timeC.text = 'בחר זמן';
+    // }
 
     print(_timeC.text);
   }
@@ -317,10 +327,14 @@ class _callState extends State<call> {
                   GestureDetector(
                     onTap: () => displayTimePicker(context),
                     child: Text(
-                      // _timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן',
-                      widget.data.isNotEmpty
+                      // _timeC.text.isNotEmpty  ? _timeC.text : 'בחר זמן',
+// _timeC.text.isEmpty? _timeC.text = widget.data['hour'] :  'בחר זמן',
+
+                      widget.data.containsKey('hour')
                           ? (_timeC.text = widget.data['hour'])
                           : (_timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן'),
+
+                      //  _timeC.text.isNotEmpty && widget.data.isEmpty ? _timeC.text : (widget.data.isNotEmpty ? widget.data['hour'] : 'בחר זמן'),
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
@@ -440,6 +454,7 @@ class _callState extends State<call> {
                       _callDetailsController.text,
                       _checkboxValue,
                       dropdownValue,
+                      _timeC.text,
                       sumPayment);
                 }
 
@@ -516,7 +531,7 @@ Future<void> addCall(client, call, paid, type, hour, payment,
 }
 
 Future<void> updateUser(
-    clientID, callID, callDetails, paid, type, payment) async {
+    clientID, callID, callDetails, paid, type, hour, payment) async {
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -558,7 +573,7 @@ Future<void> updateUser(
       'call': callDetails,
       'paid': paid,
       'type': type,
-      // 'hour': hour,
+      'hour': hour,
       'payment': payment,
       // 'products': productList
       //     .map((product) => {
