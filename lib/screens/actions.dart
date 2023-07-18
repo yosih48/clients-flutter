@@ -202,21 +202,24 @@ class _callState extends State<call> {
   }
 
   Future displayTimePicker(BuildContext context) async {
+    _timeC.text = '';
     var time = await showTimePicker(context: context, initialTime: timeOfDay);
     // print(widget.data);
     print('time  ${time}');
     setState(() {
-      if (widget.data.isNotEmpty) {
-        _timeC.text = widget.data['hour'];
-        print('NotEmpty  ${_timeC.text}');
+      // if (widget.data.isNotEmpty) {
+      //   _timeC.text = widget.data['hour'];
+      //   print('NotEmpty  ${_timeC.text}');
+      // } else {
+      // print('Empty  ${_timeC.text}');
+      if (time != null) {
+        print('bot Empty  ${time}');
+        _timeC.text = "${time.hour}:${time.minute}";
       } else {
-        print('Empty  ${_timeC.text}');
-        if (time != null) {
-          _timeC.text = "${time.hour}:${time.minute}";
-        } else {
-          _timeC.text = '0.00';
-        }
+        print(' Empty  ${time}');
+        _timeC.text = '0.00';
       }
+      // }
     });
 
     print(_timeC.text);
