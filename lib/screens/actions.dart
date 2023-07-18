@@ -113,8 +113,6 @@ class _actionsState extends State<actions> {
 
 bool _checkboxValue = false;
 
-
-
 class call extends StatefulWidget {
   final user;
   final data;
@@ -132,7 +130,7 @@ class _callState extends State<call> {
   int hourlyRate = 0;
   void initState() {
     super.initState();
-    _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
+
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
   }
@@ -150,8 +148,8 @@ class _callState extends State<call> {
   }
 
   final _timeC = TextEditingController();
-  TimeOfDay timeOfDay = TimeOfDay.now();
 
+  TimeOfDay timeOfDay = TimeOfDay.now();
   Future<void> _displayDialog() async {
     return showDialog<void>(
       context: context,
@@ -205,17 +203,23 @@ class _callState extends State<call> {
 
   Future displayTimePicker(BuildContext context) async {
     var time = await showTimePicker(context: context, initialTime: timeOfDay);
+    // print(widget.data);
+    print('time  ${time}');
+    setState(() {
+      if (widget.data.isNotEmpty) {
+        _timeC.text = widget.data['hour'];
+        print('NotEmpty  ${_timeC.text}');
+      } else {
+        print('Empty  ${_timeC.text}');
+        if (time != null) {
+          _timeC.text = "${time.hour}:${time.minute}";
+        } else {
+          _timeC.text = '0.00';
+        }
+      }
+    });
 
-    if (time != null) {
-      setState(() {
-        _timeC.text = "${time.hour}:${time.minute}";
-      });
-      print(_timeC.text);
-    } else {
-      _timeC.text = '0.00';
-
-      //  double firstNumber = 0:00;
-    }
+    print(_timeC.text);
   }
 
   String _dropdownValue = '';
@@ -235,6 +239,7 @@ class _callState extends State<call> {
 
   @override
   Widget build(BuildContext context) {
+    print('timeC ${_timeC.text}');
     String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
@@ -310,7 +315,9 @@ class _callState extends State<call> {
                   GestureDetector(
                     onTap: () => displayTimePicker(context),
                     child: Text(
-                      _timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן',
+                      widget.data.isNotEmpty
+                          ? (_timeC.text = widget.data['hour'])
+                          : (_timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן'),
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
@@ -442,7 +449,7 @@ class _callState extends State<call> {
                   _checkboxValue = false;
 
                   // Reset dropdown value
-                  _dropdownValue = '';
+                  dropdownValue = '';
 
                   // Reset other variables as needed
                   sumHourValue = 0;
