@@ -128,8 +128,10 @@ class _callState extends State<call> {
   // bool _checkboxValue = false;
 
   int hourlyRate = 0;
+  String callDetails = '';
   void initState() {
     super.initState();
+      callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
@@ -252,7 +254,7 @@ class _callState extends State<call> {
 
   @override
   Widget build(BuildContext context) {
-    String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
+    // String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
     final TextEditingController paimentController = TextEditingController();
