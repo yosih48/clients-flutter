@@ -23,47 +23,6 @@ const List<String> list = <String>[
   'בית הלקוח',
 ];
 
-class actions extends StatefulWidget {
-  final Todo? user;
-
-  const actions({super.key, this.user});
-  // const actions({Key? key, required this.userId}) : super(key: key);
-  @override
-  State<actions> createState() => _actionsState();
-}
-
-class _actionsState extends State<actions> {
-  Widget build(BuildContext context) {
-    final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    // usera = (arguments?['usera'] as String?)!;
-    bool navigatedFromScreen1 = (arguments?['fromScreen1'] as bool? ?? false);
-
-    // print(usera);
-    // print('navigatedFromScreen1  ${navigatedFromScreen1}');
-    Map data = {};
-    if (navigatedFromScreen1) {
-      data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-      print(data['call']);
-    }
-    print(data['id']);
-    // data = data.isNotEmpty
-    //     ? data
-    //     : ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('חיובים'),
-      ),
-
-      // body: call(user: widget.user!),
-
-      body: call(user: widget.user, data: data),
-    );
-  }
-}
-
-bool _checkboxValue = false;
-
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
   final Map<dynamic, dynamic> data;
@@ -75,9 +34,9 @@ class dropdown extends StatefulWidget {
   State<dropdown> createState() => _dropdownState();
 }
 
-class _dropdownState extends State<dropdown> {
-  String dropdownValue = '';
+String dropdownValue = '';
 
+class _dropdownState extends State<dropdown> {
   @override
   void initState() {
     super.initState();
@@ -113,10 +72,55 @@ class _dropdownState extends State<dropdown> {
   }
 }
 
+class actions extends StatefulWidget {
+  final Todo? user;
+
+  const actions({super.key, this.user});
+  // const actions({Key? key, required this.userId}) : super(key: key);
+  @override
+  State<actions> createState() => _actionsState();
+}
+
+class _actionsState extends State<actions> {
+  Widget build(BuildContext context) {
+    final arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    // usera = (arguments?['usera'] as String?)!;
+    bool navigatedFromScreen1 = (arguments?['fromScreen1'] as bool? ?? false);
+
+    // print(usera);
+    // print('navigatedFromScreen1  ${navigatedFromScreen1}');
+    Map data = {};
+    if (navigatedFromScreen1) {
+      data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+      print(data['call']);
+    }
+    print(data['id']);
+    // data = data.isNotEmpty
+    //     ? data
+    //     : ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('חיובים'),
+      ),
+
+      // body: call(user: widget.user!),
+
+      body: call(user: widget.user, data: data, dropdownValue: dropdownValue),
+    );
+  }
+}
+
+bool _checkboxValue = false;
+
+
+
 class call extends StatefulWidget {
   final user;
   final data;
-  const call({super.key, this.user, required this.data});
+  final String dropdownValue;
+  const call(
+      {super.key, this.user, required this.data, required this.dropdownValue});
 
   @override
   State<call> createState() => _callState();
@@ -129,6 +133,7 @@ class _callState extends State<call> {
   void initState() {
     super.initState();
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
+    dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
   }
 
@@ -394,10 +399,11 @@ class _callState extends State<call> {
               double sumPayment =
                   sumHourValue.toDouble() + sumProduct + hourCharge;
 
-              print('dropdownValue ${_dropdownValue}');
+              print('dropdownValue ${dropdownValue}');
               print('charge per hour  ${hourCharge}');
               print('total payment  ${sumPayment}');
               print('hour first number  ${firstNumber}');
+              print('call details  ${_callDetailsController.text}');
               // print('sigelton  ${AppSingelton().hourlyRate}');
               print('call time ${_timeC.text}');
 
@@ -405,14 +411,14 @@ class _callState extends State<call> {
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
                   sumHourValue != '' &&
-                  _dropdownValue != '') {
+                  dropdownValue != '') {
                 if (widget.data.isEmpty) {
                   print('empty');
                   addCall(
                       widget.user,
                       _callDetailsController.text,
                       _checkboxValue,
-                      _dropdownValue,
+                      dropdownValue,
                       // formattedTime,
                       _timeC.text,
                       sumPayment,
@@ -423,7 +429,7 @@ class _callState extends State<call> {
                       widget.data['id'],
                       _callDetailsController.text,
                       _checkboxValue,
-                      _dropdownValue,
+                      dropdownValue,
                       sumPayment);
                 }
 

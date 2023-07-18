@@ -31,8 +31,8 @@ class _AppStarterState extends State<AppStarter> {
   void initState() {
     super.initState();
     _checkToken = checkAuthToken();
-    print('appStarter ${user!.uid}');
-    AppSingelton().userID = '${user!.uid}';
+    // print('appStarter ${user!.uid}');
+    // AppSingelton().userID = '${user!.uid}';
       // print(AppSingelton().userID );
   }
 
