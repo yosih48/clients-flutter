@@ -151,6 +151,7 @@ class _callState extends State<call> {
 
   final _timeC = TextEditingController();
   TimeOfDay timeOfDay = TimeOfDay.now();
+  
 
   Future<void> _displayDialog() async {
     return showDialog<void>(
@@ -251,13 +252,13 @@ class _callState extends State<call> {
       productList = updatedList;
     });
   }
-
+  final TextEditingController paimentController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
-    final TextEditingController paimentController = TextEditingController();
+    // final TextEditingController paimentController = TextEditingController();
 
     int getSumHourValue() {
       int sumHourValue = 0;
