@@ -140,6 +140,7 @@ class ClientServiceScreen extends StatelessWidget {
                   'id': call['id'],
                   'call': call['call'],
                   'type': call['type'],
+                  'hour': call['hour'],
                   'paid': call['paid'],
                   'payment': call['payment'],
                   'usera': user,

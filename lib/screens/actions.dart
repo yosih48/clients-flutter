@@ -113,8 +113,6 @@ class _actionsState extends State<actions> {
 
 bool _checkboxValue = false;
 
-
-
 class call extends StatefulWidget {
   final user;
   final data;
@@ -205,17 +203,23 @@ class _callState extends State<call> {
 
   Future displayTimePicker(BuildContext context) async {
     var time = await showTimePicker(context: context, initialTime: timeOfDay);
+    // print(widget.data);
+    print('time  ${time}');
+    setState(() {
+      if (widget.data.isNotEmpty) {
+        _timeC.text = widget.data['hour'];
+        print('NotEmpty  ${_timeC.text}');
+      } else {
+        print('Empty  ${_timeC.text}');
+        if (time != null) {
+          _timeC.text = "${time.hour}:${time.minute}";
+        } else {
+          _timeC.text = '0.00';
+        }
+      }
+    });
 
-    if (time != null) {
-      setState(() {
-        _timeC.text = "${time.hour}:${time.minute}";
-      });
-      print(_timeC.text);
-    } else {
-      _timeC.text = '0.00';
-
-      //  double firstNumber = 0:00;
-    }
+    print(_timeC.text);
   }
 
   String _dropdownValue = '';
@@ -310,7 +314,10 @@ class _callState extends State<call> {
                   GestureDetector(
                     onTap: () => displayTimePicker(context),
                     child: Text(
-                      _timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן',
+                      // _timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן',
+                      widget.data.isNotEmpty
+                          ? (_timeC.text = widget.data['hour'])
+                          : (_timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן'),
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
