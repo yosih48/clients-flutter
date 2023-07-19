@@ -45,7 +45,9 @@
                       "filter" : "filter",
                        "amount": "amount",
                          "no": "no",
-                           "yes": "yes"
+                           "yes": "yes",
+                           "edit": "edit",
+                              "openCall": "open call"
 
                       
                 
