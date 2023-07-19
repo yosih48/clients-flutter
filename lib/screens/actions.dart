@@ -10,6 +10,8 @@ import '../componenets/alertDialog.dart';
 import '../componenets/parts.dart';
 import '../objects/clients.dart';
 import '../singelton/AppSingelton.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
@@ -131,7 +133,7 @@ class _callState extends State<call> {
   String callDetails = '';
   void initState() {
     super.initState();
-      callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
+    callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
@@ -151,7 +153,6 @@ class _callState extends State<call> {
 
   final _timeC = TextEditingController();
   TimeOfDay timeOfDay = TimeOfDay.now();
-  
 
   Future<void> _displayDialog() async {
     return showDialog<void>(
@@ -159,7 +160,7 @@ class _callState extends State<call> {
       // T: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('הוספת חלקים'),
+          title: Text(AppLocalizations.of(context)!.addParts),
           // content: TextField(
           //   controller: _textFieldController,
           //   decoration: const InputDecoration(hintText: 'Type your todo'),
@@ -183,7 +184,7 @@ class _callState extends State<call> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -196,7 +197,7 @@ class _callState extends State<call> {
                 handleProductListChanged(productList);
                 setState(() {});
               },
-              child: const Text('הוספה'),
+              child: Text(AppLocalizations.of(context)!.add),
             ),
           ],
         );
@@ -252,6 +253,7 @@ class _callState extends State<call> {
       productList = updatedList;
     });
   }
+
   final TextEditingController paimentController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -312,7 +314,8 @@ class _callState extends State<call> {
                             callDetails = value;
                           },
                           decoration: InputDecoration.collapsed(
-                              hintText: "תיאור טיפול"),
+                              hintText: AppLocalizations.of(context)!
+                                  .calldescription),
                         ),
                       ))
                 ],
@@ -324,7 +327,7 @@ class _callState extends State<call> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    'זמן טיפול:',
+                    AppLocalizations.of(context)!.callTime,
                   ),
                   SizedBox(width: 8.0),
                   GestureDetector(
@@ -335,7 +338,7 @@ class _callState extends State<call> {
 
                       widget.data.containsKey('hour')
                           ? (_timeC.text = widget.data['hour'])
-                          : (_timeC.text.isNotEmpty ? _timeC.text : 'בחר זמן'),
+                          : (_timeC.text.isNotEmpty ? _timeC.text : AppLocalizations.of(context)!.chooseTime),
 
                       //  _timeC.text.isNotEmpty && widget.data.isEmpty ? _timeC.text : (widget.data.isNotEmpty ? widget.data['hour'] : 'בחר זמן'),
                       style: TextStyle(color: Colors.red),
@@ -355,7 +358,7 @@ class _callState extends State<call> {
                       controller: paimentController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: InputDecoration(labelText: 'סהכ לתשלום'),
+                      decoration: InputDecoration(labelText: AppLocalizations.of(context)!.paymentAmount),
                     ),
                   ),
                 ],
@@ -481,6 +484,7 @@ class _callState extends State<call> {
 
                 Navigator.of(context).pop();
               } else {
+               
                 showToast('חסרים פרטים');
               }
             });

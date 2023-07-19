@@ -10,6 +10,7 @@ import 'screens/actions.dart';
 import 'screens/callsinfo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+
 class UserListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class UserListView extends StatelessWidget {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text('Loading...');
+            return Text(AppLocalizations.of(context)!.loading);
           }
           //     final Map<String, dynamic> userData = snapshot.data!.data()!;
           // final List<Todo> todos = userData.entries.map((entry) {

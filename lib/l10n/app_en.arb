@@ -20,7 +20,7 @@
         "callsHistory": "calls history",
            "addParts": "add parts",
           "calldescription": "call description",
-           "addProduct":"dsdsd",
+       
            "filtering": "filter",
            "ramainingBalance": "ramaining balance",
             "products": "Products",
@@ -35,7 +35,20 @@
                    "paid": "paid",
                     "cancel": "cancel",
                      "add": "add",
-                     "signout": "sign out"
+                     "signout": "sign out",
+                     "settings" : "settings",
+                     "loading" : "loading",
+                     "chooseTime": "choose Time",
+                     "missingDetails": "missing Details",
+                      "save": "save",
+                      "savedSuccess": "saved Successfully",
+                      "filter" : "filter",
+                       "amount": "amount",
+                         "no": "no",
+                           "yes": "yes"
+
+                      
+                
                     
             
 }

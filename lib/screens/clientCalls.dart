@@ -226,7 +226,7 @@ class _CallsScreenState extends State<CallsScreen> {
             }
 
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text('Loading...');
+              return Text(AppLocalizations.of(context)!.loading);
             }
 
             final calls = snapshot.data!.docs;
@@ -282,7 +282,8 @@ class _CallsScreenState extends State<CallsScreen> {
                           double totalPayment = snapshot.data ?? 0.0;
 
                           return Text(
-                            'יתרה לחיוב: ${totalPayment.toStringAsFixed(2)}',
+                            '${AppLocalizations.of(context)!.ramainingBalance}:'
+                            ' ${totalPayment.toStringAsFixed(2)}',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,

@@ -5,6 +5,7 @@ import 'package:clientsf/screens/settings.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'Constants/AppString.dart';
 import 'Feature/Login Screen/Login_Screen.dart';
@@ -19,7 +20,6 @@ import 'todoItem.dart';
 import 'componenets/datePick.dart';
 import 'objects/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // Future< void> main()
 // async{
@@ -67,7 +67,7 @@ class TodoApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Clients'),
+      home: MyHomePage(title: AppLocalizations.of(context)!.clients),
     );
   }
 }
@@ -281,37 +281,37 @@ class _TodoListState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
-          PopupMenuButton<String>(
-            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
-                value: 'disconnect',
-                child: Text('התנתק'),
-              ),
-              // const PopupMenuItem<String>(
-              //   value: 'option2',
-              //   child: Text('Option 2'),
-              // ),
-              // const PopupMenuItem<String>(
-              //   value: 'option3',
-              //   child: Text('Option 3'),
-              // ),
-            ],
-            icon: Icon(Icons.more_vert), // Three dots icon
-            onSelected: (String value) async {
-              await removeAuthToken();
-              String? userToken = await getAuthToken();
-              // print('User token out: $userToken');
+          // PopupMenuButton<String>(
+          //   itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+          //     const PopupMenuItem<String>(
+          //       value: 'disconnect',
+          //       child: Text('התנתק'),
+          //     ),
+          //     // const PopupMenuItem<String>(
+          //     //   value: 'option2',
+          //     //   child: Text('Option 2'),
+          //     // ),
+          //     // const PopupMenuItem<String>(
+          //     //   value: 'option3',
+          //     //   child: Text('Option 3'),
+          //     // ),
+          //   ],
+          //   icon: Icon(Icons.more_vert), // Three dots icon
+          //   onSelected: (String value) async {
+          //     await removeAuthToken();
+          //     String? userToken = await getAuthToken();
+          //     // print('User token out: $userToken');
 
-              Navigator.pushReplacement(
-                // Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginScreen(),
-                  // builder: (context) => SettingsPage(),
-                ),
-              );
-            },
-          ),
+          //     Navigator.pushReplacement(
+          //       // Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => LoginScreen(),
+          //         // builder: (context) => SettingsPage(),
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
       ),
       drawer: Drawer(
@@ -340,19 +340,19 @@ class _TodoListState extends State<MyHomePage> {
                 // ),
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text("Home"),
-              onTap: () {},
-            ),
-            ListTile(
-              leading: Icon(Icons.account_box),
-              title: Text("About"),
-              onTap: () {},
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.home),
+            //   title: Text("Home"),
+            //   onTap: () {},
+            // ),
+            // ListTile(
+            //   leading: Icon(Icons.account_box),
+            //   title: Text("About"),
+            //   onTap: () {},
+            // ),
             ListTile(
               leading: Icon(Icons.grid_3x3_outlined),
-              title: Text("settings"),
+              title: Text(AppLocalizations.of(context)!.settings),
               onTap: () {
                 Navigator.push(
                   context,
@@ -363,7 +363,7 @@ class _TodoListState extends State<MyHomePage> {
             ListTile(
               leading: Icon(Icons.contact_mail),
               // title: Text(AppLocalizations.of(context)!.signout),
-              title: Text('התנתק'),
+              title: Text(AppLocalizations.of(context)!.signout),
               onTap: () async {
                 await removeAuthToken();
                 String? userToken = await getAuthToken();

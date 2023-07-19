@@ -6,7 +6,7 @@
     "openTicket": "פתיחת קריאה",
     "editClient": "ערוך פרטי לקוח",
     "callType": "סיווג קריאה",
-    "callTime": "זמן קריאה",
+    "callTime": "זמן קריאה:",
     "clientHistory": "היסטוריית קריאות",
        "options": "אפשרויות",
        "clientName": "שם לקוח",
@@ -32,7 +32,19 @@
             "paid": "שולם",
             "cancel": "ביטול",
             "add": "הוספה",
-            "signout": "התנתק"
+            "signout": "התנתק",
+            "settings" : "הגדרות",
+            "loading" : "טוען נתונים",
+            "chooseTime": "בחר זמן",
+            "missingDetails": "חסרים פרטים",
+            "save": "שמור",
+             "savedSuccess": "נשמר בהצלחה",
+             "filter" :"סינון",
+             "amount": "סכום",
+             "yes": "כן",
+             "no": "לא"
+          
+    
 
             
     
