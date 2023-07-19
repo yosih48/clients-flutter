@@ -151,12 +151,35 @@ class _CallsScreenState extends State<CallsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print(showUnpaidOnly);
+    print(widget.clientId.name);
+    String? clientName = widget.clientId.name;
 
     // print(selectedOption);
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.callsHistory),
+        // title: Text(AppLocalizations.of(context)!.callsHistory),
+        title: Align(
+          alignment: Alignment.centerRight,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  AppLocalizations.of(context)!.callsHistory,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  clientName!,
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
+
         actions: [
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
