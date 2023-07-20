@@ -132,12 +132,24 @@ class _callState extends State<call> {
 
   int hourlyRate = 0;
   String callDetails = '';
+  List<dynamic> products = [];
   void initState() {
     super.initState();
+    if (widget.data.containsKey('products') && widget.data['products'].isNotEmpty) {
+    // if (widget.data.isNotEmpty) {
+      products = widget.data['products'];
+    }
+
     callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
+  }
+
+  void handleProductListChanged(List<ProductData> updatedList) {
+    setState(() {
+      productList = updatedList;
+    });
   }
 
   getPrefs() async {
@@ -257,11 +269,13 @@ class _callState extends State<call> {
   }
 
   List<ProductData> productList = [];
-  void handleProductListChanged(List<ProductData> updatedList) {
-    setState(() {
-      productList = updatedList;
-    });
-  }
+
+  // void handleProductListChanged(List<ProductData> updatedList) {
+  //   setState(() {
+  //     productList = updatedList;
+
+  //   });
+  // }
 
   final TextEditingController paimentController = TextEditingController();
   @override
@@ -411,6 +425,33 @@ class _callState extends State<call> {
                   ),
                 ],
               ),
+              if (products.isNotEmpty) SizedBox(height: 8),
+              Column(
+                children: products.map((product) {
+                  final productName = product['name'];
+                  final productPrice = product['price'];
+
+                  return Row(
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          productName,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: Text(
+                          '$productPrice ₪',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+
               SizedBox(height: 8),
             ],
           ),

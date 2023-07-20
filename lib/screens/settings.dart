@@ -32,7 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> getStoredHourlyRate() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // int storedValue = prefs.getInt('newValue') ?? 0;
-     int storedValue = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
+    int storedValue = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
     //  print(storedValue);
     //  print(AppSingelton().userID);
     setState(() {
@@ -108,7 +108,8 @@ class _SettingsPageState extends State<SettingsPage> {
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
                           // prefs.setInt('newValue', newValue.toInt());
-                           prefs.setInt('${AppSingelton().userID}_newValue', newValue.toInt());
+                          prefs.setInt('${AppSingelton().userID}_newValue',
+                              newValue.toInt());
                         },
                       ),
                     ],

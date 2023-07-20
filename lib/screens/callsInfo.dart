@@ -123,7 +123,7 @@ class ClientServiceScreen extends StatelessWidget {
                       Expanded(
                         flex: 5,
                         child: Text(
-                          '\$$productPrice',
+                          '$productPrice ₪',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -143,6 +143,7 @@ class ClientServiceScreen extends StatelessWidget {
                   'hour': call['hour'],
                   'paid': call['paid'],
                   'payment': call['payment'],
+                  'products': call['products'],
                   'usera': user,
                   'fromScreen1': true
                 });
