@@ -479,7 +479,8 @@ class _callState extends State<call> {
                       _checkboxValue,
                       dropdownValue,
                       _timeC.text,
-                      sumPayment);
+                      sumPayment,
+                      productList);
                 }
 
                 void resetForm() {
@@ -554,8 +555,8 @@ Future<void> addCall(client, call, paid, type, hour, payment,
   }
 }
 
-Future<void> updateUser(
-    clientID, callID, callDetails, paid, type, hour, payment) async {
+Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
+    payment, List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -599,13 +600,13 @@ Future<void> updateUser(
       'type': type,
       'hour': hour,
       'payment': payment,
-      // 'products': productList
-      //     .map((product) => {
-      //           'name': product.name,
-      //           'price': product.price,
-      //           'discountedPrice': product.discountedPrice,
-      //         })
-      //     .toList(),
+      'products': FieldValue.arrayUnion(productList
+          .map((product) => {
+                'name': product.name,
+                'price': product.price,
+                'discountedPrice': product.discountedPrice,
+              })
+          .toList()),
     });
 
     print("Call Updated");
