@@ -61,6 +61,7 @@ class _dropdownState extends State<dropdown> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
+          print(' state ${dropdownValue}');
           widget.onDropdownChanged(dropdownValue);
         });
       },
@@ -240,9 +241,17 @@ class _callState extends State<call> {
   }
 
   String _dropdownValue = '';
+  bool drop = true;
   void handleDropdownValueChange(String value) {
     setState(() {
       _dropdownValue = value;
+      if (dropdownValue == 'מכירת ציוד') {
+        drop = false;
+      } else {
+        drop = true;
+      }
+
+      print(' drop ${drop}');
     });
     print('handleDropdown ${value}');
   }
@@ -323,34 +332,38 @@ class _callState extends State<call> {
               SizedBox(
                 height: 8.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.callTime,
-                  ),
-                  SizedBox(width: 8.0),
-                  GestureDetector(
-                    onTap: () => displayTimePicker(context),
-                    child: Text(
-                      // _timeC.text.isNotEmpty  ? _timeC.text : 'בחר זמן',
+              if (drop == true)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context)!.callTime,
+                    ),
+                    SizedBox(width: 8.0),
+                    GestureDetector(
+                      onTap: () => displayTimePicker(context),
+                      child: Text(
+                        // _timeC.text.isNotEmpty  ? _timeC.text : 'בחר זמן',
 // _timeC.text.isEmpty? _timeC.text = widget.data['hour'] :  'בחר זמן',
 
-                      widget.data.containsKey('hour')
-                          ? (_timeC.text = widget.data['hour'])
-                          : (_timeC.text.isNotEmpty ? _timeC.text : AppLocalizations.of(context)!.chooseTime),
+                        widget.data.containsKey('hour')
+                            ? (_timeC.text = widget.data['hour'])
+                            : (_timeC.text.isNotEmpty
+                                ? _timeC.text
+                                : AppLocalizations.of(context)!.chooseTime),
 
-                      //  _timeC.text.isNotEmpty && widget.data.isEmpty ? _timeC.text : (widget.data.isNotEmpty ? widget.data['hour'] : 'בחר זמן'),
-                      style: TextStyle(color: Colors.red),
+                        //  _timeC.text.isNotEmpty && widget.data.isEmpty ? _timeC.text : (widget.data.isNotEmpty ? widget.data['hour'] : 'בחר זמן'),
+                        style: TextStyle(color: Colors.red),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               // old time method
               // TimeTextField(
               //     controller: timeController,
               //     controllerMinute: minuteController),
               SizedBox(height: 8),
+
               Row(
                 children: [
                   Expanded(
@@ -358,7 +371,9 @@ class _callState extends State<call> {
                       controller: paimentController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: InputDecoration(labelText: AppLocalizations.of(context)!.paymentAmount),
+                      decoration: InputDecoration(
+                          labelText:
+                              AppLocalizations.of(context)!.paymentAmount),
                     ),
                   ),
                 ],
@@ -438,6 +453,9 @@ class _callState extends State<call> {
               print('call time ${_timeC.text}');
 
               print('dataEmpty ${widget.data}');
+              if (drop == false) {
+                _timeC.text = '0';
+              }
               if (_callDetailsController.text != '' &&
                   _timeC.text != '' &&
                   sumHourValue != '' &&
@@ -484,7 +502,6 @@ class _callState extends State<call> {
 
                 Navigator.of(context).pop();
               } else {
-               
                 showToast('חסרים פרטים');
               }
             });
