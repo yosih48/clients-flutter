@@ -310,12 +310,12 @@ class _CallsScreenState extends State<CallsScreen> {
                       final payment = call['payment'];
                       final formattedDate = DateFormat('dd/MM/yy').format(
                           DateTime.fromMillisecondsSinceEpoch(timestamp));
-                      late String sum;
-                      if (paid == true) {
-                        sum = "כן";
-                      } else {
-                        sum = "לא";
-                      }
+                      // late String sum;
+                      // if (paid == true) {
+                      //   sum = "כן";
+                      // } else {
+                      //   sum = "לא";
+                      // }
 
                       // totalPayment = calls.fold(0, (double previousValue,
                       //     QueryDocumentSnapshot<Object?> element) {
@@ -428,7 +428,11 @@ class _CallsScreenState extends State<CallsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      Text(' $sum'),
+                                      if (paid)
+                                        Icon(Icons.done, color: Colors.green),
+                                      // Text(' $sum'),
+                                      if (!paid)
+                                        Icon(Icons.cancel, color: Colors.red),
                                     ],
                                   ),
                                 ),

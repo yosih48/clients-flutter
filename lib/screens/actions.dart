@@ -224,7 +224,7 @@ class _callState extends State<call> {
   Future displayTimePicker(BuildContext context) async {
     _timeC.text = '';
     widget.data.remove('hour');
-    var time = await showTimePicker(context: context, initialTime: timeOfDay);
+    var time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
     // print(widget.data);
     // print('time  ${time}');
     setState(() {
