@@ -10,7 +10,6 @@ import 'screens/actions.dart';
 import 'screens/callsinfo.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-
 class UserListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -160,6 +159,17 @@ class UserListView extends StatelessWidget {
                                   );
                                 },
                                 icon: const Icon(Icons.add_box)),
+                            IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CallsScreen(clientId: user),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.history)),
                             // icon: const Icon(Icons.history)),
                             // ElevatedButton(
                             //   child: Text(AppLocalizations.of(context)!.clientInfo),
