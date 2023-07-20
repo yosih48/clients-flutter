@@ -42,14 +42,14 @@ class TodoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // routes: {
-      //   // '/actions': (context) => actions(user: user),
-      //   // '/': (context) => TodoApp(),
-      //   '/date': (context) => HomePage(),
-      //   '/time': (context) => ScreenOne(),
-      //   // '/action': (context) => actions(),
-      //   // '/callinfo': (context) => ClientServiceScreen(),
-      // },
+      routes: {
+        // '/actions': (context) => actions(user: user),
+        // '/': (context) => TodoApp(),
+        // '/date': (context) => HomePage(),
+        // '/time': (context) => ScreenOne(),
+        '/action': (context) => actions(),
+        // '/callinfo': (context) => ClientServiceScreen(),
+      },
       title: 'Todo Manage',
       debugShowCheckedModeBanner: false,
       // localizationsDelegates: AppLocalizations.localizationsDelegates,

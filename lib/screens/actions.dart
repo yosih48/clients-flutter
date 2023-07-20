@@ -135,8 +135,9 @@ class _callState extends State<call> {
   List<dynamic> products = [];
   void initState() {
     super.initState();
-    if (widget.data.containsKey('products') && widget.data['products'].isNotEmpty) {
-    // if (widget.data.isNotEmpty) {
+    if (widget.data.containsKey('products') &&
+        widget.data['products'].isNotEmpty) {
+      // if (widget.data.isNotEmpty) {
       products = widget.data['products'];
     }
 
@@ -149,6 +150,8 @@ class _callState extends State<call> {
   void handleProductListChanged(List<ProductData> updatedList) {
     setState(() {
       productList = updatedList;
+     
+      // products.add(updatedList);
     });
   }
 
