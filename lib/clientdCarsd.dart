@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'Constants/AppString.dart';
+import 'componenets/addClientDialof.dart';
+import 'componenets/alertDialog.dart';
 import 'objects/clients.dart';
 import 'screens/actions.dart';
 import 'screens/callsinfo.dart';
@@ -87,30 +89,7 @@ class _UserListViewState extends State<UserListView> {
                           autoClose: true,
                           flex: 1,
                                              onPressed: (value)async {
-                        // Remove the item from Firestore
-  await FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .collection('user_data')
-      .doc(user.id) // Assuming 'id' is the document ID of each user data
-      .delete();
-
-  // Remove the item from the local list and update the UI
-  setState(() {
-    users.removeAt(index);
-    print('deleted');
-  });
-                          },
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          icon: Icons.delete,
-                          label: 'Delete',
-                        ),
-                        SlidableAction(
-                          autoClose: true,
-                          flex: 1,
-                          onPressed: (value) {
-                        // Remove the item from Firestore
+  //                       // Remove the item from Firestore
   // await FirebaseFirestore.instance
   //     .collection('users')
   //     .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -123,6 +102,40 @@ class _UserListViewState extends State<UserListView> {
   //   users.removeAt(index);
   //   print('deleted');
   // });
+      showDialogw(
+          context,
+          onConfirm: () async {
+            // Remove the item from Firestore
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .collection('user_data')
+                .doc(user.id) // Assuming 'id' is the document ID of each user data
+                .delete();
+
+            // Remove the item from the local list and update the UI
+            setState(() {
+              users.removeAt(index);
+              print('deleted');
+            });
+          },
+        );
+
+
+                          },
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
+                        ),
+                        SlidableAction(
+                          autoClose: true,
+                          flex: 1,
+                          onPressed: (value) {
+                                 displayDialog(context, '${user.id}');
+                                // showAlertDialog( context,'ASAS');
+                                  // showDialogw( context);
+
                           },
                           backgroundColor: Colors.blueAccent,
                           foregroundColor: Colors.white,

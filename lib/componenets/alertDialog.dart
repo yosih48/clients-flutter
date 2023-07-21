@@ -33,3 +33,31 @@ showToast(String text) {
       textColor: Colors.white,
       fontSize: 16.0);
 }
+
+
+
+
+  // Function to show the AlertDialog
+  void showDialogw(BuildContext context , {required VoidCallback onConfirm}) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('האם אתה בטוחח שברצונך למחוק?'),
+        // content: const Text('AlertDialog description'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'Cancel'),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+         onPressed: () {
+            onConfirm(); // Call the onConfirm callback passed from the SlidableAction
+            Navigator.pop(context, 'OK'); // Close the dialog
+          },
+          child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+  
