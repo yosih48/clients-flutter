@@ -126,7 +126,7 @@ class _UserListViewState extends State<UserListView> {
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                           icon: Icons.delete,
-                          label: 'Delete',
+                          label:  AppLocalizations.of(context)!.delete,
                         ),
                         SlidableAction(
                           autoClose: true,

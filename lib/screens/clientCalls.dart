@@ -80,7 +80,7 @@ class _CallsScreenState extends State<CallsScreen> {
       // T: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('filter'),
+          title:  Text( AppLocalizations.of(context)!.filtering),
           // content: TextField(
           //   controller: _textFieldController,
           //   decoration: const InputDecoration(hintText: 'Type your todo'),
@@ -109,7 +109,7 @@ class _CallsScreenState extends State<CallsScreen> {
                 Navigator.of(context).pop();
                 // print(selectedCharacter);
               },
-              child: const Text('Cancel'),
+              child:  Text(   AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -141,7 +141,7 @@ class _CallsScreenState extends State<CallsScreen> {
                   // print(_selectedCharacterNotifier.value.runtimeType);
                 });
               },
-              child: const Text('הוספה'),
+              child: Text( AppLocalizations.of(context)!.add),
             ),
           ],
         );
@@ -186,9 +186,9 @@ class _CallsScreenState extends State<CallsScreen> {
         actions: [
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-              const PopupMenuItem<String>(
+               PopupMenuItem<String>(
                 value: 'filterPaid',
-                child: Text('סינון'),
+                child: Text( AppLocalizations.of(context)!.filtering),
               ),
               // const PopupMenuItem<String>(
               //   value: 'option2',
@@ -252,7 +252,7 @@ class _CallsScreenState extends State<CallsScreen> {
                     ),
                     SizedBox(width: 24.0),
                     Text(
-                      'סכום',
+                       AppLocalizations.of(context)!.amount,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -384,7 +384,7 @@ class _CallsScreenState extends State<CallsScreen> {
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                           icon: Icons.delete,
-                          label: 'Delete',
+                         label:  AppLocalizations.of(context)!.delete,
                         ),
                         // SlidableAction(
                         //   autoClose: true,

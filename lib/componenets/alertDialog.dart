@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../Constants/AppString.dart';
 
 void showAlertDialog(BuildContext context, String title, {String? subtitle}) {
@@ -42,19 +43,19 @@ showToast(String text) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('האם אתה בטוחח שברצונך למחוק?'),
+        title: const Text('האם אתה בטוח שברצונך למחוק?'),
         // content: const Text('AlertDialog description'),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.pop(context, 'Cancel'),
-            child: const Text('Cancel'),
+            child: Text( AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
          onPressed: () {
             onConfirm(); // Call the onConfirm callback passed from the SlidableAction
             Navigator.pop(context, 'OK'); // Close the dialog
           },
-          child: const Text('OK'),
+          child:  Text( AppLocalizations.of(context)!.yes),
           ),
         ],
       ),
