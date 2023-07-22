@@ -148,7 +148,7 @@ class ClientServiceScreen extends StatelessWidget {
                   'fromScreen1': true
                 });
               },
-              child: Text('Edit'),
+              child: Text(    AppLocalizations.of(context)!.edit),
             ),
           ],
         ),

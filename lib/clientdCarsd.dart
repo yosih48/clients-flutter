@@ -140,7 +140,7 @@ class _UserListViewState extends State<UserListView> {
                           backgroundColor: Colors.blueAccent,
                           foregroundColor: Colors.white,
                           icon: Icons.edit,
-                          label: 'Edit',
+                          label:  AppLocalizations.of(context)!.edit,
                         ),
                       ],
                     ),

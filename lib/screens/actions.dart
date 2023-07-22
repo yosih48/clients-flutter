@@ -422,7 +422,7 @@ class _callState extends State<call> {
                   GestureDetector(
                     onTap: () => _displayDialog(),
                     child: Text(
-                      'אספקת חלקים:',
+                         AppLocalizations.of(context)!.addParts,
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
@@ -460,7 +460,7 @@ class _callState extends State<call> {
           ),
         ),
         ElevatedButton(
-          child: Text('שמור'),
+          child: Text(    AppLocalizations.of(context)!.save),
           onPressed: () {
             // someFunction();
             setState(() {
@@ -547,7 +547,7 @@ class _callState extends State<call> {
 
                 Navigator.of(context).pop();
               } else {
-                showToast('חסרים פרטים');
+                showToast(    AppLocalizations.of(context)!.missingDetails);
               }
             });
           },
@@ -593,7 +593,7 @@ Future<void> addCall(client, call, paid, type, hour, payment,
     });
     print("Call Added");
 
-    showToast('נשמר בהצלחה');
+    // showToast('נשמר בהצלחה');
   } catch (error) {
     print("Failed to add call: $error");
   }
@@ -654,7 +654,7 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
     });
 
     print("Call Updated");
-    showToast('עודכן בהצלחה');
+    // showToast('עודכן בהצלחה');
   } catch (error) {
     print("Failed to update call: $error");
   }
