@@ -47,7 +47,7 @@ class _dropdownState extends State<dropdown> {
 
   @override
   Widget build(BuildContext context) {
-    print(dropdownValue);
+    // print(dropdownValue);
     return DropdownButton<String>(
       value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
@@ -61,7 +61,7 @@ class _dropdownState extends State<dropdown> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
-          print(' state ${dropdownValue}');
+          // print(' state ${dropdownValue}');
           widget.onDropdownChanged(dropdownValue);
         });
       },
@@ -96,9 +96,9 @@ class _actionsState extends State<actions> {
     Map data = {};
     if (navigatedFromScreen1) {
       data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-      print(data['call']);
+      // print(data['call']);
     }
-    print(data['id']);
+    // print(data['id']);
     // data = data.isNotEmpty
     //     ? data
     //     : ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
@@ -163,8 +163,8 @@ class _callState extends State<call> {
       // hourlyRate = prefs.getInt('newValue') ?? 0;
       hourlyRate = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
     });
-    print(' void share ${hourlyRate}');
-    print('widget.data   ${widget.data}');
+    // print(' void share ${hourlyRate}');
+    // print('widget.data   ${widget.data}');
   }
 
   final _timeC = TextEditingController();
@@ -236,10 +236,10 @@ class _callState extends State<call> {
       // print('Empty  ${_timeC.text}');
 
       if (time != null) {
-        print('bot Empty  ${time}');
+        // print('bot Empty  ${time}');
         _timeC.text = "${time.hour}:${time.minute}";
       } else {
-        print(' Empty  ${time}');
+        // print(' Empty  ${time}');
         _timeC.text = '0.00';
       }
 
@@ -253,7 +253,7 @@ class _callState extends State<call> {
     //   _timeC.text = 'בחר זמן';
     // }
 
-    print(_timeC.text);
+    // print(_timeC.text);
   }
 
   String _dropdownValue = '';
@@ -267,9 +267,9 @@ class _callState extends State<call> {
         drop = true;
       }
 
-      print(' drop ${drop}');
+      // print(' drop ${drop}');
     });
-    print('handleDropdown ${value}');
+    // print('handleDropdown ${value}');
   }
 
   List<ProductData> productList = [];
@@ -406,12 +406,12 @@ class _callState extends State<call> {
                   Checkbox(
                       value: _checkboxValue,
                       onChanged: (newValue) {
-                        print(newValue);
+                        // print(newValue);
 
                         setState(() {
                           _checkboxValue = newValue!;
 
-                          print(_checkboxValue);
+                          // print(_checkboxValue);
                         });
                       }),
                 ],
@@ -475,9 +475,14 @@ class _callState extends State<call> {
               double sumProduct = 0;
               for (var product in productList) {
                 // print('Product Name: ${product.name}');
-                // print('Price: ${product.price}');
+                print('productList Price: ${product.price}');
                 // print('Discounted Price: ${product.discountedPrice}');
                 sumProduct += product.price!;
+              }
+              for (var product in products) {
+                // print('Product Name: ${product.name}');
+                print('products Price: ${product.price}');
+                // print('Discounted Price: ${product.discountedPrice}');
               }
 
               // print(sumHourValue.runtimeType);
@@ -489,15 +494,15 @@ class _callState extends State<call> {
               double sumPayment =
                   sumHourValue.toDouble() + sumProduct + hourCharge;
 
-              print('dropdownValue ${dropdownValue}');
-              print('charge per hour  ${hourCharge}');
-              print('total payment  ${sumPayment}');
-              print('hour first number  ${firstNumber}');
-              print('call details  ${_callDetailsController.text}');
+              // print('dropdownValue ${dropdownValue}');
+              // print('charge per hour  ${hourCharge}');
+              // print('total payment  ${sumPayment}');
+              // print('hour first number  ${firstNumber}');
+              // print('call details  ${_callDetailsController.text}');
               // print('sigelton  ${AppSingelton().hourlyRate}');
-              print('call time ${_timeC.text}');
+              // print('call time ${_timeC.text}');
 
-              print('dataEmpty ${widget.data}');
+              // print('dataEmpty ${widget.data}');
               if (drop == false) {
                 _timeC.text = '0';
               }
@@ -506,7 +511,7 @@ class _callState extends State<call> {
                   sumHourValue != '' &&
                   dropdownValue != '') {
                 if (widget.data.isEmpty) {
-                  print('empty');
+                  // print('empty');
                   addCall(
                       widget.user,
                       _callDetailsController.text,
@@ -562,8 +567,8 @@ class _callState extends State<call> {
 Future<void> addCall(client, call, paid, type, hour, payment,
     List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
-  print('userID  ${client.id}');
-  print('nainuserID  ${user}');
+  // print('userID  ${client.id}');
+  // print('nainuserID  ${user}');
   final clientRef = FirebaseFirestore.instance
       .collection('users')
       .doc(user!.uid)
