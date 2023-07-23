@@ -75,8 +75,8 @@ class _UserListViewState extends State<UserListView> {
               itemCount: users.length,
               itemBuilder: (BuildContext context, int index) {
                 final user = users[index];
-                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                return Padding(
+                  padding: const EdgeInsets.all(0.0),
                   child: Slidable(
                     key: const ValueKey(0),
                     endActionPane: ActionPane(
@@ -88,144 +88,140 @@ class _UserListViewState extends State<UserListView> {
                         SlidableAction(
                           autoClose: true,
                           flex: 1,
-                                             onPressed: (value)async {
-  //                       // Remove the item from Firestore
-  // await FirebaseFirestore.instance
-  //     .collection('users')
-  //     .doc(FirebaseAuth.instance.currentUser!.uid)
-  //     .collection('user_data')
-  //     .doc(user.id) // Assuming 'id' is the document ID of each user data
-  //     .delete();
+                          onPressed: (value) async {
+                            //                       // Remove the item from Firestore
+                            // await FirebaseFirestore.instance
+                            //     .collection('users')
+                            //     .doc(FirebaseAuth.instance.currentUser!.uid)
+                            //     .collection('user_data')
+                            //     .doc(user.id) // Assuming 'id' is the document ID of each user data
+                            //     .delete();
 
-  // // Remove the item from the local list and update the UI
-  // setState(() {
-  //   users.removeAt(index);
-  //   print('deleted');
-  // });
-      showDialogw(
-          context,
-          onConfirm: () async {
-            // Remove the item from Firestore
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('user_data')
-                .doc(user.id) // Assuming 'id' is the document ID of each user data
-                .delete();
+                            // // Remove the item from the local list and update the UI
+                            // setState(() {
+                            //   users.removeAt(index);
+                            //   print('deleted');
+                            // });
+                            showDialogw(
+                              context,
+                              onConfirm: () async {
+                                // Remove the item from Firestore
+                                await FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                                    .collection('user_data')
+                                    .doc(user
+                                        .id) // Assuming 'id' is the document ID of each user data
+                                    .delete();
 
-            // Remove the item from the local list and update the UI
-            setState(() {
-              users.removeAt(index);
-              print('deleted');
-            });
-          },
-        );
-
-
+                                // Remove the item from the local list and update the UI
+                                setState(() {
+                                  users.removeAt(index);
+                                  print('deleted');
+                                });
+                              },
+                            );
                           },
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                           icon: Icons.delete,
-                          label:  AppLocalizations.of(context)!.delete,
+                          label: AppLocalizations.of(context)!.delete,
                         ),
                         SlidableAction(
                           autoClose: true,
                           flex: 1,
                           onPressed: (value) {
-                                 displayDialog(context, '${user.id}');
-                                // showAlertDialog( context,'ASAS');
-                                  // showDialogw( context);
-
+                            displayDialog(context, '${user.id}');
+                            // showAlertDialog( context,'ASAS');
+                            // showDialogw( context);
                           },
                           backgroundColor: Colors.blueAccent,
                           foregroundColor: Colors.white,
                           icon: Icons.edit,
-                          label:  AppLocalizations.of(context)!.edit,
+                          label: AppLocalizations.of(context)!.edit,
                         ),
                       ],
                     ),
                     child: Center(
-                            child: Card(
-                    margin: const EdgeInsets.all(10),
-                    child: ListTile(
-                      title:
-                          Text(user.name, style: TextStyle(fontSize: 15.0)),
-                      subtitle: Text('${user.phone}',
-                          style: TextStyle(fontSize: 15.0)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => clientInfo(
-                                      user: user,
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.info)),
-                          IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => actions(
-                                      user: user,
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.add_box)),
-                          IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        CallsScreen(clientId: user),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.history)),
-                          // icon: const Icon(Icons.history)),
-                          // ElevatedButton(
-                          //   child: Text(AppLocalizations.of(context)!.clientInfo),
-                          //   onPressed: () {
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => clientInfo(
-                          //           user: user,
-                          //         ),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
-                          SizedBox(width: 8),
-                          // ElevatedButton(
-                          //   child: Text(AppLocalizations.of(context)!.openTicket),
-                          //   onPressed: () {
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //         builder: (context) => actions(
-                          //           user: user,
-                          //         ),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
-                        ],
-                      ),
-                    )),
+                      child: Card(
+                          margin: const EdgeInsets.all(10),
+                          child: ListTile(
+                            title: Text(user.name,
+                                style: TextStyle(fontSize: 15.0)),
+                            subtitle: Text('${user.phone}',
+                                style: TextStyle(fontSize: 15.0)),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => clientInfo(
+                                            user: user,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.info)),
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => actions(
+                                            user: user,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add_box)),
+                                IconButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CallsScreen(clientId: user),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.history)),
+                                // icon: const Icon(Icons.history)),
+                                // ElevatedButton(
+                                //   child: Text(AppLocalizations.of(context)!.clientInfo),
+                                //   onPressed: () {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder: (context) => clientInfo(
+                                //           user: user,
+                                //         ),
+                                //       ),
+                                //     );
+                                //   },
+                                // ),
+                                SizedBox(width: 8),
+                                // ElevatedButton(
+                                //   child: Text(AppLocalizations.of(context)!.openTicket),
+                                //   onPressed: () {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder: (context) => actions(
+                                //           user: user,
+                                //         ),
+                                //       ),
+                                //     );
+                                //   },
+                                // ),
+                              ],
+                            ),
+                          )),
                     ),
                   ),
                 );
-
-
 
                 // return GestureDetector(
                 //   // onLongPress: () {
