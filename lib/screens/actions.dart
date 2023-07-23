@@ -475,16 +475,16 @@ class _callState extends State<call> {
               double newProduct = 0;
               for (var product in productList) {
                 // print('Product Name: ${product.name}');
-                print('productList Price: ${product.price}');
+                print('productList Price: ${product.discountedPrice}');
                 // print('Discounted Price: ${product.discountedPrice}');
-                newProduct += product.price!;
+                newProduct += product.discountedPrice!;
               }
               double oldProduct = 0;
               for (var product in products) {
                 // print('Product Name: ${product.name}');
-                print('products Price: ${product['price']}');
+                print('products Price: ${product['discountedPrice']}');
                 // print('Discounted Price: ${product.discountedPrice}');
-                oldProduct += product['price'];
+                oldProduct += product['discountedPrice'];
               }
               double sumProduct = oldProduct + newProduct;
               print('sumProductt: ${sumProduct}');
