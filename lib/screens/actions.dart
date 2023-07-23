@@ -150,7 +150,7 @@ class _callState extends State<call> {
   void handleProductListChanged(List<ProductData> updatedList) {
     setState(() {
       productList = updatedList;
-     
+
       // products.add(updatedList);
     });
   }
@@ -224,7 +224,8 @@ class _callState extends State<call> {
   Future displayTimePicker(BuildContext context) async {
     _timeC.text = '';
     widget.data.remove('hour');
-    var time = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    var time =
+        await showTimePicker(context: context, initialTime: TimeOfDay.now());
     // print(widget.data);
     // print('time  ${time}');
     setState(() {
@@ -422,7 +423,7 @@ class _callState extends State<call> {
                   GestureDetector(
                     onTap: () => _displayDialog(),
                     child: Text(
-                         AppLocalizations.of(context)!.addParts,
+                      AppLocalizations.of(context)!.addParts,
                       style: TextStyle(color: Colors.red),
                     ),
                   ),
@@ -432,7 +433,7 @@ class _callState extends State<call> {
               Column(
                 children: products.map((product) {
                   final productName = product['name'];
-                  final productPrice = product['price'];
+                  final productPrice = product['discountedPrice'];
 
                   return Row(
                     children: [
@@ -460,7 +461,7 @@ class _callState extends State<call> {
           ),
         ),
         ElevatedButton(
-          child: Text(    AppLocalizations.of(context)!.save),
+          child: Text(AppLocalizations.of(context)!.save),
           onPressed: () {
             // someFunction();
             setState(() {
@@ -547,7 +548,7 @@ class _callState extends State<call> {
 
                 Navigator.of(context).pop();
               } else {
-                showToast(    AppLocalizations.of(context)!.missingDetails);
+                showToast(AppLocalizations.of(context)!.missingDetails);
               }
             });
           },

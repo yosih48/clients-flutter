@@ -78,7 +78,7 @@ class ClientServiceScreen extends StatelessWidget {
               children: [
                 if (products.isNotEmpty)
                   Expanded(
-                    flex: 3,
+                    flex: 4,
                     child: Text(
                       AppLocalizations.of(context)!.product,
                       style:
@@ -92,11 +92,18 @@ class ClientServiceScreen extends StatelessWidget {
                   Expanded(
                     flex: 5,
                     child: Text(
-                      AppLocalizations.of(context)!.productPrice,
+                      AppLocalizations.of(context)!.costPrice,
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
+                Expanded(
+                  flex: 4,
+                  child: Text(
+                    AppLocalizations.of(context)!.finalPrice,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
               ],
             ),
             // SizedBox(height: 8),
@@ -105,32 +112,40 @@ class ClientServiceScreen extends StatelessWidget {
                 '-',
                 style: TextStyle(fontSize: 16),
               ),
-            if (products.isNotEmpty)
-              Column(
-                children: products.map((product) {
-                  final productName = product['name'];
-                  final productPrice = product['price'];
+            if (products.isNotEmpty) SizedBox(height: 8.0),
+            Column(
+              children: products.map((product) {
+                final productName = product['name'];
+                final productPrice = product['price'];
+                final costPrice = product['discountedPrice'];
 
-                  return Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          productName,
-                          style: TextStyle(fontSize: 16),
-                        ),
+                return Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        productName,
+                        style: TextStyle(fontSize: 16),
                       ),
-                      Expanded(
-                        flex: 5,
-                        child: Text(
-                          '$productPrice ₪',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        '$productPrice ₪',
+                        style: TextStyle(fontSize: 16),
                       ),
-                    ],
-                  );
-                }).toList(),
-              ),
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        '$costPrice  ₪',
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
             SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
@@ -148,7 +163,7 @@ class ClientServiceScreen extends StatelessWidget {
                   'fromScreen1': true
                 });
               },
-              child: Text(    AppLocalizations.of(context)!.edit),
+              child: Text(AppLocalizations.of(context)!.edit),
             ),
           ],
         ),
