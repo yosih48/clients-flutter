@@ -161,4 +161,11 @@ class ProductData {
     this.price,
     this.discountedPrice,
   });
+    factory ProductData.fromDynamic(dynamic json) {
+    return ProductData(
+      name: json['name'],
+      price: json['price']?.toDouble(),
+      discountedPrice: json['discountedPrice']?.toDouble(),
+    );
+  }
 }
