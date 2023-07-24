@@ -132,7 +132,7 @@ class _callState extends State<call> {
 
   int hourlyRate = 0;
   String callDetails = '';
-  double sumPayment = 0.00;
+  String sumPayment = '0';
   List<dynamic> products = [];
   void initState() {
     super.initState();
@@ -144,7 +144,7 @@ class _callState extends State<call> {
     }
 
     callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
-    sumPayment = widget.data.isNotEmpty ? widget.data['payment'] : 0;
+    sumPayment = widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
@@ -286,23 +286,24 @@ class _callState extends State<call> {
 
   @override
   Widget build(BuildContext context) {
-    String sumPayment2 = sumPayment.toString();
+   
     final TextEditingController paimentController =
-        TextEditingController(text: sumPayment2);
-    print('sumPayment2  ${sumPayment2}');
-    print('paimentController  ${paimentController.text.runtimeType}');
-    print('paimentController  ${paimentController.text.runtimeType}');
+        TextEditingController(text: sumPayment);
+    // print('sumPayment  ${sumPayment}');
+    // print('sumPayment  ${sumPayment.runtimeType}');
+   
     // String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
     // final TextEditingController paimentController = TextEditingController();
 
-    int getSumHourValue() {
-      int sumHourValue = 0;
+    double getSumHourValue() {
+      double sumHourValue = 0.0;
 
       String sumHourString = paimentController.text;
-      if (sumHourString != '0.0') {
-        sumHourValue = int.parse(sumHourString);
+      // print('object ${sumHourString}');
+      if (sumHourString != '0') {
+        sumHourValue = double.parse(sumHourString);
       }
       return sumHourValue;
     }
@@ -473,7 +474,7 @@ class _callState extends State<call> {
           onPressed: () {
             // someFunction();
             setState(() {
-              int sumHourValue = getSumHourValue();
+              double sumHourValue = getSumHourValue();
               int? firstNumber = 0;
               if (_timeC.text.isNotEmpty) {
                 firstNumber = int.tryParse(_timeC.text.substring(0, 1));
