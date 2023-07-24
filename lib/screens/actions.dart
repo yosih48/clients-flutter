@@ -132,9 +132,11 @@ class _callState extends State<call> {
 
   int hourlyRate = 0;
   String callDetails = '';
+  double sumPayment = 0.00;
   List<dynamic> products = [];
   void initState() {
     super.initState();
+
     if (widget.data.containsKey('products') &&
         widget.data['products'].isNotEmpty) {
       // if (widget.data.isNotEmpty) {
@@ -142,6 +144,7 @@ class _callState extends State<call> {
     }
 
     callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
+    sumPayment = widget.data.isNotEmpty ? widget.data['payment'] : 0;
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
@@ -281,9 +284,14 @@ class _callState extends State<call> {
   //   });
   // }
 
-  final TextEditingController paimentController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    String sumPayment2 = sumPayment.toString();
+    final TextEditingController paimentController =
+        TextEditingController(text: sumPayment2);
+    print('sumPayment2  ${sumPayment2}');
+    print('paimentController  ${paimentController.text.runtimeType}');
+    print('paimentController  ${paimentController.text.runtimeType}');
     // String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
@@ -293,7 +301,7 @@ class _callState extends State<call> {
       int sumHourValue = 0;
 
       String sumHourString = paimentController.text;
-      if (sumHourString != '') {
+      if (sumHourString != '0.0') {
         sumHourValue = int.parse(sumHourString);
       }
       return sumHourValue;
