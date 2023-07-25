@@ -147,7 +147,7 @@ class _callState extends State<call> {
     callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     sumPayment = widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
-    _checkboxDone = widget.data.isNotEmpty ? widget.data['done'] : false;
+    _checkboxDone = widget.data.isNotEmpty && widget.data.containsKey('done')? widget.data['done'] : false;
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
   }

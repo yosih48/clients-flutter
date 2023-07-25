@@ -1,6 +1,7 @@
 import 'package:clientsf/screens/AppStarter.dart';
 import 'package:clientsf/screens/PhoneLogin.dart';
 import 'package:clientsf/screens/callsInfo.dart';
+import 'package:clientsf/screens/callsTodo.dart';
 import 'package:clientsf/screens/settings.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -357,6 +358,16 @@ class _TodoListState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SettingsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.grid_3x3_outlined),
+              title: Text('todo'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => callsTodo()),
                 );
               },
             ),
