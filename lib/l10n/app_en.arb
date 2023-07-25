@@ -49,7 +49,8 @@
                            "yes": "yes",
                            "edit": "edit",
                               "openCall": "open call",
-                               "delete": "delete"
+                               "delete": "delete",
+                               "done": "done"
 
                       
                 

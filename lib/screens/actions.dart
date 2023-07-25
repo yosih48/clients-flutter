@@ -115,6 +115,7 @@ class _actionsState extends State<actions> {
 }
 
 bool _checkboxValue = false;
+bool _checkboxDone = false;
 
 class call extends StatefulWidget {
   final user;
@@ -146,6 +147,7 @@ class _callState extends State<call> {
     callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     sumPayment = widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
+    _checkboxDone = widget.data.isNotEmpty ? widget.data['done'] : false;
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
   }
@@ -425,6 +427,26 @@ class _callState extends State<call> {
                       }),
                 ],
               ),
+                   SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.done,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Checkbox(
+                      value: _checkboxDone,
+                      onChanged: (newValue) {
+                        // print(newValue);
+
+                        setState(() {
+                          _checkboxDone = newValue!;
+
+                          // print(_checkboxValue);
+                        });
+                      }),
+                ],
+              ),
               SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -532,6 +554,7 @@ class _callState extends State<call> {
                       // formattedTime,
                       _timeC.text,
                       sumPayment,
+                      _checkboxDone,
                       productList);
                 } else {
                   updateUser(
@@ -542,6 +565,7 @@ class _callState extends State<call> {
                       dropdownValue,
                       _timeC.text,
                       sumPayment,
+                      _checkboxDone,
                       productList);
                 }
 
@@ -552,7 +576,7 @@ class _callState extends State<call> {
 
                   // Reset checkbox value
                   _checkboxValue = false;
-
+_checkboxDone =false;
                   // Reset dropdown value
                   _dropdownValue = '';
 
@@ -576,7 +600,7 @@ class _callState extends State<call> {
   }
 }
 
-Future<void> addCall(client, call, paid, type, hour, payment,
+Future<void> addCall(client, call, paid, type, hour, payment, done,
     List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
   // print('userID  ${client.id}');
@@ -601,6 +625,7 @@ Future<void> addCall(client, call, paid, type, hour, payment,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'hour': hour,
       'payment': payment,
+      'done': done,
       'products': productList
           .map((product) => {
                 'name': product.name,
@@ -618,7 +643,7 @@ Future<void> addCall(client, call, paid, type, hour, payment,
 }
 
 Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
-    payment, List<ProductData> productList) async {
+    payment,done, List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -662,6 +687,7 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
       'type': type,
       'hour': hour,
       'payment': payment,
+       'done': done,
       'products': FieldValue.arrayUnion(productList
           .map((product) => {
                 'name': product.name,
