@@ -15,6 +15,7 @@ class callsTodo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
     return Scaffold(
       appBar: AppBar(
         title: Text('dsdsd'),
@@ -23,9 +24,8 @@ class callsTodo extends StatelessWidget {
         child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collectionGroup('calls')
-
                 // .where('done', isEqualTo: false)
-
+                // .where('call', isEqualTo: 'rr')
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -52,7 +52,7 @@ class callsTodo extends StatelessWidget {
                     // For example, if you want to display the call's ID and title:
                     return ListTile(
                       title: Text(callData['call']),
-                      subtitle: Text(callData['id']),
+                      subtitle: Text(callData['type']),
                     );
                   },
                 );
