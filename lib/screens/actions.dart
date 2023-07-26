@@ -143,11 +143,22 @@ class _callState extends State<call> {
       // if (widget.data.isNotEmpty) {
       products = widget.data['products'];
     }
+    if (widget.data.containsKey('done') &&
+       widget.data['done'] == null) {
+      // if (widget.data.isNotEmpty) {
+      _checkboxDone =false;
+    }else if(widget.data['done'] == true){
+      _checkboxDone = true;
+    }
 
+    print(widget.data['done'].runtimeType);
     callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
-    sumPayment = widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
+    sumPayment =
+        widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
-    _checkboxDone = widget.data.isNotEmpty && widget.data.containsKey('done')? widget.data['done'] : false;
+    // _checkboxDone = widget.data.isNotEmpty && widget.data.containsKey('done')
+    //     ? widget.data['done']
+    //     : '';
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
     getPrefs();
   }
@@ -288,12 +299,11 @@ class _callState extends State<call> {
 
   @override
   Widget build(BuildContext context) {
-   
     final TextEditingController paimentController =
         TextEditingController(text: sumPayment);
     // print('sumPayment  ${sumPayment}');
     // print('sumPayment  ${sumPayment.runtimeType}');
-   
+
     // String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
@@ -427,7 +437,7 @@ class _callState extends State<call> {
                       }),
                 ],
               ),
-                   SizedBox(height: 8),
+              SizedBox(height: 8),
               Row(
                 children: [
                   Text(
@@ -576,7 +586,7 @@ class _callState extends State<call> {
 
                   // Reset checkbox value
                   _checkboxValue = false;
-_checkboxDone =false;
+                  _checkboxDone = false;
                   // Reset dropdown value
                   _dropdownValue = '';
 
@@ -643,7 +653,7 @@ Future<void> addCall(client, call, paid, type, hour, payment, done,
 }
 
 Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
-    payment,done, List<ProductData> productList) async {
+    payment, done, List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -687,7 +697,7 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
       'type': type,
       'hour': hour,
       'payment': payment,
-       'done': done,
+      'done': done,
       'products': FieldValue.arrayUnion(productList
           .map((product) => {
                 'name': product.name,

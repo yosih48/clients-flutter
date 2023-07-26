@@ -80,7 +80,7 @@ class _CallsScreenState extends State<CallsScreen> {
       // T: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text( AppLocalizations.of(context)!.filtering),
+          title: Text(AppLocalizations.of(context)!.filtering),
           // content: TextField(
           //   controller: _textFieldController,
           //   decoration: const InputDecoration(hintText: 'Type your todo'),
@@ -109,7 +109,7 @@ class _CallsScreenState extends State<CallsScreen> {
                 Navigator.of(context).pop();
                 // print(selectedCharacter);
               },
-              child:  Text(   AppLocalizations.of(context)!.cancel),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -141,7 +141,7 @@ class _CallsScreenState extends State<CallsScreen> {
                   // print(_selectedCharacterNotifier.value.runtimeType);
                 });
               },
-              child: Text( AppLocalizations.of(context)!.add),
+              child: Text(AppLocalizations.of(context)!.add),
             ),
           ],
         );
@@ -186,9 +186,9 @@ class _CallsScreenState extends State<CallsScreen> {
         actions: [
           PopupMenuButton<String>(
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-               PopupMenuItem<String>(
+              PopupMenuItem<String>(
                 value: 'filterPaid',
-                child: Text( AppLocalizations.of(context)!.filtering),
+                child: Text(AppLocalizations.of(context)!.filtering),
               ),
               // const PopupMenuItem<String>(
               //   value: 'option2',
@@ -220,6 +220,7 @@ class _CallsScreenState extends State<CallsScreen> {
               .collection('calls')
               // .where('paid', isEqualTo: _selectedCharacterNotifier.value)
               .where('paid', isEqualTo: _getFilterValue())
+              // .where('done', isEqualTo: true)
               // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:
@@ -252,7 +253,7 @@ class _CallsScreenState extends State<CallsScreen> {
                     ),
                     SizedBox(width: 24.0),
                     Text(
-                       AppLocalizations.of(context)!.amount,
+                      AppLocalizations.of(context)!.amount,
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -345,69 +346,63 @@ class _CallsScreenState extends State<CallsScreen> {
                       // );
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child:Slidable(
-               key: const ValueKey(0),
-                    endActionPane: ActionPane(
-                      dismissible: DismissiblePane(onDismissed: () {
-                        // we can able to perform to some action here
-                      }),
-                      motion: const DrawerMotion(),
-                      children: [
-                        SlidableAction(
-                          autoClose: true,
-                          flex: 1,
-                                             onPressed: (value)async {
+                        child: Slidable(
+                          key: const ValueKey(0),
+                          endActionPane: ActionPane(
+                            dismissible: DismissiblePane(onDismissed: () {
+                              // we can able to perform to some action here
+                            }),
+                            motion: const DrawerMotion(),
+                            children: [
+                              SlidableAction(
+                                autoClose: true,
+                                flex: 1,
+                                onPressed: (value) async {
+                                  showDialogw(
+                                    context,
+                                    onConfirm: () async {
+                                      // Remove the item from Firestore
+                                      await FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(FirebaseAuth
+                                              .instance.currentUser!.uid)
+                                          .collection('user_data')
+                                          .doc(widget.clientId.id)
+                                          .collection('calls')
+                                          .doc(call[
+                                              'id']) // Assuming 'id' is the document ID of each user data
+                                          .delete();
 
-      showDialogw(
-          context,
-          onConfirm: () async {
-            // Remove the item from Firestore
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('user_data')
-                .doc(widget.clientId.id)
-                .collection('calls')
-                .doc(call['id']) // Assuming 'id' is the document ID of each user data
-                .delete();
+                                      // Remove the item from the local list and update the UI
+                                      setState(() {
+                                        // users.removeAt(index);
+                                        // print('deleted');
+                                      });
+                                    },
+                                  );
+                                },
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                                icon: Icons.delete,
+                                label: AppLocalizations.of(context)!.delete,
+                              ),
+                              // SlidableAction(
+                              //   autoClose: true,
+                              //   flex: 1,
+                              //   onPressed: (value) {
+                              //         //  displayDialog(context, '${user.id}');
 
-            // Remove the item from the local list and update the UI
-            setState(() {
-              // users.removeAt(index);
-              // print('deleted');
-            });
-          },
-        );
+                              //         // showAlertDialog( context,'ASAS');
+                              //           // showDialogw( context);
 
-
-                          },
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                          icon: Icons.delete,
-                         label:  AppLocalizations.of(context)!.delete,
-                        ),
-                        // SlidableAction(
-                        //   autoClose: true,
-                        //   flex: 1,
-                        //   onPressed: (value) {
-                        //         //  displayDialog(context, '${user.id}');
-
-
-                        //         // showAlertDialog( context,'ASAS');
-                        //           // showDialogw( context);
-
-                        //   },
-                        //   backgroundColor: Colors.blueAccent,
-                        //   foregroundColor: Colors.white,
-                        //   icon: Icons.edit,
-                        //   label: 'Edit',
-                        // ),
-                      ],
-                    ),
-
-
-
-                          
+                              //   },
+                              //   backgroundColor: Colors.blueAccent,
+                              //   foregroundColor: Colors.white,
+                              //   icon: Icons.edit,
+                              //   label: 'Edit',
+                              // ),
+                            ],
+                          ),
                           child: InkWell(
                             onTap: () {
                               // Handle the second option
@@ -432,7 +427,7 @@ class _CallsScreenState extends State<CallsScreen> {
                                           color: Colors.blueAccent,
                                           width: 1.0,
                                           style: BorderStyle.solid))),
-                                              
+
                               child: Container(
                                 // padding: EdgeInsets.all(16),
                                 decoration: BoxDecoration(
@@ -445,7 +440,8 @@ class _CallsScreenState extends State<CallsScreen> {
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Text(' $formattedDate '),
                                           // Text(callDetails),
@@ -456,7 +452,8 @@ class _CallsScreenState extends State<CallsScreen> {
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 10),
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
                                       height: 60,
                                       width: 0.5,
                                       color: Colors.grey[200]!.withOpacity(0.7),
@@ -471,7 +468,8 @@ class _CallsScreenState extends State<CallsScreen> {
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 10),
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
                                       height: 60,
                                       width: 0.5,
                                       color: Colors.grey[200]!.withOpacity(0.7),
@@ -486,7 +484,8 @@ class _CallsScreenState extends State<CallsScreen> {
                                       ),
                                     ),
                                     Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 10),
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
                                       height: 60,
                                       width: 0.5,
                                       color: Colors.grey[200]!.withOpacity(0.7),
@@ -497,10 +496,12 @@ class _CallsScreenState extends State<CallsScreen> {
                                             CrossAxisAlignment.center,
                                         children: [
                                           if (paid)
-                                            Icon(Icons.done, color: Colors.green),
+                                            Icon(Icons.done,
+                                                color: Colors.green),
                                           // Text(' $sum'),
                                           if (!paid)
-                                            Icon(Icons.cancel, color: Colors.red),
+                                            Icon(Icons.cancel,
+                                                color: Colors.red),
                                         ],
                                       ),
                                     ),
