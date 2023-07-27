@@ -220,7 +220,7 @@ class _CallsScreenState extends State<CallsScreen> {
               .collection('calls')
               // .where('paid', isEqualTo: _selectedCharacterNotifier.value)
               .where('paid', isEqualTo: _getFilterValue())
-              // .where('done', isEqualTo: true)
+              // .where('userRef', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
               // .orderBy('timestamp', descending: true)
               .snapshots(),
           builder:

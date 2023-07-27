@@ -15,6 +15,7 @@ class callsTodo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   
     String currentUserId = FirebaseAuth.instance.currentUser!.uid;
     return Scaffold(
       appBar: AppBar(
@@ -25,7 +26,7 @@ class callsTodo extends StatelessWidget {
             stream: FirebaseFirestore.instance
                 .collectionGroup('calls')
                 // .where('done', isEqualTo: false)
-                // .where('call', isEqualTo: 'rr')
+                    .where('userRef', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

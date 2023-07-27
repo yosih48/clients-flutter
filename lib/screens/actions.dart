@@ -444,6 +444,7 @@ class _callState extends State<call> {
                     AppLocalizations.of(context)!.done,
                     style: TextStyle(fontSize: 16),
                   ),
+              SizedBox(width: 4),
                   Checkbox(
                       value: _checkboxDone,
                       onChanged: (newValue) {
@@ -511,32 +512,45 @@ class _callState extends State<call> {
               if (_timeC.text.isNotEmpty) {
                 firstNumber = int.tryParse(_timeC.text.substring(0, 1));
               }
-
+    print('sumHourValue: ${sumHourValue}');
 // sum poduct price
               double newProduct = 0;
               for (var product in productList) {
                 // print('Product Name: ${product.name}');
-                print('productList Price: ${product.discountedPrice}');
+                // print('productList Price: ${product.discountedPrice}');
                 // print('Discounted Price: ${product.discountedPrice}');
                 newProduct += product.discountedPrice!;
               }
               double oldProduct = 0;
               for (var product in products) {
                 // print('Product Name: ${product.name}');
-                print('products Price: ${product['discountedPrice']}');
+                // print('products Price: ${product['discountedPrice']}');
                 // print('Discounted Price: ${product.discountedPrice}');
                 oldProduct += product['discountedPrice'];
               }
               double sumProduct = oldProduct + newProduct;
-              print('sumProductt: ${sumProduct}');
+              // print('sumProductt: ${sumProduct}');
+              // print('newProduct: ${newProduct}');
+              // print('oldProduct: ${oldProduct}');
+              // print('sumHourValue: ${sumHourValue}');
               // print(sumHourValue.runtimeType);
               // print('userID  ${widget.user.id}');
 
               // price per hour
               int hourCharge = hourlyRate * (firstNumber! + 1);
               // calculate total price
-              double sumPayment =
-                  sumHourValue.toDouble() + sumProduct + hourCharge;
+               double sumPayment = 0;
+              if(sumHourValue == 0.0 ){
+               sumPayment =
+                  sumHourValue.toDouble() +  hourCharge + sumProduct ;
+// print('sumHourValue emptey');
+              }else{
+              sumHourValue <sumProduct? 
+                    sumPayment =
+                  sumHourValue.toDouble() + sumProduct+ hourCharge: sumPayment =  sumHourValue.toDouble() +  hourCharge + newProduct ;
+                  // print('sumHourValue not emptey');
+      
+              }
 
               // print('dropdownValue ${dropdownValue}');
               // print('charge per hour  ${hourCharge}');
