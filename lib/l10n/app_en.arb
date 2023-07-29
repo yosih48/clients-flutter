@@ -51,8 +51,8 @@
                               "openCall": "open call",
                                "delete": "delete",
                                "done": "done",
-                               "todo": "todo"
-
+                               "todo": "todo",
+                               "noTodoCalls": "no open calls" 
                       
                 
                     

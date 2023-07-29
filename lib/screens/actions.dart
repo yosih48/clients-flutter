@@ -583,6 +583,7 @@ class _callState extends State<call> {
                 } else {
                   updateUser(
                       widget.data['usera'],
+                      
                       widget.data['id'],
                       _callDetailsController.text,
                       _checkboxValue,
@@ -652,6 +653,7 @@ Future<void> addCall(client, call, paid, type, hour, payment, done,
       'done': done,
       'userRef': user!.uid,
       'clientName': client.name,
+      'clientRef': client.id,
       'products': productList
           .map((product) => {
                 'name': product.name,
@@ -670,6 +672,7 @@ Future<void> addCall(client, call, paid, type, hour, payment, done,
 
 Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
     payment, done, List<ProductData> productList) async {
+  print(clientID);
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
       FirebaseFirestore.instance.collection('users');
@@ -679,7 +682,6 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
       .collection('user_data')
       .doc(clientID);
   final callsRef = clientRef.collection('calls');
-  // print(phone);
   // print(user!.uid);
   // print(id);
 

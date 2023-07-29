@@ -60,14 +60,21 @@ class callsTodo extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ClientServiceScreen(
-                                      call: callData, user:callData['id']),
+                                      call: callData, user:callData['clientRef']),
                                 ),
                               );
                             },
 
                       child: Card(
                         child: ListTile(
-                          leading: Text(callData['clientName']),
+                           leading: Container(
+    width: 60, // Adjust the width as needed to control wrapping behavior
+    child: Text(
+      callData['clientName'],
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    ),
+  ),
                           title: Text(callData['type']),
                           subtitle: Text(callData['call']),
                         ),
