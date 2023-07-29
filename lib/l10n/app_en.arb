@@ -50,7 +50,8 @@
                            "edit": "edit",
                               "openCall": "open call",
                                "delete": "delete",
-                               "done": "done"
+                               "done": "done",
+                               "todo": "todo"
 
                       
                 

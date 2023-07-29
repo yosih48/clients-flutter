@@ -627,7 +627,7 @@ class _callState extends State<call> {
 Future<void> addCall(client, call, paid, type, hour, payment, done,
     List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
-  // print('userID  ${client.id}');
+  // print('userID  ${client.name}');
   // print('nainuserID  ${user}');
   final clientRef = FirebaseFirestore.instance
       .collection('users')
@@ -650,6 +650,8 @@ Future<void> addCall(client, call, paid, type, hour, payment, done,
       'hour': hour,
       'payment': payment,
       'done': done,
+      'userRef': user!.uid,
+      'clientName': client.name,
       'products': productList
           .map((product) => {
                 'name': product.name,

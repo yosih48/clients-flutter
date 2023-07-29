@@ -19,13 +19,13 @@ class callsTodo extends StatelessWidget {
     String currentUserId = FirebaseAuth.instance.currentUser!.uid;
     return Scaffold(
       appBar: AppBar(
-        title: Text('dsdsd'),
+        title: Text(AppLocalizations.of(context)!.todo),
       ),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
             stream: FirebaseFirestore.instance
                 .collectionGroup('calls')
-                // .where('done', isEqualTo: false)
+                .where('done', isEqualTo: false)
                     .where('userRef', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                 .snapshots(),
             builder:
@@ -51,9 +51,27 @@ class callsTodo extends StatelessWidget {
                     print(callData);
                     // Now, you can use `callData` to display the relevant information on the screen
                     // For example, if you want to display the call's ID and title:
-                    return ListTile(
-                      title: Text(callData['call']),
-                      subtitle: Text(callData['type']),
+                    return InkWell(
+       onTap: () {
+                              // Handle the second option
+                              // Navigator.of(context).pop();
+                              // Navigator.pushNamed(context, '/actions');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ClientServiceScreen(
+                                      call: callData, user:callData['id']),
+                                ),
+                              );
+                            },
+
+                      child: Card(
+                        child: ListTile(
+                          leading: Text(callData['clientName']),
+                          title: Text(callData['type']),
+                          subtitle: Text(callData['call']),
+                        ),
+                      ),
                     );
                   },
                 );
