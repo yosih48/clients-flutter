@@ -182,10 +182,16 @@ getSumProduct(){
                 print('loop ${product.discountedPrice}');
                 double sumProd = product.discountedPrice!;
                 sumPayment += sumProd;
-  //           double sumPaymentAsDouble = double.parse(sumPayment); 
 
-  // double totalSum = sumPaymentAsDouble + sumProd;
-  //  print('Total sum: $totalSum'); 
+    //          double sumHourValue = getSumHourValue();
+    //           int? firstNumber = 0;
+    //           if (_timeC.text.isNotEmpty) {
+    //             firstNumber = int.tryParse(_timeC.text.substring(0, 1));
+    //           }
+    // print('sumHourValue: ${sumHourValue}');
+
+
+
    print('Total sum: $sumPayment'); 
  
               }
@@ -332,7 +338,6 @@ getSumProduct(){
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
     // final TextEditingController paimentController = TextEditingController();
-
     double getSumHourValue() {
       double sumHourValue = 0.0;
 
@@ -343,6 +348,8 @@ getSumProduct(){
       }
       return sumHourValue;
     }
+    
+
 
     return Column(
       children: [
