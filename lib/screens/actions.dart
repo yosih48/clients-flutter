@@ -133,7 +133,7 @@ class _callState extends State<call> {
 
   int hourlyRate = 0;
   String callDetails = '';
-  String sumPayment = '0';
+  double sumPayment = 0;
   List<dynamic> products = [];
   void initState() {
     super.initState();
@@ -151,10 +151,10 @@ class _callState extends State<call> {
       _checkboxDone = true;
     }
 
-    print(widget.data['done'].runtimeType);
+    // print(widget.data['done'].runtimeType);
     callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     sumPayment =
-        widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
+        widget.data.isNotEmpty ? widget.data['payment'] : '0';
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
     // _checkboxDone = widget.data.isNotEmpty && widget.data.containsKey('done')
     //     ? widget.data['done']
@@ -163,13 +163,33 @@ class _callState extends State<call> {
     getPrefs();
   }
 
-  void handleProductListChanged(List<ProductData> updatedList) {
+  void handleProductListChanged(List<ProductData> updatedList){
     setState(() {
       productList = updatedList;
+    
 
       // products.add(updatedList);
     });
+
+
   }
+
+getSumProduct(){
+     for (var product in productList) {
+                // print('Product Name: ${product.name}');
+                // print('productList Price: ${product.discountedPrice}');
+                // print('Discounted Price: ${product.discountedPrice}');
+                print('loop ${product.discountedPrice}');
+                double sumProd = product.discountedPrice!;
+                sumPayment += sumProd;
+  //           double sumPaymentAsDouble = double.parse(sumPayment); 
+
+  // double totalSum = sumPaymentAsDouble + sumProd;
+  //  print('Total sum: $totalSum'); 
+   print('Total sum: $sumPayment'); 
+ 
+              }
+}
 
   getPrefs() async {
     // The async keyword is placed before the SharedPreferences class.
@@ -227,7 +247,10 @@ class _callState extends State<call> {
               onPressed: () {
                 Navigator.of(context).pop();
                 handleProductListChanged(productList);
-                setState(() {});
+                setState(() {
+                getSumProduct();
+
+                });
               },
               child: Text(AppLocalizations.of(context)!.add),
             ),
@@ -300,7 +323,8 @@ class _callState extends State<call> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController paimentController =
-        TextEditingController(text: sumPayment);
+        // TextEditingController(text: sumPayment);
+        TextEditingController();
     // print('sumPayment  ${sumPayment}');
     // print('sumPayment  ${sumPayment.runtimeType}');
 
@@ -404,6 +428,7 @@ class _callState extends State<call> {
               SizedBox(height: 8),
 
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Expanded(
                     child: TextField(
@@ -415,9 +440,30 @@ class _callState extends State<call> {
                               AppLocalizations.of(context)!.paymentAmount),
                     ),
                   ),
+    
                 ],
               ),
               SizedBox(height: 8),
+Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Sum of Payment:',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(width: 8), // Add spacing between text and box
+                  // PaymentBox(parameter1: 50.0, parameter2: 30.0),
+                  Text('${sumPayment}')
+                  // $sumPayment;
+                ],
+              ),
+              // You can create multiple PaymentBox widgets with different parameters
+     
+            ],
+          ),
               Row(
                 children: [
                   Text(
@@ -565,7 +611,7 @@ class _callState extends State<call> {
                 _timeC.text = '0';
               }
               if (_callDetailsController.text != '' &&
-                  _timeC.text != '' &&
+                  // _timeC.text != '' &&
                   sumHourValue != '' &&
                   dropdownValue != '') {
                 if (widget.data.isEmpty) {
