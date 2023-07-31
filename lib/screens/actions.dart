@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supercharged/supercharged.dart';
 import '../Constants/AppString.dart';
 import '../componenets/alertDialog.dart';
 import '../componenets/parts.dart';
@@ -43,7 +44,6 @@ class _dropdownState extends State<dropdown> {
   void initState() {
     super.initState();
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
-    int test = widget.data['payment'];
   }
 
   @override
@@ -135,10 +135,11 @@ class _callState extends State<call> {
   int hourlyRate = 0;
   String callDetails = '';
   String sumPayment = '0';
+  String extraPayment = '0';
   List<dynamic> products = [];
   void initState() {
     super.initState();
-
+    print('extraPayment1: ${extraPayment}');
     if (widget.data.containsKey('products') &&
         widget.data['products'].isNotEmpty) {
       // if (widget.data.isNotEmpty) {
@@ -151,11 +152,19 @@ class _callState extends State<call> {
       _checkboxDone = true;
     }
 
-    print(widget.data['done'].runtimeType);
+    // print(widget.data['done'].runtimeType);
     callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     sumPayment =
         widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
+
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
+
+    if (widget.data.containsKey('extraPayment')) {
+      // if (widget.data.isNotEmpty) {
+      extraPayment = widget.data['extraPayment'].toString();
+      print('extraPayment: ${extraPayment}');
+    }
+    print('extraPayment2: ${extraPayment}');
     // _checkboxDone = widget.data.isNotEmpty && widget.data.containsKey('done')
     //     ? widget.data['done']
     //     : '';
@@ -297,11 +306,14 @@ class _callState extends State<call> {
 
   //   });
   // }
-
+  // final TextEditingController paimentController =
+  // TextEditingController(text: sumPayment);
+  // TextEditingController();
   @override
   Widget build(BuildContext context) {
     final TextEditingController paimentController =
-        TextEditingController(text: sumPayment);
+        TextEditingController(text: extraPayment);
+    //     TextEditingController();
     // print('sumPayment  ${sumPayment}');
     // print('sumPayment  ${sumPayment.runtimeType}');
 
@@ -413,22 +425,26 @@ class _callState extends State<call> {
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: InputDecoration(
                           labelText:
-                              AppLocalizations.of(context)!.paymentAmount),
+                              AppLocalizations.of(context)!.extraPayment),
                     ),
                   ),
+                  // SizedBox(width: 132),
                 ],
+              ),
+              SizedBox(
+                height: 8,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Sum of Payment:',
-                    style: TextStyle(fontSize: 18),
+                    '${AppLocalizations.of(context)!.paymentAmount}:',
+                    style: TextStyle(fontSize: 15),
                   ),
                   SizedBox(width: 8), // Add spacing between text and box
                   // PaymentBox(parameter1: 50.0, parameter2: 30.0),
                   // '$widget.data['payment']'
-                
+                  Text('${widget.data['payment']}')
                 ],
               ),
               SizedBox(height: 8),
@@ -532,6 +548,7 @@ class _callState extends State<call> {
               print('sumHourValue: ${sumHourValue}');
 // sum poduct price
               double newProduct = 0;
+
               for (var product in productList) {
                 // print('Product Name: ${product.name}');
                 // print('productList Price: ${product.discountedPrice}');
@@ -563,6 +580,11 @@ class _callState extends State<call> {
               //     : hourlyRate * (firstNumber! + 1);
 
               print('hourCharge: ${hourCharge}');
+              print('paimentController.text: ${paimentController.text}');
+
+              double? payment = paimentController.text == ''
+                  ? 0
+                  : paimentController.text.toDouble();
               // widget.data.remove('payment');
               // widget.data['payment'] = 0;
               // print('widget.data payment: ${widget.data['payment']}');
@@ -580,7 +602,7 @@ class _callState extends State<call> {
 //                 // print('sumHourValue not emptey');
 //               }
 
-              double sumPayment = sumProduct + hourCharge;
+              double sumPayment = sumProduct + hourCharge + payment!;
 
               // print('dropdownValue ${dropdownValue}');
               // print('charge per hour  ${hourCharge}');
@@ -609,6 +631,7 @@ class _callState extends State<call> {
                       _timeC.text,
                       sumPayment,
                       _checkboxDone,
+                      payment,
                       productList);
                 } else {
                   updateUser(
@@ -620,6 +643,7 @@ class _callState extends State<call> {
                       _timeC.text,
                       sumPayment,
                       _checkboxDone,
+                      payment,
                       productList);
                 }
 
@@ -654,7 +678,7 @@ class _callState extends State<call> {
   }
 }
 
-Future<void> addCall(client, call, paid, type, hour, payment, done,
+Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
     List<ProductData> productList) async {
   User? user = FirebaseAuth.instance.currentUser;
   // print('userID  ${client.name}');
@@ -683,6 +707,7 @@ Future<void> addCall(client, call, paid, type, hour, payment, done,
       'userRef': user!.uid,
       'clientName': client.name,
       'clientRef': client.id,
+      'extraPayment': extraCharge,
       'products': productList
           .map((product) => {
                 'name': product.name,
@@ -700,7 +725,7 @@ Future<void> addCall(client, call, paid, type, hour, payment, done,
 }
 
 Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
-    payment, done, List<ProductData> productList) async {
+    payment, done, extraCharge, List<ProductData> productList) async {
   print(clientID);
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
@@ -745,6 +770,7 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
       'hour': hour,
       'payment': payment,
       'done': done,
+      'extraPayment': extraCharge,
       'products': FieldValue.arrayUnion(productList
           .map((product) => {
                 'name': product.name,

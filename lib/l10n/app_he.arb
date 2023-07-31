@@ -49,7 +49,8 @@
               "delete": "מחק",
                  "done": "בוצע",
                     "todo": "לביצוע",
-                    "noTodoCalls": "אין קריאות לביצוע"
+                    "noTodoCalls": "אין קריאות לביצוע",
+                     "extraPayment": "חיוב נוסף"
           
     
 

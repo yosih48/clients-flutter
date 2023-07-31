@@ -159,6 +159,7 @@ class ClientServiceScreen extends StatelessWidget {
                   'paid': call['paid'],
                   'payment': call['payment'],
                   'done': call['done'],
+                  'extraPayment': call['extraPayment'],
                   'products': call['products'],
                   'usera': user,
                   'fromScreen1': true
