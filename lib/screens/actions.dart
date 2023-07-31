@@ -43,6 +43,7 @@ class _dropdownState extends State<dropdown> {
   void initState() {
     super.initState();
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
+    int test = widget.data['payment'];
   }
 
   @override
@@ -143,11 +144,10 @@ class _callState extends State<call> {
       // if (widget.data.isNotEmpty) {
       products = widget.data['products'];
     }
-    if (widget.data.containsKey('done') &&
-       widget.data['done'] == null) {
+    if (widget.data.containsKey('done') && widget.data['done'] == null) {
       // if (widget.data.isNotEmpty) {
-      _checkboxDone =false;
-    }else if(widget.data['done'] == true){
+      _checkboxDone = false;
+    } else if (widget.data['done'] == true) {
       _checkboxDone = true;
     }
 
@@ -238,6 +238,7 @@ class _callState extends State<call> {
   }
 
   Future displayTimePicker(BuildContext context) async {
+    print('_timeC.text: ${_timeC.text}');
     _timeC.text = '';
     widget.data.remove('hour');
     var time =
@@ -417,7 +418,21 @@ class _callState extends State<call> {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Sum of Payment:',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(width: 8), // Add spacing between text and box
+                  // PaymentBox(parameter1: 50.0, parameter2: 30.0),
+                  // '$widget.data['payment']'
+                
+                ],
+              ),
               SizedBox(height: 8),
+
               Row(
                 children: [
                   Text(
@@ -444,7 +459,7 @@ class _callState extends State<call> {
                     AppLocalizations.of(context)!.done,
                     style: TextStyle(fontSize: 16),
                   ),
-              SizedBox(width: 4),
+                  SizedBox(width: 4),
                   Checkbox(
                       value: _checkboxDone,
                       onChanged: (newValue) {
@@ -507,12 +522,14 @@ class _callState extends State<call> {
           onPressed: () {
             // someFunction();
             setState(() {
-              double sumHourValue = getSumHourValue();
+              // double sumHourValue = getSumHourValue();
+              double sumHourValue = 0;
+              print('sumHourValue1: ${sumHourValue}');
               int? firstNumber = 0;
               if (_timeC.text.isNotEmpty) {
                 firstNumber = int.tryParse(_timeC.text.substring(0, 1));
               }
-    print('sumHourValue: ${sumHourValue}');
+              print('sumHourValue: ${sumHourValue}');
 // sum poduct price
               double newProduct = 0;
               for (var product in productList) {
@@ -537,20 +554,33 @@ class _callState extends State<call> {
               // print('userID  ${widget.user.id}');
 
               // price per hour
+              print('_timeC.text: ${_timeC.text}');
+              print('widget.data hour: ${widget.data['hour']}');
+
               int hourCharge = hourlyRate * (firstNumber! + 1);
+              // int hourCharge = _timeC.text == widget.data['hour']
+              //     ? 0
+              //     : hourlyRate * (firstNumber! + 1);
+
+              print('hourCharge: ${hourCharge}');
+              // widget.data.remove('payment');
+              // widget.data['payment'] = 0;
+              // print('widget.data payment: ${widget.data['payment']}');
               // calculate total price
-               double sumPayment = 0;
-              if(sumHourValue == 0.0 ){
-               sumPayment =
-                  sumHourValue.toDouble() +  hourCharge + sumProduct ;
-// print('sumHourValue emptey');
-              }else{
-              sumHourValue <sumProduct? 
-                    sumPayment =
-                  sumHourValue.toDouble() + sumProduct+ hourCharge: sumPayment =  sumHourValue.toDouble() +  hourCharge + newProduct ;
-                  // print('sumHourValue not emptey');
-      
-              }
+//               double sumPayment = 0;
+//               if (sumHourValue == 0.0) {
+//                 sumPayment = sumHourValue.toDouble() + hourCharge + sumProduct;
+// // print('sumHourValue emptey');
+//               } else {
+//                 sumHourValue < sumProduct
+//                     ? sumPayment =
+//                         sumHourValue.toDouble() + sumProduct + hourCharge
+//                     : sumPayment =
+//                         sumHourValue.toDouble() + hourCharge + newProduct;
+//                 // print('sumHourValue not emptey');
+//               }
+
+              double sumPayment = sumProduct + hourCharge;
 
               // print('dropdownValue ${dropdownValue}');
               // print('charge per hour  ${hourCharge}');
@@ -565,7 +595,7 @@ class _callState extends State<call> {
                 _timeC.text = '0';
               }
               if (_callDetailsController.text != '' &&
-                  _timeC.text != '' &&
+                  // _timeC.text != '' &&
                   sumHourValue != '' &&
                   dropdownValue != '') {
                 if (widget.data.isEmpty) {
@@ -583,7 +613,6 @@ class _callState extends State<call> {
                 } else {
                   updateUser(
                       widget.data['usera'],
-                      
                       widget.data['id'],
                       _callDetailsController.text,
                       _checkboxValue,

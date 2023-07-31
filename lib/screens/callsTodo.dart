@@ -15,7 +15,6 @@ class callsTodo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
     String currentUserId = FirebaseAuth.instance.currentUser!.uid;
     return Scaffold(
       appBar: AppBar(
@@ -26,7 +25,8 @@ class callsTodo extends StatelessWidget {
             stream: FirebaseFirestore.instance
                 .collectionGroup('calls')
                 .where('done', isEqualTo: false)
-                    .where('userRef', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                .where('userRef',
+                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -52,29 +52,29 @@ class callsTodo extends StatelessWidget {
                     // Now, you can use `callData` to display the relevant information on the screen
                     // For example, if you want to display the call's ID and title:
                     return InkWell(
-       onTap: () {
-                              // Handle the second option
-                              // Navigator.of(context).pop();
-                              // Navigator.pushNamed(context, '/actions');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ClientServiceScreen(
-                                      call: callData, user:callData['clientRef']),
-                                ),
-                              );
-                            },
-
+                      onTap: () {
+                        // Handle the second option
+                        // Navigator.of(context).pop();
+                        // Navigator.pushNamed(context, '/actions');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ClientServiceScreen(
+                                call: callData, user: callData['clientRef']),
+                          ),
+                        );
+                      },
                       child: Card(
                         child: ListTile(
-                           leading: Container(
-    width: 60, // Adjust the width as needed to control wrapping behavior
-    child: Text(
-      callData['clientName'],
-      maxLines: 2,
-      overflow: TextOverflow.ellipsis,
-    ),
-  ),
+                          leading: Container(
+                            width:
+                                60, // Adjust the width as needed to control wrapping behavior
+                            child: Text(
+                              callData['clientName'],
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                           title: Text(callData['type']),
                           subtitle: Text(callData['call']),
                         ),
