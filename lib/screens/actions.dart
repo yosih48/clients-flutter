@@ -447,49 +447,9 @@ class _callState extends State<call> {
                   Text('${widget.data['payment']}')
                 ],
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 16),
 
-              Row(
-                children: [
-                  Text(
-                    AppStrings.paid,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Checkbox(
-                      value: _checkboxValue,
-                      onChanged: (newValue) {
-                        // print(newValue);
-
-                        setState(() {
-                          _checkboxValue = newValue!;
-
-                          // print(_checkboxValue);
-                        });
-                      }),
-                ],
-              ),
-              SizedBox(height: 8),
-              Row(
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.done,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(width: 4),
-                  Checkbox(
-                      value: _checkboxDone,
-                      onChanged: (newValue) {
-                        // print(newValue);
-
-                        setState(() {
-                          _checkboxDone = newValue!;
-
-                          // print(_checkboxValue);
-                        });
-                      }),
-                ],
-              ),
-              SizedBox(height: 8),
+          
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -528,8 +488,49 @@ class _callState extends State<call> {
                   );
                 }).toList(),
               ),
+                  SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    AppStrings.paid,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Checkbox(
+                      value: _checkboxValue,
+                      onChanged: (newValue) {
+                        // print(newValue);
 
-              SizedBox(height: 8),
+                        setState(() {
+                          _checkboxValue = newValue!;
+
+                          // print(_checkboxValue);
+                        });
+                      }),
+                ],
+              ),
+              // SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.done,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(width: 4),
+                  Checkbox(
+                      value: _checkboxDone,
+                      onChanged: (newValue) {
+                        // print(newValue);
+
+                        setState(() {
+                          _checkboxDone = newValue!;
+
+                          // print(_checkboxValue);
+                        });
+                      }),
+                ],
+              ),
+
+              // SizedBox(height: 8),
             ],
           ),
         ),
@@ -582,7 +583,7 @@ class _callState extends State<call> {
               print('hourCharge: ${hourCharge}');
               print('paimentController.text: ${paimentController.text}');
 
-              double? payment = paimentController.text == ''
+              double? payment = paimentController.text == 'null'
                   ? 0
                   : paimentController.text.toDouble();
               // widget.data.remove('payment');
@@ -606,11 +607,12 @@ class _callState extends State<call> {
 
               // print('dropdownValue ${dropdownValue}');
               // print('charge per hour  ${hourCharge}');
-              // print('total payment  ${sumPayment}');
+              print('total payment  ${sumPayment}');
+              print('payment  ${payment}');
               // print('hour first number  ${firstNumber}');
               // print('call details  ${_callDetailsController.text}');
               // print('sigelton  ${AppSingelton().hourlyRate}');
-              // print('call time ${_timeC.text}');
+              print('call time ${_timeC.text}');
 
               // print('dataEmpty ${widget.data}');
               if (drop == false) {
