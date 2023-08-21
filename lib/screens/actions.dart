@@ -535,6 +535,7 @@ class _callState extends State<call> {
               ),
               SizedBox(height: 8),
               Row(
+                
                 children: [
                   Text(
                     AppStrings.paid,
@@ -551,12 +552,8 @@ class _callState extends State<call> {
                           // print(_checkboxValue);
                         });
                       }),
-                ],
-              ),
-              // SizedBox(height: 8),
-              Row(
-                children: [
-                  Text(
+                        SizedBox(width: 24),
+                               Text(
                     AppLocalizations.of(context)!.done,
                     style: TextStyle(fontSize: 16),
                   ),
@@ -574,6 +571,27 @@ class _callState extends State<call> {
                       }),
                 ],
               ),
+              // SizedBox(height: 8),
+              // Row(
+              //   children: [
+              //     Text(
+              //       AppLocalizations.of(context)!.done,
+              //       style: TextStyle(fontSize: 16),
+              //     ),
+              //     SizedBox(width: 4),
+              //     Checkbox(
+              //         value: _checkboxDone,
+              //         onChanged: (newValue) {
+              //           // print(newValue);
+
+              //           setState(() {
+              //             _checkboxDone = newValue!;
+
+              //             // print(_checkboxValue);
+              //           });
+              //         }),
+              //   ],
+              // ),
 
               // SizedBox(height: 8),
             ],
