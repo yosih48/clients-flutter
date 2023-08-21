@@ -78,7 +78,7 @@ class ClientServiceScreen extends StatelessWidget {
               children: [
                 if (products.isNotEmpty)
                   Expanded(
-                    flex: 4,
+                    flex: 2,
                     child: Text(
                       AppLocalizations.of(context)!.product,
                       style:
@@ -89,16 +89,16 @@ class ClientServiceScreen extends StatelessWidget {
                   height: 8.0,
                 ),
                 if (products.isNotEmpty)
-                  Expanded(
-                    flex: 5,
-                    child: Text(
-                      AppLocalizations.of(context)!.costPrice,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  // Expanded(
+                  //   flex: 5,
+                  //   child: Text(
+                  //     AppLocalizations.of(context)!.costPrice,
+                  //     style:
+                  //         TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  //   ),
+                  // ),
                 Expanded(
-                  flex: 4,
+                  flex:4,
                   child: Text(
                     AppLocalizations.of(context)!.finalPrice,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -128,15 +128,15 @@ class ClientServiceScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
+                    // Expanded(
+                    //   flex: 5,
+                    //   child: Text(
+                    //     '$productPrice ₪',
+                    //     style: TextStyle(fontSize: 16),
+                    //   ),
+                    // ),
                     Expanded(
-                      flex: 5,
-                      child: Text(
-                        '$productPrice ₪',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 4,
+                      flex: 6,
                       child: Text(
                         '$costPrice  ₪',
                         style: TextStyle(fontSize: 16),

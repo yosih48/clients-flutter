@@ -449,7 +449,79 @@ class _callState extends State<call> {
               ),
               SizedBox(height: 16),
 
-              Row(
+        
+                  if (products.isNotEmpty)
+                Row(
+                children: [
+                       SizedBox(width: 4.0),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        AppLocalizations.of(context)!.product,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  if (products.isNotEmpty)
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        AppLocalizations.of(context)!.costPrice,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  Expanded(
+                    flex: 4,
+                    child: Text(
+                      AppLocalizations.of(context)!.finalPrice,
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              if (products.isNotEmpty) SizedBox(height: 10),
+              Column(
+                children: products.map((product) {
+                  final productName = product['name'];
+                   final productPrice = product['price'];
+                  final costPrice = product['discountedPrice'];
+
+                  return Row(
+                    children: [
+                      SizedBox(width: 4.0),
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                          productName,
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: Text(
+                       
+                             '$productPrice ₪',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: Text(
+                         '$costPrice ₪',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  );
+                }).toList(),
+              ),
+                SizedBox(height: 8),
+                    Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   GestureDetector(
@@ -460,32 +532,6 @@ class _callState extends State<call> {
                     ),
                   ),
                 ],
-              ),
-              if (products.isNotEmpty) SizedBox(height: 10),
-              Column(
-                children: products.map((product) {
-                  final productName = product['name'];
-                  final productPrice = product['discountedPrice'];
-
-                  return Row(
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          productName,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 5,
-                        child: Text(
-                          '$productPrice ₪',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
               ),
               SizedBox(height: 8),
               Row(
