@@ -444,7 +444,7 @@ class _callState extends State<call> {
                   SizedBox(width: 8), // Add spacing between text and box
                   // PaymentBox(parameter1: 50.0, parameter2: 30.0),
                   // '$widget.data['payment']'
-                  Text('${widget.data['payment']}')
+                  Text( widget.data.isEmpty? '0' : '${widget.data['payment']}')
                 ],
               ),
               SizedBox(height: 16),
