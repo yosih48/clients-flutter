@@ -266,7 +266,7 @@ class _callState extends State<call> {
         _timeC.text = "${time.hour}:${time.minute}";
       } else {
         // print(' Empty  ${time}');
-        _timeC.text = '0.00';
+        _timeC.text = '0:00';
       }
 
       // }
@@ -449,7 +449,6 @@ class _callState extends State<call> {
               ),
               SizedBox(height: 16),
 
-          
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -488,7 +487,7 @@ class _callState extends State<call> {
                   );
                 }).toList(),
               ),
-                  SizedBox(height: 8),
+              SizedBox(height: 8),
               Row(
                 children: [
                   Text(
@@ -541,12 +540,20 @@ class _callState extends State<call> {
             setState(() {
               // double sumHourValue = getSumHourValue();
               double sumHourValue = 0;
-              print('sumHourValue1: ${sumHourValue}');
+              // print('sumHourValue1: ${sumHourValue}');
+                   if (drop == false) {
+                _timeC.text = '0:00';
+              }
+              print('_timeC.text: ${_timeC.text}');
               int? firstNumber = 0;
+              int? secondNumber = 0;
               if (_timeC.text.isNotEmpty) {
                 firstNumber = int.tryParse(_timeC.text.substring(0, 1));
+                secondNumber = int.tryParse(_timeC.text.split(":")[1].substring(0, 1));
               }
               print('sumHourValue: ${sumHourValue}');
+              print('secondNumber: ${secondNumber}');
+         
 // sum poduct price
               double newProduct = 0;
 
@@ -574,12 +581,15 @@ class _callState extends State<call> {
               // price per hour
               print('_timeC.text: ${_timeC.text}');
               print('widget.data hour: ${widget.data['hour']}');
-
-              int hourCharge = hourlyRate * (firstNumber! + 1);
+              if (secondNumber! > 0) {
+                firstNumber = firstNumber! + 1;
+              }
+              print('firstNumber: ${firstNumber}');
+              int hourCharge = hourlyRate * (firstNumber!);
               // int hourCharge = _timeC.text == widget.data['hour']
               //     ? 0
               //     : hourlyRate * (firstNumber! + 1);
-
+         
               print('hourCharge: ${hourCharge}');
               print('paimentController.text: ${paimentController.text}');
 
@@ -615,9 +625,9 @@ class _callState extends State<call> {
               print('call time ${_timeC.text}');
 
               // print('dataEmpty ${widget.data}');
-              if (drop == false) {
-                _timeC.text = '0';
-              }
+              // if (drop == false) {
+              //   _timeC.text = '0:00';
+              // }
               if (_callDetailsController.text != '' &&
                   // _timeC.text != '' &&
                   sumHourValue != '' &&
