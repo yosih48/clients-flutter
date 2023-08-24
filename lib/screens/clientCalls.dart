@@ -101,23 +101,23 @@ void exportToExcel(List<dynamic> data) async{
   String excelFilePath = await _getExcelFilePath();
   final File excelFile = File(excelFilePath);
   await excelFile.writeAsBytes(excelBytes!);
-  //   showDialog(
-  //   context: context,
-  //   builder: (BuildContext context) {
-  //     return AlertDialog(
-  //       title: Text('Export Complete'),
-  //       content: Text('Data has been exported to Excel file: $excelFilePath.'),
-  //       actions: <Widget>[
-  //         TextButton(
-  //           onPressed: () {
-  //             Navigator.of(context).pop();
-  //           },
-  //           child: Text('OK'),
-  //         ),
-  //       ],
-  //     );
-  //   },
-  // );
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Export Complete'),
+        content: Text('Data has been exported to Excel file: $excelFilePath.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
     // Save the bytes to a file or send it to the user
     // You can use the 'path_provider' package to access device storage
  
