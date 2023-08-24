@@ -136,14 +136,24 @@ class _callState extends State<call> {
   String callDetails = '';
   String sumPayment = '0';
   String extraPayment = '0';
-  List<dynamic> products = [];
+  List<Object> products = [];
+   List<ProductData> productList = [];
   void initState() {
     super.initState();
     print('extraPayment1: ${extraPayment}');
     if (widget.data.containsKey('products') &&
         widget.data['products'].isNotEmpty) {
       // if (widget.data.isNotEmpty) {
-      products = widget.data['products'];
+      // productList = widget.data['products'];
+       productList = (widget.data['products'] as List<dynamic>)
+          .map<ProductData>((product) {
+        // Convert each dynamic product into a ProductData object
+        return ProductData(
+          name: product['name'],
+          price: product['price'],
+          discountedPrice: product['discountedPrice'],
+        );
+      }).toList();
     }
     if (widget.data.containsKey('done') && widget.data['done'] == null) {
       // if (widget.data.isNotEmpty) {
@@ -174,9 +184,16 @@ class _callState extends State<call> {
 
   void handleProductListChanged(List<ProductData> updatedList) {
     setState(() {
-      productList = updatedList;
+      // products = updatedList;
 
-      // products.add(updatedList);
+      //  productList.add(updatedList as ProductData);
+  // productList.addAll(List.from(updatedList));
+      for (var product in updatedList) {
+        if (!productList.contains(product)) {
+          productList.add(
+              product); // Add only if the product doesn't exist in productList
+        }
+      }
     });
   }
 
@@ -298,7 +315,7 @@ class _callState extends State<call> {
     // print('handleDropdown ${value}');
   }
 
-  List<ProductData> productList = [];
+  // List<ProductData> productList = [];
 
   // void handleProductListChanged(List<ProductData> updatedList) {
   //   setState(() {
@@ -484,12 +501,12 @@ class _callState extends State<call> {
                   ),
                 ],
               ),
-              if (products.isNotEmpty) SizedBox(height: 10),
+              if (productList.isNotEmpty) SizedBox(height: 10),
               Column(
-                children: products.map((product) {
-                  final productName = product['name'];
-                   final productPrice = product['price'];
-                  final costPrice = product['discountedPrice'];
+                children: productList.map((product) {
+                  final productName = product.name;
+                   final productPrice = product.price;
+                  final costPrice = product.discountedPrice;
 
                   return Row(
                     children: [
@@ -497,7 +514,7 @@ class _callState extends State<call> {
                       Expanded(
                         flex: 4,
                         child: Text(
-                          productName,
+                          '$productName',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -516,6 +533,17 @@ class _callState extends State<call> {
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          // Delete the product when the delete button is pressed
+                          setState(() {
+                            productList.remove(product);
+                          });
+                        },
+                      ),
+
+
                     ],
                   );
                 }).toList(),
@@ -622,19 +650,20 @@ class _callState extends State<call> {
               double newProduct = 0;
 
               for (var product in productList) {
-                // print('Product Name: ${product.name}');
+                print('Product Name: ${product.name}');
                 // print('productList Price: ${product.discountedPrice}');
                 // print('Discounted Price: ${product.discountedPrice}');
                 newProduct += product.discountedPrice!;
               }
-              double oldProduct = 0;
-              for (var product in products) {
-                // print('Product Name: ${product.name}');
-                // print('products Price: ${product['discountedPrice']}');
-                // print('Discounted Price: ${product.discountedPrice}');
-                oldProduct += product['discountedPrice'];
-              }
-              double sumProduct = oldProduct + newProduct;
+              // double oldProduct = 0;
+              // for (var product in products) {
+              //   // print('Product Name: ${product.name}');
+              //   // print('products Price: ${product['discountedPrice']}');
+              //   // print('Discounted Price: ${product.discountedPrice}');
+              //   oldProduct += product['discountedPrice'];
+              // }
+              // double sumProduct = oldProduct + newProduct;
+              double sumProduct =  newProduct;
               // print('sumProductt: ${sumProduct}');
               // print('newProduct: ${newProduct}');
               // print('oldProduct: ${oldProduct}');
@@ -680,6 +709,7 @@ class _callState extends State<call> {
               double sumPayment = sumProduct + hourCharge + payment!;
 
               // print('dropdownValue ${dropdownValue}');
+          
               // print('charge per hour  ${hourCharge}');
               print('total payment  ${sumPayment}');
               print('payment  ${payment}');
@@ -847,13 +877,13 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
       'payment': payment,
       'done': done,
       'extraPayment': extraCharge,
-      'products': FieldValue.arrayUnion(productList
+      'products': productList
           .map((product) => {
                 'name': product.name,
                 'price': product.price,
                 'discountedPrice': product.discountedPrice,
               })
-          .toList()),
+          .toList(),
     });
 
     print("Call Updated");
