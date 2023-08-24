@@ -176,7 +176,7 @@ class _callState extends State<call> {
         widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
 
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
-    _checkboxParts =  widget.data.containsKey('partsPaid') && widget.data['partsPaid'] == null ? false  : widget.data['partsPaid'];
+    _checkboxParts =  widget.data.containsKey('partsPaid') && widget.data['partsPaid'] == null ? false  :( widget.data['partsPaid']== true? true :false);
 
     if (widget.data.containsKey('extraPayment')) {
       // if (widget.data.isNotEmpty) {
@@ -371,6 +371,41 @@ class _callState extends State<call> {
                     onDropdownChanged: handleDropdownValueChange,
                     data: widget.data,
                   ),
+                    SizedBox(width: 96),
+     
+                  Text(
+                    AppStrings.paid,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Checkbox(
+                      value: _checkboxValue,
+                      onChanged: (newValue) {
+                        // print(newValue);
+
+                        setState(() {
+                          _checkboxValue = newValue!;
+
+                          // print(_checkboxValue);
+                        });
+                      }),
+                  SizedBox(width: 24),
+                  Text(
+                    AppLocalizations.of(context)!.done,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(width: 4),
+                  Checkbox(
+                      value: _checkboxDone,
+                      onChanged: (newValue) {
+                        // print(newValue);
+
+                        setState(() {
+                          _checkboxDone = newValue!;
+
+                          // print(_checkboxValue);
+                        });
+                      }),
+          
 
                   // ElevatedButton(
                   //   child: Text('תאריך קריאה'),
@@ -614,42 +649,42 @@ class _callState extends State<call> {
                 ],
               ),
               SizedBox(height: 8),
-              Row(
-                children: [
-                  Text(
-                    AppStrings.paid,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Checkbox(
-                      value: _checkboxValue,
-                      onChanged: (newValue) {
-                        // print(newValue);
+              // Row(
+              //   children: [
+              //     Text(
+              //       AppStrings.paid,
+              //       style: TextStyle(fontSize: 16),
+              //     ),
+              //     Checkbox(
+              //         value: _checkboxValue,
+              //         onChanged: (newValue) {
+              //           // print(newValue);
 
-                        setState(() {
-                          _checkboxValue = newValue!;
+              //           setState(() {
+              //             _checkboxValue = newValue!;
 
-                          // print(_checkboxValue);
-                        });
-                      }),
-                  SizedBox(width: 24),
-                  Text(
-                    AppLocalizations.of(context)!.done,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(width: 4),
-                  Checkbox(
-                      value: _checkboxDone,
-                      onChanged: (newValue) {
-                        // print(newValue);
+              //             // print(_checkboxValue);
+              //           });
+              //         }),
+              //     SizedBox(width: 24),
+              //     Text(
+              //       AppLocalizations.of(context)!.done,
+              //       style: TextStyle(fontSize: 16),
+              //     ),
+              //     SizedBox(width: 4),
+              //     Checkbox(
+              //         value: _checkboxDone,
+              //         onChanged: (newValue) {
+              //           // print(newValue);
 
-                        setState(() {
-                          _checkboxDone = newValue!;
+              //           setState(() {
+              //             _checkboxDone = newValue!;
 
-                          // print(_checkboxValue);
-                        });
-                      }),
-                ],
-              ),
+              //             // print(_checkboxValue);
+              //           });
+              //         }),
+              //   ],
+              // ),
               // SizedBox(height: 8),
               // Row(
               //   children: [
