@@ -54,7 +54,7 @@
                                "todo": "todo",
                                "noTodoCalls": "no open calls" ,
                                "extraPayment": "extraPayment",
-                                "sumHours": "sum hours",
+                                "sumHours": "total hours",
                                 "totalCosts": "total costs"
                       
                 

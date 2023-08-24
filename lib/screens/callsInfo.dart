@@ -45,7 +45,7 @@ class ClientServiceScreen extends StatelessWidget {
             ),
             SizedBox(height: 16),
                  Text(
-              AppLocalizations.of(context)!.description,
+              AppLocalizations.of(context)!.sumHours,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             Text(
