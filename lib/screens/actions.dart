@@ -192,7 +192,7 @@ class _callState extends State<call> {
     // print('widget.data   ${widget.data}');
   }
 
-  final _timeC = TextEditingController();
+  final _timeC = TextEditingController(text: '0:00');
   TimeOfDay timeOfDay = TimeOfDay.now();
 
   Future<void> _displayDialog() async {
@@ -726,7 +726,7 @@ class _callState extends State<call> {
                 void resetForm() {
                   // Clear text fields
                   _callDetailsController.text = '';
-                  _timeC.text = '';
+                  _timeC.text = '0:00';
 
                   // Reset checkbox value
                   _checkboxValue = false;
