@@ -44,6 +44,15 @@ class ClientServiceScreen extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             SizedBox(height: 16),
+                 Text(
+              AppLocalizations.of(context)!.description,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              '${call['hour']}',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 16),
             Text(
               AppLocalizations.of(context)!.paymentAmount,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

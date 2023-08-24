@@ -50,7 +50,8 @@
                  "done": "בוצע",
                     "todo": "לביצוע",
                     "noTodoCalls": "אין קריאות לביצוע",
-                     "extraPayment": "חיוב נוסף"
+                     "extraPayment": "חיוב נוסף",
+                     "sumHours": "סה"כ שעות עבודה"
           
     
 
