@@ -117,6 +117,7 @@ class _actionsState extends State<actions> {
 
 bool _checkboxValue = false;
 bool _checkboxDone = false;
+bool _checkboxParts = false;
 
 class call extends StatefulWidget {
   final user;
@@ -175,13 +176,14 @@ class _callState extends State<call> {
         widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
 
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
+    _checkboxParts =  widget.data.containsKey('partsPaid') && widget.data['partsPaid'] == null ? false  : widget.data['partsPaid'];
 
     if (widget.data.containsKey('extraPayment')) {
       // if (widget.data.isNotEmpty) {
       extraPayment = widget.data['extraPayment'].toString();
       print('extraPayment: ${extraPayment}');
     }
-    print('extraPayment2: ${extraPayment}');
+    print(' partsPaid: ${ widget.data['partsPaid']}');
     // _checkboxDone = widget.data.isNotEmpty && widget.data.containsKey('done')
     //     ? widget.data['done']
     //     : '';
@@ -514,7 +516,8 @@ class _callState extends State<call> {
                     ),
                   ],
                 ),
-              if (productList.isNotEmpty) SizedBox(height: 10),
+              if (productList.isNotEmpty)
+               SizedBox(height: 10),
               Column(
                 children: productList.map((product) {
                   final productName = product.name;
@@ -577,18 +580,37 @@ class _callState extends State<call> {
                   ),
                 ],
               ),
+                if (productList.isNotEmpty)
               SizedBox(height: 8),
+                if (productList.isNotEmpty)
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    '${AppLocalizations.of(context)!.paymentAmount}:',
+                    '${AppLocalizations.of(context)!.totalCosts}:',
                     style: TextStyle(fontSize: 15),
                   ),
                   SizedBox(width: 8), // Add spacing between text and box
                   // PaymentBox(parameter1: 50.0, parameter2: 30.0),
                   // '$widget.data['payment']'
-                  Text(pay.toString())
+                  Text(pay.toString()),
+                   SizedBox(width: 24),
+                           Text(
+                  AppLocalizations.of(context)!.paid,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Checkbox(
+                      value: _checkboxParts,
+                      onChanged: (newValue) {
+                        // print(newValue);
+
+                        setState(() {
+                          _checkboxParts = newValue!;
+
+                          // print(_checkboxValue);
+                        });
+                      }),
+
                 ],
               ),
               SizedBox(height: 8),
@@ -768,7 +790,8 @@ class _callState extends State<call> {
                       sumPayment,
                       _checkboxDone,
                       payment,
-                      productList);
+                      productList,
+                      _checkboxParts);
                 } else {
                   updateUser(
                       widget.data['usera'],
@@ -780,7 +803,8 @@ class _callState extends State<call> {
                       sumPayment,
                       _checkboxDone,
                       payment,
-                      productList);
+                      productList,
+                      _checkboxParts);
                 }
 
                 void resetForm() {
@@ -791,6 +815,7 @@ class _callState extends State<call> {
                   // Reset checkbox value
                   _checkboxValue = false;
                   _checkboxDone = false;
+                  _checkboxParts = false;
                   // Reset dropdown value
                   _dropdownValue = '';
 
@@ -815,7 +840,7 @@ class _callState extends State<call> {
 }
 
 Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
-    List<ProductData> productList) async {
+    List<ProductData> productList, partsPaid) async {
   User? user = FirebaseAuth.instance.currentUser;
   // print('userID  ${client.name}');
   // print('nainuserID  ${user}');
@@ -851,6 +876,7 @@ Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
                 'discountedPrice': product.discountedPrice,
               })
           .toList(),
+           'partsPaid':  partsPaid
     });
     print("Call Added");
 
@@ -861,7 +887,7 @@ Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
 }
 
 Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
-    payment, done, extraCharge, List<ProductData> productList) async {
+    payment, done, extraCharge, List<ProductData> productList,  partsPaid) async {
   print(clientID);
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
@@ -914,6 +940,7 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
                 'discountedPrice': product.discountedPrice,
               })
           .toList(),
+           'partsPaid':  partsPaid
     });
 
     print("Call Updated");

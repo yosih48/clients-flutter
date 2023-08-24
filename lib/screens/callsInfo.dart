@@ -171,6 +171,7 @@ class ClientServiceScreen extends StatelessWidget {
                   'extraPayment': call['extraPayment'],
                   'products': call['products'],
                   'usera': user,
+                  'partsPaid': call['partsPaid'],
                   'fromScreen1': true
                 });
               },

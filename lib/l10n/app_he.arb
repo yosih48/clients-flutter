@@ -51,7 +51,9 @@
                     "todo": "לביצוע",
                     "noTodoCalls": "אין קריאות לביצוע",
                      "extraPayment": "חיוב נוסף",
-                     "sumHours": "סה"כ שעות עבודה"
+                      "sumHours": "סך שעות",
+                       "totalCosts": "סך עלויות"
+             
           
     
 
