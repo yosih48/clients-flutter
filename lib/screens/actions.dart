@@ -137,7 +137,8 @@ class _callState extends State<call> {
   String sumPayment = '0';
   String extraPayment = '0';
   List<Object> products = [];
-   List<ProductData> productList = [];
+  List<ProductData> productList = [];
+  double pay = 0;
   void initState() {
     super.initState();
     print('extraPayment1: ${extraPayment}');
@@ -145,7 +146,7 @@ class _callState extends State<call> {
         widget.data['products'].isNotEmpty) {
       // if (widget.data.isNotEmpty) {
       // productList = widget.data['products'];
-       productList = (widget.data['products'] as List<dynamic>)
+      productList = (widget.data['products'] as List<dynamic>)
           .map<ProductData>((product) {
         // Convert each dynamic product into a ProductData object
         return ProductData(
@@ -154,6 +155,12 @@ class _callState extends State<call> {
           discountedPrice: product['discountedPrice'],
         );
       }).toList();
+    }
+          for (var product in productList) {
+      // print('Product Name: ${product.name}');
+      // print('productList Price: ${product.discountedPrice}');
+      // print('Discounted Price: ${product.discountedPrice}');
+      pay += product.price!;
     }
     if (widget.data.containsKey('done') && widget.data['done'] == null) {
       // if (widget.data.isNotEmpty) {
@@ -187,7 +194,7 @@ class _callState extends State<call> {
       // products = updatedList;
 
       //  productList.add(updatedList as ProductData);
-  // productList.addAll(List.from(updatedList));
+      // productList.addAll(List.from(updatedList));
       for (var product in updatedList) {
         if (!productList.contains(product)) {
           productList.add(
@@ -461,16 +468,15 @@ class _callState extends State<call> {
                   SizedBox(width: 8), // Add spacing between text and box
                   // PaymentBox(parameter1: 50.0, parameter2: 30.0),
                   // '$widget.data['payment']'
-                  Text( widget.data.isEmpty? '0' : '${widget.data['payment']}')
+                  Text(widget.data.isEmpty ? '0' : '${widget.data['payment']}')
                 ],
               ),
               SizedBox(height: 16),
 
-        
-                  if (productList.isNotEmpty)
+              if (productList.isNotEmpty)
                 Row(
-                children: [
-                       SizedBox(width: 4.0),
+                  children: [
+                    SizedBox(width: 4.0),
                     Expanded(
                       flex: 3,
                       child: Text(
@@ -479,11 +485,13 @@ class _callState extends State<call> {
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  if (productList.isNotEmpty)
-                  SizedBox(width: 6.0,),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    if (productList.isNotEmpty)
+                      SizedBox(
+                        width: 6.0,
+                      ),
                     Expanded(
                       flex: 5,
                       child: Text(
@@ -492,27 +500,25 @@ class _callState extends State<call> {
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ),
-                  Expanded(
-                    flex: 4,
-                    child: Text(
-                      AppLocalizations.of(context)!.finalPrice,
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        AppLocalizations.of(context)!.finalPrice,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-        ''
+                    Expanded(
+                      flex: 2,
+                      child: Text(''),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               if (productList.isNotEmpty) SizedBox(height: 10),
               Column(
                 children: productList.map((product) {
                   final productName = product.name;
-                   final productPrice = product.price;
+                  final productPrice = product.price;
                   final costPrice = product.discountedPrice;
 
                   return Row(
@@ -528,24 +534,23 @@ class _callState extends State<call> {
                       Expanded(
                         flex: 5,
                         child: Text(
-                       
-                             '$productPrice ₪',
+                          '$productPrice ₪',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
                       Expanded(
                         flex: 4,
                         child: Text(
-                         '$costPrice ₪',
+                          '$costPrice ₪',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
                       SizedBox(
-                        //  width: 24, 
-                         height: 26,
+                        //  width: 24,
+                        height: 26,
                         child: IconButton(
-                            // iconSize: 18,
-                              padding: EdgeInsets.zero,
+                          // iconSize: 18,
+                          padding: EdgeInsets.zero,
                           icon: Icon(Icons.delete),
                           onPressed: () {
                             // Delete the product when the delete button is pressed
@@ -555,14 +560,12 @@ class _callState extends State<call> {
                           },
                         ),
                       ),
-
-
                     ],
                   );
                 }).toList(),
               ),
-                SizedBox(height: 8),
-                    Row(
+              SizedBox(height: 8),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   GestureDetector(
@@ -576,7 +579,20 @@ class _callState extends State<call> {
               ),
               SizedBox(height: 8),
               Row(
-                
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${AppLocalizations.of(context)!.paymentAmount}:',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  SizedBox(width: 8), // Add spacing between text and box
+                  // PaymentBox(parameter1: 50.0, parameter2: 30.0),
+                  // '$widget.data['payment']'
+                  Text(pay.toString())
+                ],
+              ),
+              SizedBox(height: 8),
+              Row(
                 children: [
                   Text(
                     AppStrings.paid,
@@ -593,8 +609,8 @@ class _callState extends State<call> {
                           // print(_checkboxValue);
                         });
                       }),
-                        SizedBox(width: 24),
-                               Text(
+                  SizedBox(width: 24),
+                  Text(
                     AppLocalizations.of(context)!.done,
                     style: TextStyle(fontSize: 16),
                   ),
@@ -646,7 +662,7 @@ class _callState extends State<call> {
               // double sumHourValue = getSumHourValue();
               double sumHourValue = 0;
               // print('sumHourValue1: ${sumHourValue}');
-                   if (drop == false) {
+              if (drop == false) {
                 _timeC.text = '0:00';
               }
               print('_timeC.text: ${_timeC.text}');
@@ -654,11 +670,12 @@ class _callState extends State<call> {
               int? secondNumber = 0;
               if (_timeC.text.isNotEmpty) {
                 firstNumber = int.tryParse(_timeC.text.substring(0, 1));
-                secondNumber = int.tryParse(_timeC.text.split(":")[1].substring(0, 1));
+                secondNumber =
+                    int.tryParse(_timeC.text.split(":")[1].substring(0, 1));
               }
               print('sumHourValue: ${sumHourValue}');
               print('secondNumber: ${secondNumber}');
-         
+
 // sum poduct price
               double newProduct = 0;
 
@@ -676,7 +693,7 @@ class _callState extends State<call> {
               //   oldProduct += product['discountedPrice'];
               // }
               // double sumProduct = oldProduct + newProduct;
-              double sumProduct =  newProduct;
+              double sumProduct = newProduct;
               // print('sumProductt: ${sumProduct}');
               // print('newProduct: ${newProduct}');
               // print('oldProduct: ${oldProduct}');
@@ -695,7 +712,7 @@ class _callState extends State<call> {
               // int hourCharge = _timeC.text == widget.data['hour']
               //     ? 0
               //     : hourlyRate * (firstNumber! + 1);
-         
+
               print('hourCharge: ${hourCharge}');
               print('paimentController.text: ${paimentController.text}');
 
@@ -722,7 +739,7 @@ class _callState extends State<call> {
               double sumPayment = sumProduct + hourCharge + payment!;
 
               // print('dropdownValue ${dropdownValue}');
-          
+
               // print('charge per hour  ${hourCharge}');
               print('total payment  ${sumPayment}');
               print('payment  ${payment}');
