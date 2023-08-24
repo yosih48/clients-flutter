@@ -1,14 +1,18 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:clientsf/objects/clients.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:excel/excel.dart';
 import '../componenets/addClientDialof.dart';
 import '../componenets/alertDialog.dart';
 import '../componenets/dialogFilter.dart';
@@ -64,6 +68,67 @@ class _CallsScreenState extends State<CallsScreen> {
   }
 
   @override
+Future<List<dynamic>> fetchCallsData() async {
+  CollectionReference callsCollection = FirebaseFirestore.instance
+      .collection('users')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection('user_data')
+      .doc(widget.clientId.id)
+      .collection('calls');
+  
+  QuerySnapshot querySnapshot = await callsCollection.get();
+  List<dynamic> callsData = querySnapshot.docs.map((doc) => doc.data()).toList();
+    for (var row in callsData) {
+   print(callsData);
+  }
+  return callsData;
+}
+void exportToExcel(List<dynamic> data) async{
+  final Excel excel = Excel.createExcel();
+  final Sheet sheet = excel['Sheet1'];
+
+  // Add headers
+  sheet.appendRow(data[0].keys.toList());
+
+  // Add data rows
+  for (var row in data) {
+    sheet.appendRow(row.values.toList());
+  }
+
+  // Save the Excel file
+   List<int>? excelBytes = excel.encode();
+    
+  String excelFilePath = await _getExcelFilePath();
+  final File excelFile = File(excelFilePath);
+  await excelFile.writeAsBytes(excelBytes!);
+  //   showDialog(
+  //   context: context,
+  //   builder: (BuildContext context) {
+  //     return AlertDialog(
+  //       title: Text('Export Complete'),
+  //       content: Text('Data has been exported to Excel file: $excelFilePath.'),
+  //       actions: <Widget>[
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.of(context).pop();
+  //           },
+  //           child: Text('OK'),
+  //         ),
+  //       ],
+  //     );
+  //   },
+  // );
+    // Save the bytes to a file or send it to the user
+    // You can use the 'path_provider' package to access device storage
+ 
+}
+Future<String> _getExcelFilePath() async {
+  Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+  String excelFilePath = '${appDocumentsDirectory.path}/calls_data.xlsx';
+  return excelFilePath;
+}
+
+
   void dispose() {
     _selectedCharacterNotifier.dispose();
     super.dispose();
@@ -263,6 +328,37 @@ class _CallsScreenState extends State<CallsScreen> {
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
+
+                  ],
+                ),
+                Row(
+                  children: [
+                                        IconButton(
+                          // iconSize: 18,
+                          padding: EdgeInsets.zero,
+                          icon: Icon(Icons.delete),
+                          onPressed: ()async {
+                    List callsData = await fetchCallsData();
+                       exportToExcel(callsData);
+                           showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Export Complete'),
+          content: Text('Data has been exported to Excel.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+                          },
+                        ),
                   ],
                 ),
                 Container(
@@ -422,11 +518,12 @@ class _CallsScreenState extends State<CallsScreen> {
                               margin: EdgeInsets.only(top: 12),
                               decoration: BoxDecoration(
                                   // border: Border.bo(color: Colors.blueAccent)
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          color: Colors.blueAccent,
-                                          width: 1.0,
-                                          style: BorderStyle.solid))),
+                                  // border: Border(
+                                  //     bottom: BorderSide(
+                                  //         color: Colors.blueAccent,
+                                  //         width: 1.0,
+                                  //         style: BorderStyle.solid))
+                                          ),
 
                               child: Container(
                                 // padding: EdgeInsets.all(16),
