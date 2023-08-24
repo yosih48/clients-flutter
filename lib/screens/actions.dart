@@ -467,12 +467,12 @@ class _callState extends State<call> {
               SizedBox(height: 16),
 
         
-                  if (products.isNotEmpty)
+                  if (productList.isNotEmpty)
                 Row(
                 children: [
                        SizedBox(width: 4.0),
                     Expanded(
-                      flex: 4,
+                      flex: 3,
                       child: Text(
                         AppLocalizations.of(context)!.product,
                         style: TextStyle(
@@ -482,7 +482,8 @@ class _callState extends State<call> {
                   SizedBox(
                     height: 8.0,
                   ),
-                  if (products.isNotEmpty)
+                  if (productList.isNotEmpty)
+                  SizedBox(width: 6.0,),
                     Expanded(
                       flex: 5,
                       child: Text(
@@ -497,6 +498,12 @@ class _callState extends State<call> {
                       AppLocalizations.of(context)!.finalPrice,
                       style:
                           TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+        ''
                     ),
                   ),
                 ],
@@ -533,14 +540,20 @@ class _callState extends State<call> {
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          // Delete the product when the delete button is pressed
-                          setState(() {
-                            productList.remove(product);
-                          });
-                        },
+                      SizedBox(
+                        //  width: 24, 
+                         height: 26,
+                        child: IconButton(
+                            // iconSize: 18,
+                              padding: EdgeInsets.zero,
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            // Delete the product when the delete button is pressed
+                            setState(() {
+                              productList.remove(product);
+                            });
+                          },
+                        ),
                       ),
 
 
