@@ -141,28 +141,19 @@ Future<List<dynamic>> fetchCallsData() async {
     List<List<dynamic>> rows = [];
 
     List<dynamic> row = [];
-    row.add("number");
-    row.add("latitude");
-    row.add("longitude");
+    row.add("payment");
+    row.add("paid");
+    row.add("call");
     rows.add(row);
     for (int i = 0; i < data.length; i++) {
       List<dynamic> row = [];
-      row.add(data[i]["call"]);
-      row.add(data[i]["type"]);
+      row.add(data[i]["payment"]);
       row.add(data[i]["paid"]);
+      row.add(data[i]["call"]);
       rows.add(row);
     }
 
-    // String csv = const ListToCsvConverter().convert(rows);
 
-    // String dir = await ExtStorage.getExternalStoragePublicDirectory(
-    //     ExtStorage.DIRECTORY_DOWNLOADS);
-    // print("dir $dir");
-    // String file = "$dir";
-
-    // File f = File(file + "/filename.csv");
-
-    // f.writeAsString(csv);
     String csv = const ListToCsvConverter().convert(rows);
 
 String dir = await ExternalPath.getExternalStoragePublicDirectory(
@@ -171,8 +162,8 @@ String dir = await ExternalPath.getExternalStoragePublicDirectory(
     String file = "$dir";
 
     File f = File(file + "/filename.csv");
-
-    f.writeAsString(csv);
+ await f.writeAsBytes(utf8.encode(csv)); 
+     f.writeAsString(csv);
                                showDialog(
       context: context,
       builder: (BuildContext context) {
