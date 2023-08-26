@@ -13,7 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:external_path/external_path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../componenets/addClientDialof.dart';
 import '../componenets/alertDialog.dart';
@@ -677,29 +677,52 @@ Future<String> _getExcelFilePath() async {
                     },
                   ),
                 ),
+                ElevatedButton(
+  onPressed: () async {
+    List callsData = await fetchCallsData();
+    _generateCsvFile(callsData);
+  },
+  style: ElevatedButton.styleFrom(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8), // Adjust the corner radius as needed
+    ),
+  ),
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(Icons.file_copy),
+      SizedBox(width: 8),
+      Text('Export to Excel'),
+    ],
+  ),
+),
               ],
               
             );
           },
         ),
       ),
-           floatingActionButton: FloatingActionButton(
-        onPressed: () async{
-                         List callsData = await fetchCallsData();
-                    //    exportToExcel(callsData);
-          _generateCsvFile(callsData);
-        },
-     tooltip: 'Export to Excel', // Update tooltip to match the action
-child: Row(
-  
-  children: [
-    Icon(Icons.arrow_back),
-    // SizedBox(width: 8), // Adjust the spacing between icon and text
-    // Text('Export to Excel'), // Replace this text with your desired label
-  ],
-),
+//            floatingActionButton: FloatingActionButton(
+//         onPressed: () async{
+//                          List callsData = await fetchCallsData();
+//                     //    exportToExcel(callsData);
+//           _generateCsvFile(callsData);
+//         },
+//      tooltip: 'Export to Excel', // Update tooltip to match the action
+// child: Row(
+//   children: [
+//     Icon(Icons.file_copy),
+//     SizedBox(width: 8),
+//     Flexible(
+//       child: Text(
+//         'Export to Excel',
+//         overflow: TextOverflow.ellipsis,
+//       ),
+//     ),
+//   ],
+// ),
 
-      )
+//       )
     );
   }
 }
