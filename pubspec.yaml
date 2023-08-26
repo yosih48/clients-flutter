@@ -40,6 +40,7 @@ dependencies:
   excel: ^2.1.0
   path_provider: ^2.1.0
   widget_bindings: ^1.0.0+1
+  external_path: ^1.0.3
   firebase_auth: ^4.6.3
   firebase_core: ^2.13.1
   pin_code_fields: ^7.4.0
@@ -56,6 +57,8 @@ dependencies:
     sdk: flutter
   shared_preferences: ^2.2.0
   settings_ui: ^2.0.2
+ 
+  csv: ^5.0.2
  
 
 dev_dependencies:

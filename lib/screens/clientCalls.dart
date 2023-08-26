@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:csv/csv.dart';
 
 import 'package:clientsf/objects/clients.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,10 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-
+import 'package:external_path/external_path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:excel/excel.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../componenets/addClientDialof.dart';
 import '../componenets/alertDialog.dart';
 import '../componenets/dialogFilter.dart';
@@ -94,6 +96,7 @@ void exportToExcel(List<dynamic> data) async{
   for (var row in data) {
     sheet.appendRow(row.values.toList());
   }
+ 
 
   // Save the Excel file
    List<int>? excelBytes = excel.encode();
@@ -122,6 +125,57 @@ void exportToExcel(List<dynamic> data) async{
     // You can use the 'path_provider' package to access device storage
  
 }
+  void _generateCsvFile(List<dynamic> data) async {
+     print('csv data  ${data}');
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+    ].request();
+
+    // List<dynamic> associateList = [
+    //   {"number": 1, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+    //   {"number": 2, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+    //   {"number": 3, "lat": "14.97534313396318", "lon": "101.22998536005622"},
+    //   {"number": 4, "lat": "14.97534313396318", "lon": "101.22998536005622"}
+    // ];
+
+    List<List<dynamic>> rows = [];
+
+    List<dynamic> row = [];
+    row.add("number");
+    row.add("latitude");
+    row.add("longitude");
+    rows.add(row);
+    for (int i = 0; i < data.length; i++) {
+      List<dynamic> row = [];
+      row.add(data[i]["call"]);
+      row.add(data[i]["type"]);
+      row.add(data[i]["paid"]);
+      rows.add(row);
+    }
+
+    // String csv = const ListToCsvConverter().convert(rows);
+
+    // String dir = await ExtStorage.getExternalStoragePublicDirectory(
+    //     ExtStorage.DIRECTORY_DOWNLOADS);
+    // print("dir $dir");
+    // String file = "$dir";
+
+    // File f = File(file + "/filename.csv");
+
+    // f.writeAsString(csv);
+    String csv = const ListToCsvConverter().convert(rows);
+
+String dir = await ExternalPath.getExternalStoragePublicDirectory(
+    ExternalPath.DIRECTORY_DOWNLOADS);
+    print("dir $dir");
+    String file = "$dir";
+
+    File f = File(file + "/filename.csv");
+
+    f.writeAsString(csv);
+
+
+  }
 Future<String> _getExcelFilePath() async {
   Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
   String excelFilePath = '${appDocumentsDirectory.path}/calls_data.xlsx';
@@ -339,7 +393,8 @@ Future<String> _getExcelFilePath() async {
                           icon: Icon(Icons.delete),
                           onPressed: ()async {
                     List callsData = await fetchCallsData();
-                       exportToExcel(callsData);
+                    //    exportToExcel(callsData);
+          _generateCsvFile(callsData);
                            showDialog(
       context: context,
       builder: (BuildContext context) {
