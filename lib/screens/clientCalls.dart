@@ -70,21 +70,22 @@ class _CallsScreenState extends State<CallsScreen> {
   }
 
   @override
-Future<List<dynamic>> fetchCallsData() async {
-  CollectionReference callsCollection = FirebaseFirestore.instance
-      .collection('users')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .collection('user_data')
-      .doc(widget.clientId.id)
-      .collection('calls');
-  
-  QuerySnapshot querySnapshot = await callsCollection.get();
-  List<dynamic> callsData = querySnapshot.docs.map((doc) => doc.data()).toList();
+  Future<List<dynamic>> fetchCallsData() async {
+    CollectionReference callsCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('user_data')
+        .doc(widget.clientId.id)
+        .collection('calls');
+
+    QuerySnapshot querySnapshot = await callsCollection.get();
+    List<dynamic> callsData =
+        querySnapshot.docs.map((doc) => doc.data()).toList();
     for (var row in callsData) {
-   print(callsData);
+      print(callsData);
+    }
+    return callsData;
   }
-  return callsData;
-}
 // void exportToExcel(List<dynamic> data) async{
 //   final Excel excel = Excel.createExcel();
 //   final Sheet sheet = excel['Sheet1'];
@@ -96,11 +97,10 @@ Future<List<dynamic>> fetchCallsData() async {
 //   for (var row in data) {
 //     sheet.appendRow(row.values.toList());
 //   }
- 
 
 //   // Save the Excel file
 //    List<int>? excelBytes = excel.encode();
-    
+
 //   String excelFilePath = await _getExcelFilePath();
 //   final File excelFile = File(excelFilePath);
 //   await excelFile.writeAsBytes(excelBytes!);
@@ -123,14 +123,15 @@ Future<List<dynamic>> fetchCallsData() async {
 //   );
 //     // Save the bytes to a file or send it to the user
 //     // You can use the 'path_provider' package to access device storage
- 
+
 // }
   void _generateCsvFile(List<dynamic> data) async {
-     print('csv data  ${data}');
+    print('csv data  ${data}');
     Map<Permission, PermissionStatus> statuses = await [
       Permission.storage,
     ].request();
 
+    var status = await Permission.storage.request();
     // List<dynamic> associateList = [
     //   {"number": 1, "lat": "14.97534313396318", "lon": "101.22998536005622"},
     //   {"number": 2, "lat": "14.97534313396318", "lon": "101.22998536005622"},
@@ -141,30 +142,39 @@ Future<List<dynamic>> fetchCallsData() async {
     List<List<dynamic>> rows = [];
 
     List<dynamic> row = [];
+    row.add("call");
+    row.add("hour");
+    row.add("product name");
+    row.add("product price");
     row.add("payment");
     row.add("paid");
-    row.add("call");
     rows.add(row);
     for (int i = 0; i < data.length; i++) {
       List<dynamic> row = [];
+      row.add(data[i]["call"]);
+      row.add(data[i]["hour"]);
+        for (var product in data[i]["products"]) {
+        row.add(product["name"]);
+        row.add(product["discountPrice"]);
+      }
       row.add(data[i]["payment"]);
       row.add(data[i]["paid"]);
-      row.add(data[i]["call"]);
+        row.add(i + 1);
       rows.add(row);
     }
 
-
     String csv = const ListToCsvConverter().convert(rows);
 
-String dir = await ExternalPath.getExternalStoragePublicDirectory(
-    ExternalPath.DIRECTORY_DOWNLOADS);
+    String dir = await ExternalPath.getExternalStoragePublicDirectory(
+        ExternalPath.DIRECTORY_DOWNLOADS);
     print("dir $dir");
     String file = "$dir";
-
     File f = File(file + "/filename.csv");
- await f.writeAsBytes(utf8.encode(csv)); 
-     f.writeAsString(csv);
-                               showDialog(
+ 
+      print('request');
+      await f.writeAsBytes(utf8.encode(csv));
+      f.writeAsString(csv);
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -181,15 +191,14 @@ String dir = await ExternalPath.getExternalStoragePublicDirectory(
         );
       },
     );
-
-
+  
   }
-Future<String> _getExcelFilePath() async {
-  Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
-  String excelFilePath = '${appDocumentsDirectory.path}/calls_data.xlsx';
-  return excelFilePath;
-}
 
+  Future<String> _getExcelFilePath() async {
+    Directory appDocumentsDirectory = await getApplicationDocumentsDirectory();
+    String excelFilePath = '${appDocumentsDirectory.path}/calls_data.xlsx';
+    return excelFilePath;
+  }
 
   void dispose() {
     _selectedCharacterNotifier.dispose();
@@ -390,40 +399,39 @@ Future<String> _getExcelFilePath() async {
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
-
                   ],
                 ),
-    //             Row(
-    //               children: [
-    //                                     IconButton(
-    //                       // iconSize: 18,
-    //                       padding: EdgeInsets.zero,
-    //                       icon: Icon(Icons.delete),
-    //                       onPressed: ()async {
-    //                 List callsData = await fetchCallsData();
-    //                 //    exportToExcel(callsData);
-    //       _generateCsvFile(callsData);
-    //                        showDialog(
-    //   context: context,
-    //   builder: (BuildContext context) {
-    //     return AlertDialog(
-    //       title: Text('Export Complete'),
-    //       content: Text('Data has been exported to Excel.'),
-    //       actions: <Widget>[
-    //         TextButton(
-    //           onPressed: () {
-    //             Navigator.of(context).pop();
-    //           },
-    //           child: Text('OK'),
-    //         ),
-    //       ],
-    //     );
-    //   },
-    // );
-    //                       },
-    //                     ),
-    //               ],
-    //             ),
+                //             Row(
+                //               children: [
+                //                                     IconButton(
+                //                       // iconSize: 18,
+                //                       padding: EdgeInsets.zero,
+                //                       icon: Icon(Icons.delete),
+                //                       onPressed: ()async {
+                //                 List callsData = await fetchCallsData();
+                //                 //    exportToExcel(callsData);
+                //       _generateCsvFile(callsData);
+                //                        showDialog(
+                //   context: context,
+                //   builder: (BuildContext context) {
+                //     return AlertDialog(
+                //       title: Text('Export Complete'),
+                //       content: Text('Data has been exported to Excel.'),
+                //       actions: <Widget>[
+                //         TextButton(
+                //           onPressed: () {
+                //             Navigator.of(context).pop();
+                //           },
+                //           child: Text('OK'),
+                //         ),
+                //       ],
+                //     );
+                //   },
+                // );
+                //                       },
+                //                     ),
+                //               ],
+                //             ),
                 Container(
                   margin: EdgeInsets.only(top: 16.0),
                   child: Row(
@@ -664,11 +672,8 @@ Future<String> _getExcelFilePath() async {
                                         ],
                                       ),
                                     ),
-                                    
                                   ],
-                                  
                                 ),
-                                
                               ),
                             ),
                           ),
@@ -678,26 +683,26 @@ Future<String> _getExcelFilePath() async {
                   ),
                 ),
                 ElevatedButton(
-  onPressed: () async {
-    List callsData = await fetchCallsData();
-    _generateCsvFile(callsData);
-  },
-  style: ElevatedButton.styleFrom(
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8), // Adjust the corner radius as needed
-    ),
-  ),
-  child: Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(Icons.file_copy),
-      SizedBox(width: 8),
-      Text('Export to Excel'),
-    ],
-  ),
-),
+                  onPressed: () async {
+                    List callsData = await fetchCallsData();
+                    _generateCsvFile(callsData);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          8), // Adjust the corner radius as needed
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.file_copy),
+                      SizedBox(width: 8),
+                      Text('Export to Excel'),
+                    ],
+                  ),
+                ),
               ],
-              
             );
           },
         ),

@@ -13,8 +13,8 @@
             "name": "clients",
             "request": "launch",
             "type": "dart",
-            "deviceId": "Android SDK built for x86"
-            // "deviceId": "M2101K7BG"
+            // "deviceId": "Android SDK built for x86"
+            "deviceId": "M2101K7BG"
         },
                      {
             "name": "clients11",
