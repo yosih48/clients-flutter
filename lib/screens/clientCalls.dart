@@ -71,6 +71,7 @@ class _CallsScreenState extends State<CallsScreen> {
 
   @override
   Future<List<dynamic>> fetchCallsData() async {
+    print(widget.clientId.name);
     CollectionReference callsCollection = FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -141,25 +142,21 @@ class _CallsScreenState extends State<CallsScreen> {
 
     List<List<dynamic>> rows = [];
 
-    List<dynamic> row = [];
-    row.add("call");
-    row.add("hour");
-    row.add("product name");
-    row.add("product price");
-    row.add("payment");
-    row.add("paid");
-    rows.add(row);
+    List<dynamic> headerRow = [
+      "call number",
+          "call",
+      "hour",
+      "payment",
+      "paid",
+    ];
+    rows.add(headerRow);
     for (int i = 0; i < data.length; i++) {
       List<dynamic> row = [];
+      row.add(i + 1);
       row.add(data[i]["call"]);
       row.add(data[i]["hour"]);
-        for (var product in data[i]["products"]) {
-        row.add(product["name"]);
-        row.add(product["discountPrice"]);
-      }
       row.add(data[i]["payment"]);
       row.add(data[i]["paid"]);
-        row.add(i + 1);
       rows.add(row);
     }
 
@@ -169,11 +166,11 @@ class _CallsScreenState extends State<CallsScreen> {
         ExternalPath.DIRECTORY_DOWNLOADS);
     print("dir $dir");
     String file = "$dir";
-    File f = File(file + "/filename.csv");
- 
-      print('request');
-      await f.writeAsBytes(utf8.encode(csv));
-      f.writeAsString(csv);
+    File f = File(file + "/${widget.clientId.name}.csv");
+
+    print('request');
+    await f.writeAsBytes(utf8.encode(csv));
+    f.writeAsString(csv);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -191,7 +188,6 @@ class _CallsScreenState extends State<CallsScreen> {
         );
       },
     );
-  
   }
 
   Future<String> _getExcelFilePath() async {
