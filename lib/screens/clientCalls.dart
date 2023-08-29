@@ -143,11 +143,11 @@ class _CallsScreenState extends State<CallsScreen> {
     List<List<dynamic>> rows = [];
 
     List<dynamic> headerRow = [
-      "call number",
-          "call",
-      "hour",
-      "payment",
-      "paid",
+      "מספר קריאה",
+          "תיאור קריאה",
+      "שעות עבודה",
+      "לתשלום",
+      "שולם",
     ];
     rows.add(headerRow);
     for (int i = 0; i < data.length; i++) {
@@ -160,17 +160,24 @@ class _CallsScreenState extends State<CallsScreen> {
       rows.add(row);
     }
 
-    String csv = const ListToCsvConverter().convert(rows);
+    // String csv = const ListToCsvConverter().convert(rows);
+    String csv = '\uFEFF' + const ListToCsvConverter().convert(rows);
 
     String dir = await ExternalPath.getExternalStoragePublicDirectory(
         ExternalPath.DIRECTORY_DOWNLOADS);
     print("dir $dir");
-    String file = "$dir";
-    File f = File(file + "/${widget.clientId.name}.csv");
 
-    print('request');
-    await f.writeAsBytes(utf8.encode(csv));
-    f.writeAsString(csv);
+    // String file = "$dir";
+    // File f = File(file + "/${widget.clientId.name}.csv");
+    String filePath = "$dir/${widget.clientId.name}.csv";
+    File file = File(filePath);
+    await file.writeAsBytes(utf8.encode(csv)); // Ensure UTF-8 encoding
+
+    print("CSV file saved at: $filePath");
+
+    // print('request');
+    // await f.writeAsBytes(utf8.encode(csv));
+    // f.writeAsString(csv);
     showDialog(
       context: context,
       builder: (BuildContext context) {
