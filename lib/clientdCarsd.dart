@@ -144,7 +144,7 @@ class _UserListViewState extends State<UserListView> {
                     ),
                     child: Center(
                       child: Card(
-                          margin: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.all(5),
                           child: ListTile(
                             title: Text(user.name,
                                 style: TextStyle(fontSize: 15.0)),
