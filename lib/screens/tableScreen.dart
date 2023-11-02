@@ -10,6 +10,7 @@ class DataTableExample extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Map<String, double> clientTotalPayments = {};
+     List<DataRow> rows = [];
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -22,13 +23,24 @@ class DataTableExample extends StatelessWidget {
         }
 
         return FutureBuilder<void>(
-          future: processUserData(userDataSnapshot.data!.docs),
+          
+            future: processUserData(userDataSnapshot.data!.docs, clientTotalPayments, rows),
           builder: (context, snapshot) {
+             print('ProcessUserData called'); // Verify if the function is called
             if (snapshot.connectionState == ConnectionState.done) {
-              // return _buildDataTable();
-              return DataTableWidget(clientTotalPayments: clientTotalPayments);
+               return Scaffold(
+                appBar: AppBar(
+                  title: Text('Data Table Example'),
+                ),
+                //  body: DataTableWidget(rows: rows),
+                   body: DataTableWidget(clientTotalPayments: clientTotalPayments),
+              );
             } else {
-              return CircularProgressIndicator();
+                   return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+                   );
             }
           },
         );
@@ -36,41 +48,36 @@ class DataTableExample extends StatelessWidget {
     );
   }
 
-  Future<void> processUserData(List<QueryDocumentSnapshot> userDataDocs) async {
-    List<DataRow> rows = [];
-    // Define a map to store total payments for each client
-    Map<String, double> clientTotalPayments = {};
-    for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
-      // Print the entire document
-      print("userDataDoc: $userDataDoc");
 
-      // Print the document data as a Map
-      print("userDataDoc data: ${userDataDoc.data()}");
-      String clientName =
-          userDataDoc.get('name')?.toString() ?? 'Unknown Client';
+
+ Future<void> processUserData(
+    List<QueryDocumentSnapshot> userDataDocs,
+    Map<String, double> clientTotalPayments,
+    List<DataRow> rows,
+  ) async {
+    for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
+      String clientName = userDataDoc.get('name')?.toString() ?? 'Unknown Client';
       print("Client Name: $clientName");
       // Access the 'calls' collection for each client's document
-      QuerySnapshot callsSnapshot =
-          await userDataDoc.reference.collection('calls').get();
+      QuerySnapshot callsSnapshot = await userDataDoc.reference.collection('calls').get();
 
       double totalPayment = 0;
 
       for (QueryDocumentSnapshot callDoc in callsSnapshot.docs) {
         totalPayment += callDoc['payment'] as double;
       }
-      print(totalPayment);
       // Store the total payment for the client
       clientTotalPayments[clientName] = totalPayment;
+
+      print(totalPayment);
+      print(clientTotalPayments);
+
       rows.add(DataRow(
         cells: <DataCell>[
           DataCell(Text(clientName)),
           DataCell(Text(totalPayment.toStringAsFixed(2))),
         ],
       ));
-    }
-
-
+          }
   }
-
-
 }

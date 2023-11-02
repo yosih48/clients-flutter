@@ -10,7 +10,6 @@ class DataTableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     List<DataRow> rows = [];
 
-    // Create DataRows based on the clientTotalPayments map
     clientTotalPayments.forEach((clientName, totalPayment) {
       rows.add(DataRow(
         cells: <DataCell>[
