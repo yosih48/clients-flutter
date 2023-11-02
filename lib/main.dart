@@ -3,6 +3,7 @@ import 'package:clientsf/screens/PhoneLogin.dart';
 import 'package:clientsf/screens/callsInfo.dart';
 import 'package:clientsf/screens/callsTodo.dart';
 import 'package:clientsf/screens/settings.dart';
+import 'package:clientsf/screens/tableScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -368,6 +369,16 @@ class _TodoListState extends State<MyHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => callsTodo()),
+                );
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.grid_3x3_outlined),
+              title: Text(AppLocalizations.of(context)!.todo),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DataTableExample()),
                 );
               },
             ),
