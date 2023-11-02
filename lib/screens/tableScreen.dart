@@ -69,8 +69,8 @@ class DataTableExample extends StatelessWidget {
       // Store the total payment for the client
       clientTotalPayments[clientName] = totalPayment;
 
-      print(totalPayment);
-      print(clientTotalPayments);
+      // print(totalPayment);
+      // print(clientTotalPayments);
 
       rows.add(DataRow(
         cells: <DataCell>[
