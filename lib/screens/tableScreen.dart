@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../componenets/tableData.dart';
+
 class DataTableExample extends StatelessWidget {
   const DataTableExample({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Map<String, double> clientTotalPayments = {};
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -23,7 +26,7 @@ class DataTableExample extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               // return _buildDataTable();
-              return CircularProgressIndicator();
+              return DataTableWidget(clientTotalPayments: clientTotalPayments);
             } else {
               return CircularProgressIndicator();
             }
@@ -34,9 +37,9 @@ class DataTableExample extends StatelessWidget {
   }
 
   Future<void> processUserData(List<QueryDocumentSnapshot> userDataDocs) async {
+    List<DataRow> rows = [];
     // Define a map to store total payments for each client
     Map<String, double> clientTotalPayments = {};
-
     for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
       // Print the entire document
       print("userDataDoc: $userDataDoc");
@@ -58,13 +61,16 @@ class DataTableExample extends StatelessWidget {
       print(totalPayment);
       // Store the total payment for the client
       clientTotalPayments[clientName] = totalPayment;
+      rows.add(DataRow(
+        cells: <DataCell>[
+          DataCell(Text(clientName)),
+          DataCell(Text(totalPayment.toStringAsFixed(2))),
+        ],
+      ));
     }
 
-    // You can use clientTotalPayments for further processing or display
+
   }
 
-  // Widget _buildDataTable() {
-  //   // Build and return the DataTable widget here
-  //   // You can use the data from processUserData to populate the table
-  // }
+
 }
