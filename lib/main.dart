@@ -374,7 +374,8 @@ class _TodoListState extends State<MyHomePage> {
             ),
             ListTile(
               leading: Icon(Icons.grid_3x3_outlined),
-              title: Text(AppLocalizations.of(context)!.todo),
+              // title: Text(AppLocalizations.of(context)!.todo),
+              title: Text('טבלת הכנסות'),
               onTap: () {
                 Navigator.push(
                   context,

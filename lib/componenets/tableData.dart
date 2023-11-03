@@ -19,22 +19,33 @@ class DataTableWidget extends StatelessWidget {
       ));
     });
 
-    return DataTable(
-      columns: const <DataColumn>[
-        DataColumn(
-          label: Text(
-            'Client Name',
-            style: TextStyle(fontStyle: FontStyle.italic),
+    return Container(
+
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          
+          DataTable(
+    
+            columns: const <DataColumn>[
+              DataColumn(
+                label: Text(
+                  'Client Name',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ),
+              DataColumn(
+                label: Text(
+                  'Total Payment',
+                  style: TextStyle(fontStyle: FontStyle.italic),
+                ),
+              ),
+            ],
+            rows: rows,
           ),
-        ),
-        DataColumn(
-          label: Text(
-            'Total Payment',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-        ),
-      ],
-      rows: rows,
+        ],
+      ),
+      
     );
   }
 }
