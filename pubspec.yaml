@@ -61,6 +61,7 @@ dependencies:
  
   csv: ^5.0.2
   font_awesome_flutter: ^10.4.0
+  syncfusion_flutter_datepicker: ^21.2.3
  
 
 dev_dependencies:

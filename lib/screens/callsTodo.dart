@@ -16,6 +16,9 @@ class callsTodo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+// int startTimestamp = DateTime(2023, 8, 1).millisecondsSinceEpoch;
+//     int endTimestamp = DateTime(2023, 10, 1).millisecondsSinceEpoch;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.todo),
@@ -27,6 +30,9 @@ class callsTodo extends StatelessWidget {
                 .where('done', isEqualTo: false)
                 .where('userRef',
                     isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        // .where('timestamp',
+        //             isGreaterThanOrEqualTo: startTimestamp,
+        //             isLessThan: endTimestamp)
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {

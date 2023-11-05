@@ -278,14 +278,9 @@ class _callState extends State<call> {
     widget.data.remove('hour');
     var time =
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
-    // print(widget.data);
-    // print('time  ${time}');
+  
     setState(() {
-      // if (widget.data.isNotEmpty) {
-      //   _timeC.text = widget.data['hour'];
-      //   print('NotEmpty  ${_timeC.text}');
-      // } else {
-      // print('Empty  ${_timeC.text}');
+
 
       if (time != null) {
         // print('bot Empty  ${time}');
@@ -297,15 +292,7 @@ class _callState extends State<call> {
 
       // }
     });
-    //     if (widget.data.isNotEmpty) {
-    //   _timeC.text = widget.data['hour'];
-    // } else if (time != null) {
-    //   _timeC.text = "${time.hour}:${time.minute}";
-    // } else {
-    //   _timeC.text = 'בחר זמן';
-    // }
 
-    // print(_timeC.text);
   }
 
   String _dropdownValue = '';
