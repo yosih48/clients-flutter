@@ -2,24 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import '../componenets/datePick.dart';
 import '../componenets/datePicker.dart';
 import '../componenets/tableData.dart';
 
-class DataTableExample extends StatelessWidget {
+class DataTableExample extends StatefulWidget {
   const DataTableExample({Key? key}) : super(key: key);
-  Future<void> displayDialog(context) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return  DatePickerExample(restorationId: 'main');
-      },
-    );
+
+  @override
+  State<DataTableExample> createState() => _DataTableExampleState();
+}
+
+class _DataTableExampleState extends State<DataTableExample> {
+  TextEditingController dateController = TextEditingController();
+
+  @override
+  void initState() {
+    dateController.text = ""; //set the initial value of text field
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     Map<String, double> clientTotalPayments = {};
     List<DataRow> rows = [];
+    DateTime selected = DateTime.now();
+    DateTime initial = DateTime(1970);
+    DateTime last = DateTime.now();
+    final _dateC = TextEditingController();
+    Future displayDatePicker(context) async {
+      var date = await showDatePicker(
+        context: context,
+        initialDate: selected,
+        firstDate: initial,
+        lastDate: last,
+      );
+      if (date != null) {
+        setState(() {
+          _dateC.text = date.toLocal().toString().split(" ")[0];
+        });
+      }
+      print(_dateC.text);
+    }
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -47,29 +71,8 @@ class DataTableExample extends StatelessWidget {
                   Row(
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                               displayDialog(context);
-                        },
-                        child: Text('fdfdfdfdf'),
-                        // child: GestureDetector(
-                        //       onTap: () {
-                        //             showDialog(
-                        //               context: context,
-                        //               builder: (BuildContext context) {
-                        //                 return SimpleDialog(
-                        //                   title: Text('Select a Date'),
-                        //                   contentPadding: EdgeInsets.all(16),
-                        //                   children: [
-                        //                     DatePickerExample(restorationId: 'main'),
-                        //                   ],
-                        //                 );
-                        //               },
-                        //             );
-                        //           },
-
-                        //   child: Text('dsdsds'),
-                        // ),
-                      ),
+                          onPressed: () => displayDatePicker(context),
+                          child: const Text('date pick'))
                     ],
                   ),
                   Row(

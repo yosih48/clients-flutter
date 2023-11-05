@@ -1,63 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    return _HomePage();
-  }
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePage extends State<HomePage> {
-  TextEditingController dateInput = TextEditingController();
+class _HomePageState extends State<HomePage> {
+  TextEditingController dateController = TextEditingController();
 
   @override
   void initState() {
-    dateInput.text = ""; //set the initial value of text field
+    dateController.text = ""; //set the initial value of text field
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("תאריך"),
-        ),
+        appBar: AppBar(title: const Text("Datepicker")),
         body: Container(
-            padding: EdgeInsets.all(15),
-            height: MediaQuery.of(context).size.width / 3,
+            padding: const EdgeInsets.all(15),
+            height: 150,
             child: Center(
                 child: TextField(
-              controller: dateInput,
-              //editing controller of this TextField
-              decoration: InputDecoration(
+              controller: dateController, //editing controller of this TextField
+              decoration: const InputDecoration(
                   icon: Icon(Icons.calendar_today), //icon of text field
                   labelText: "Enter Date" //label text of field
                   ),
-              readOnly: true,
-              //set it true, so that user will not able to edit text
+              readOnly: true, // when true user cannot edit text
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1950),
-                    //DateTime.now() - not to allow to choose before today.
-                    lastDate: DateTime(2100));
+                    initialDate: DateTime.now(), //get today's date
+                    firstDate: DateTime(
+                        2000), //DateTime.now() - not to allow to choose before today.
+                    lastDate: DateTime(2101));
 
                 if (pickedDate != null) {
                   print(
-                      pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                  String formattedDate =
-                      DateFormat('yyyy-MM-dd').format(pickedDate);
+                      pickedDate); //get the picked date in the format => 2022-07-04 00:00:00.000
+                  String formattedDate = DateFormat('yyyy-MM-dd').format(
+                      pickedDate); // format date in required form here we use yyyy-MM-dd that means time is removed
                   print(
-                      formattedDate); //formatted date output using intl package =>  2021-03-16
+                      formattedDate); //formatted date output using intl package =>  2022-07-04
+                  //You can format date as per your need
+
                   setState(() {
-                    dateInput.text =
-                        formattedDate; //set output date to TextField value.
+                    dateController.text =
+                        formattedDate; //set foratted date to TextField value.
                   });
-                } else {}
+                } else {
+                  print("Date is not selected");
+                }
               },
             ))));
   }
