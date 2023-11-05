@@ -18,6 +18,7 @@ class DataTableExample extends StatefulWidget {
 class _DataTableExampleState extends State<DataTableExample> {
 
   final _dateC = TextEditingController(text:'1');
+  final _dateCEnd = TextEditingController(text:'12');
 
   @override
   void initState() {
@@ -65,6 +66,38 @@ class _DataTableExampleState extends State<DataTableExample> {
       }
       print(_dateC.text);
     }
+    Future displayDatePickerEnd(context) async {
+      var date = await showMonthPicker(
+        context: context,
+        initialDate: selected,
+        firstDate: initial,
+        lastDate: last,
+      );
+      if (date != null) {
+        setState(() {
+          // _dateC.text = date.toLocal().toString().split(" ")[0];
+          String selectedDate =
+              date.toLocal().toString().split(" ")[0]; // Example: "2023-11-05"
+
+          List<String> dateParts = selectedDate
+              .split("-"); // Split by "-" to get parts ["2023", "11", "05"]
+
+          // Extract the month part and convert it to an integer
+          int month = int.parse(dateParts[1]);
+
+          // Now 'month' contains the month as an integer (e.g., 11)
+
+          _dateCEnd.text =
+              selectedDate; // If you want to keep the full date as a string
+
+          // or
+
+          _dateCEnd.text =
+              month.toString(); // If you only want the month as a string
+        });
+      }
+      print(_dateCEnd.text);
+    }
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -94,11 +127,11 @@ class _DataTableExampleState extends State<DataTableExample> {
                     children: [
                       ElevatedButton(
                           onPressed: () => displayDatePicker(context),
-                          child: const Text('date pick')),
+                          child: const Text('מחודש:')),
                           SizedBox(width: 8),
                           
-Text('חודש:'),
-                      SizedBox(width: 5),
+// Text('חודש:'),
+                      // SizedBox(width: 5),
 SizedBox(
   width: 80,
   height: 40,
@@ -117,6 +150,24 @@ SizedBox(
   
   ),
 ),
+SizedBox(width: 8,),
+                      ElevatedButton(
+                          onPressed: () => displayDatePickerEnd(context),
+                          child: const Text('עד חודש:')),
+                      SizedBox(width: 8),
+                      SizedBox(
+                        width: 80,
+                        height: 40,
+                        child: TextFormField(
+                          controller: _dateCEnd,
+                          decoration: const InputDecoration(
+
+                              // labelText: 'date picker',
+
+                              border: OutlineInputBorder()),
+                          enabled: false,
+                        ),
+                      ),
 
                     ],
 
@@ -148,8 +199,9 @@ SizedBox(
   ) async {
     print(_dateC.text);
     int month = int.parse(_dateC.text);
+    int monthEnd = int.parse(_dateCEnd.text);
     int startTimestamp = DateTime(2023, month  , 1).millisecondsSinceEpoch;
-    int endTimestamp = DateTime(2023, month, 1).millisecondsSinceEpoch;
+    int endTimestamp = DateTime(2023, monthEnd, 31).millisecondsSinceEpoch;
 
     for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
       String clientName =
