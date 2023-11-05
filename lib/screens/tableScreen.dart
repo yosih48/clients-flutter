@@ -7,7 +7,7 @@ import '../componenets/datePicker.dart';
 import '../componenets/tableData.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
+import 'package:flutter_month_picker/flutter_month_picker.dart';
 class DataTableExample extends StatefulWidget {
   const DataTableExample({Key? key}) : super(key: key);
 
@@ -34,7 +34,7 @@ class _DataTableExampleState extends State<DataTableExample> {
     DateTime last = DateTime.now();
 
     Future displayDatePicker(context) async {
-      var date = await showDatePicker(
+      var date = await showMonthPicker(
         context: context,
         initialDate: selected,
         firstDate: initial,
@@ -65,37 +65,6 @@ class _DataTableExampleState extends State<DataTableExample> {
       }
       print(_dateC.text);
     }
-//  Future<void> displayDatePicker(BuildContext context) async {
-//       DateTime currentDate = DateTime.now();
-//       DateTime? selectedDate = await showDatePicker(
-//         context: context,
-//         initialDate: currentDate,
-//         firstDate: DateTime(currentDate.year - 1, 1),
-//         lastDate: DateTime(currentDate.year + 1, 12),
-//         builder: (BuildContext context, Widget? child) {
-//           return Theme(
-//             data: ThemeData.light().copyWith(
-//               primaryColor:
-//                   Colors.blue, // Change the primary color to your preference
-//               accentColor:
-//                   Colors.blue, // Change the accent color to your preference
-//               colorScheme: ColorScheme.light(primary: Colors.blue),
-//               buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
-//             ),
-//             child: child!,
-//           );
-//         },
-//       );
-
-//       if (selectedDate != null) {
-//         setState(() {
-//           // Format the selected date to display only the month and year
-//           String formattedDate = DateFormat.yMMM().format(selectedDate);
-//           _dateC.text = formattedDate;
-//         });
-//         print(_dateC.text);
-//       }
-//     }
 
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
@@ -180,7 +149,7 @@ SizedBox(
     print(_dateC.text);
     int month = int.parse(_dateC.text);
     int startTimestamp = DateTime(2023, month  , 1).millisecondsSinceEpoch;
-    int endTimestamp = DateTime(2023, 12, 1).millisecondsSinceEpoch;
+    int endTimestamp = DateTime(2023, month, 1).millisecondsSinceEpoch;
 
     for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
       String clientName =
