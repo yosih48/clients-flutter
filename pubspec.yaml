@@ -62,8 +62,9 @@ dependencies:
   csv: ^5.0.2
   font_awesome_flutter: ^10.4.0
   syncfusion_flutter_datepicker: ^21.2.3
-  month_year_picker: ^0.2.0+4
-  flutter_month_picker: ^0.0.2
+ 
+  month_picker_dialog: ^2.2.1
+  # flutter_month_picker: ^0.0.2
  
 
 dev_dependencies:
