@@ -22,7 +22,7 @@ import 'todoItem.dart';
 import 'componenets/datePick.dart';
 import 'objects/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import 'package:month_year_picker/month_year_picker.dart';
 // Future< void> main()
 // async{
 //   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +61,7 @@ class TodoApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
+           MonthYearPickerLocalizations.delegate,
       ],
       supportedLocales: [
         Locale('en'), // English
