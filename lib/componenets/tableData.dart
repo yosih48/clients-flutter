@@ -9,16 +9,25 @@ class DataTableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<DataRow> rows = [];
-
+double totalSum = 0.0; // Initialize the total sum
     clientTotalPayments.forEach((clientName, totalPayment) {
+      print( totalPayment);
       rows.add(DataRow(
         cells: <DataCell>[
           DataCell(Text(clientName)),
           DataCell(Text(totalPayment.toStringAsFixed(2))),
+        
+            
         ],
       ));
+       totalSum += totalPayment; // Add the current totalPayment to the total sum
     });
-
+rows.add(DataRow(
+  cells: <DataCell>[
+    DataCell(Text('סהכ תשלומים',style: TextStyle(fontWeight: FontWeight.bold),)),
+    DataCell(Text(totalSum.toStringAsFixed(2), style: TextStyle(fontWeight: FontWeight.bold),)),
+  ],
+));
     return Container(
 
       child: Row(
@@ -40,6 +49,7 @@ class DataTableWidget extends StatelessWidget {
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),
               ),
+       
             ],
             rows: rows,
           ),

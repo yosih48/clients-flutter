@@ -3,12 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
-
 import '../componenets/tableData.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:flutter_month_picker/flutter_month_picker.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+
 class DataTableExample extends StatefulWidget {
   const DataTableExample({Key? key}) : super(key: key);
 
@@ -17,15 +17,13 @@ class DataTableExample extends StatefulWidget {
 }
 
 class _DataTableExampleState extends State<DataTableExample> {
-
-  final _dateC = TextEditingController(text:'1');
-  final _dateCEnd = TextEditingController(text:'12');
-  final _dateCyear= TextEditingController(text:'2023');
-  final _dateCEndYear = TextEditingController(text:'2023');
+  final _dateC = TextEditingController(text: '1');
+  final _dateCEnd = TextEditingController(text: '12');
+  final _dateCyear = TextEditingController(text: '2023');
+  final _dateCEndYear = TextEditingController(text: '2023');
 
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -56,21 +54,22 @@ class _DataTableExampleState extends State<DataTableExample> {
           // Extract the month part and convert it to an integer
           int month = int.parse(dateParts[1]);
           int year = int.parse(dateParts[0]);
-print(year);
+          print(year);
           // Now 'month' contains the month as an integer (e.g., 11)
 
           _dateC.text =
               selectedDate; // If you want to keep the full date as a string
 
           // or
-          _dateC.text = month.toString(); // If you only want the month as a string
-_dateCyear.text =  year.toString();
+          _dateC.text =
+              month.toString(); // If you only want the month as a string
+          _dateCyear.text = year.toString();
         });
       }
       print(_dateC.text);
     }
+
     Future displayDatePickerEnd(context) async {
-  
       var date = await showMonthPicker(
         context: context,
         initialDate: selected,
@@ -97,8 +96,10 @@ _dateCyear.text =  year.toString();
 
           // or
 
-          _dateCEnd.text = month.toString(); // If you only want the month as a string
-          _dateCEndYear.text = year.toString(); // If you only want the year as a string
+          _dateCEnd.text =
+              month.toString(); // If you only want the month as a string
+          _dateCEndYear.text =
+              year.toString(); // If you only want the year as a string
         });
       }
       print(_dateCEnd.text);
@@ -133,36 +134,22 @@ _dateCyear.text =  year.toString();
                       ElevatedButton(
                           onPressed: () => displayDatePicker(context),
                           child: const Text('מחודש:')),
-                          SizedBox(width: 8),
-                          
-// Text('חודש:'),
-                      // SizedBox(width: 5),
-SizedBox(
-  width: 80,
-  height: 40,
+                      SizedBox(width: 8),
+
+                      SizedBox(
+                        width: 80,
+                        height: 40,
                         child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text('${_dateCyear.text}/ ${_dateC.text} '),
-     
-    ],
-  ),
-  // child: TextFormField(
-  
-  //   controller: _dateC,
-  
-  //   decoration: const InputDecoration(
-  
-  //     // labelText: 'date picker',
-  
-  //     border: OutlineInputBorder()
-  
-  //   ),
-  //    enabled: false,
-  
-  // ),
-),
-SizedBox(width: 8,),
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('${_dateCyear.text}/ ${_dateC.text} '),
+                          ],
+                        ),
+              
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
                       ElevatedButton(
                           onPressed: () => displayDatePickerEnd(context),
                           child: const Text('עד חודש:')),
@@ -170,18 +157,16 @@ SizedBox(width: 8,),
                       SizedBox(
                         width: 80,
                         height: 40,
-                      child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text('${_dateCEndYear.text}/ ${_dateCEnd.text} '),
-     
-    ],
-  ),
-                       
-              
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('${_dateCEndYear.text}/ ${_dateCEnd.text} '),
+                          ],
+                        ),
+
                         // child: TextFormField(
                         //   controller: _dateCEnd,
-                          
+
                         //   decoration: const InputDecoration(
 
                         //       // labelText: 'date picker',
@@ -190,9 +175,7 @@ SizedBox(width: 8,),
                         //   enabled: false,
                         // ),
                       ),
-
                     ],
-
                   ),
                   Row(
                     children: [
@@ -224,7 +207,7 @@ SizedBox(width: 8,),
     int monthEnd = int.parse(_dateCEnd.text);
     int year = int.parse(_dateCyear.text);
     int yearEnd = int.parse(_dateCEndYear.text);
-    int startTimestamp = DateTime(year, month  , 1).millisecondsSinceEpoch;
+    int startTimestamp = DateTime(year, month, 1).millisecondsSinceEpoch;
     int endTimestamp = DateTime(yearEnd, monthEnd, 31).millisecondsSinceEpoch;
 
     for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
@@ -256,6 +239,8 @@ SizedBox(width: 8,),
         cells: <DataCell>[
           DataCell(Text(clientName)),
           DataCell(Text(totalPayment.toStringAsFixed(2))),
+        
+          
         ],
       ));
     }
