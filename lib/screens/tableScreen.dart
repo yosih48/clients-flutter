@@ -121,14 +121,19 @@ class _DataTableExampleState extends State<DataTableExample> {
                 //  body: DataTableWidget(rows: rows),
                 body: Column(children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
                           onPressed: () => displayDatePicker(context),
                           child: const Text('date pick')),
-                          SizedBox(width: 200),
-Expanded(
-  child:   TextFormField(
+                          SizedBox(width: 8),
+                          
+Text('חודש:'),
+                      SizedBox(width: 5),
+SizedBox(
+  width: 80,
+  height: 40,
+  child: TextFormField(
   
     controller: _dateC,
   
@@ -139,6 +144,7 @@ Expanded(
       border: OutlineInputBorder()
   
     ),
+     enabled: false,
   
   ),
 ),
