@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 import '../componenets/tableData.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:flutter_month_picker/flutter_month_picker.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
@@ -21,11 +21,28 @@ class _DataTableExampleState extends State<DataTableExample> {
   final _dateCEnd = TextEditingController(text: '12');
   final _dateCyear = TextEditingController(text: '2023');
   final _dateCEndYear = TextEditingController(text: '2023');
+ 
+bool _checkboxDone = true;
 
   @override
   void initState() {
     super.initState();
+     loadCheckboxValue();
   }
+  Future<void> loadCheckboxValue() async {
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    _checkboxDone = prefs.getBool('checkboxDone') ?? true;
+  });
+}
+  // Update and save the value when the checkbox is changed
+void updateCheckboxValue(bool newValue) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('_checkboxDone', newValue);
+  setState(() {
+    _checkboxDone = newValue;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +51,6 @@ class _DataTableExampleState extends State<DataTableExample> {
     DateTime selected = DateTime.now();
     DateTime initial = DateTime(1970);
     DateTime last = DateTime.now();
-
     Future displayDatePicker(context) async {
       var date = await showMonthPicker(
         context: context,
@@ -175,6 +191,12 @@ class _DataTableExampleState extends State<DataTableExample> {
                         //   enabled: false,
                         // ),
                       ),
+Checkbox(
+  value: _checkboxDone,
+  onChanged: (newValue) {
+    updateCheckboxValue(newValue!);
+  },
+),
                     ],
                   ),
                   Row(
@@ -213,7 +235,7 @@ class _DataTableExampleState extends State<DataTableExample> {
     for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
       String clientName =
           userDataDoc.get('name')?.toString() ?? 'Unknown Client';
-      print("Client Name: $clientName");
+      // print("Client Name: $clientName");
       // Access the 'calls' collection for each client's document
       QuerySnapshot callsSnapshot =
           await userDataDoc.reference.collection('calls').get();
@@ -222,10 +244,20 @@ class _DataTableExampleState extends State<DataTableExample> {
 
       for (QueryDocumentSnapshot callDoc in callsSnapshot.docs) {
         int documentTimestamp = callDoc['timestamp'] as int;
+        bool documentPaid =  callDoc['paid'];
+        if(_checkboxDone = true){
         if (documentTimestamp >= startTimestamp &&
-            documentTimestamp < endTimestamp) {
+            documentTimestamp < endTimestamp && documentPaid == true) {
           // Add the payment to totalPayment
           totalPayment += callDoc['payment'] as double;
+        }
+
+        }else{
+               if (documentTimestamp >= startTimestamp &&
+            documentTimestamp < endTimestamp && documentPaid == false) {
+          // Add the payment to totalPayment
+          totalPayment += callDoc['payment'] as double;
+        }
         }
         // totalPayment += callDoc['payment'] as double;
       }

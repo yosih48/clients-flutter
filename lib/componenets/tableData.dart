@@ -11,7 +11,7 @@ class DataTableWidget extends StatelessWidget {
     List<DataRow> rows = [];
 double totalSum = 0.0; // Initialize the total sum
     clientTotalPayments.forEach((clientName, totalPayment) {
-      print( totalPayment);
+      // print( totalPayment);
       rows.add(DataRow(
         cells: <DataCell>[
           DataCell(Text(clientName)),
