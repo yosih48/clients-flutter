@@ -18,6 +18,7 @@ class AppSingelton {
   //  String userID = user!.uid;
   double hourlyRate = 0.0;
   String userID = '';
+  bool checkboxPaid = false;
 
 
   void doSomething() {

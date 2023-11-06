@@ -9,6 +9,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 // import 'package:flutter_month_picker/flutter_month_picker.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 
+import '../singelton/AppSingelton.dart';
+
 class DataTableExample extends StatefulWidget {
   const DataTableExample({Key? key}) : super(key: key);
 
@@ -22,27 +24,29 @@ class _DataTableExampleState extends State<DataTableExample> {
   final _dateCyear = TextEditingController(text: '2023');
   final _dateCEndYear = TextEditingController(text: '2023');
  
-bool _checkboxDone = true;
+bool _checkboxDone =false;
 
   @override
   void initState() {
     super.initState();
-     loadCheckboxValue();
+     getStoredHourlyRate();
   }
-  Future<void> loadCheckboxValue() async {
-  final prefs = await SharedPreferences.getInstance();
-  setState(() {
-    _checkboxDone = prefs.getBool('checkboxDone') ?? true;
-  });
-}
-  // Update and save the value when the checkbox is changed
-void updateCheckboxValue(bool newValue) async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('_checkboxDone', newValue);
-  setState(() {
-    _checkboxDone = newValue;
-  });
-}
+    Future<void> getStoredHourlyRate() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // int storedValue = prefs.getInt('newValue') ?? 0;
+ bool storedValue = prefs.getBool('${AppSingelton().checkboxPaid}_newValue') ?? false;
+    //  print(storedValue);
+    //  print(AppSingelton().userID);
+    setState(() {
+      _checkboxDone = storedValue;
+      print('getStoredHourlyRate ${storedValue}');
+      print('getStoredHourlyRate ${_checkboxDone}');
+    });
+    
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -191,12 +195,21 @@ void updateCheckboxValue(bool newValue) async {
                         //   enabled: false,
                         // ),
                       ),
-Checkbox(
-  value: _checkboxDone,
-  onChanged: (newValue) {
-    updateCheckboxValue(newValue!);
-  },
-),
+// Checkbox(
+//   value: _checkboxDone,
+//   onChanged: (newValue)async {
+//     bool newCheckboxDone = newValue!;
+//               setState(() {
+//                           //  _checkboxDone = newCheckboxDone;
+//                            _checkboxDone = false;
+//                             // print(hourlyRate);
+//                             // print(AppSingelton().hourlyRate);
+//                           });
+//     SharedPreferences prefs =
+//                               await SharedPreferences.getInstance();
+// prefs.setBool('${AppSingelton().checkboxPaid}_newValue', newValue);
+//   },
+// ),
                     ],
                   ),
                   Row(
