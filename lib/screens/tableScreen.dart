@@ -24,25 +24,12 @@ class _DataTableExampleState extends State<DataTableExample> {
   final _dateCyear = TextEditingController(text: '2023');
   final _dateCEndYear = TextEditingController(text: '2023');
  
-bool _checkboxDone =false;
+
 
   @override
   void initState() {
     super.initState();
-     getStoredHourlyRate();
-  }
-    Future<void> getStoredHourlyRate() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // int storedValue = prefs.getInt('newValue') ?? 0;
- bool storedValue = prefs.getBool('${AppSingelton().checkboxPaid}_newValue') ?? false;
-    //  print(storedValue);
-    //  print(AppSingelton().userID);
-    setState(() {
-      _checkboxDone = storedValue;
-      print('getStoredHourlyRate ${storedValue}');
-      print('getStoredHourlyRate ${_checkboxDone}');
-    });
-    
+   
   }
 
 
