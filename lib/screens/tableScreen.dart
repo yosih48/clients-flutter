@@ -47,6 +47,7 @@ void updateCheckboxValue(bool newValue) async {
   @override
   Widget build(BuildContext context) {
     Map<String, double> clientTotalPayments = {};
+    Map<String, double> clientNotPaidPayments = {};
     List<DataRow> rows = [];
     DateTime selected = DateTime.now();
     DateTime initial = DateTime(1970);
@@ -134,7 +135,7 @@ void updateCheckboxValue(bool newValue) async {
 
         return FutureBuilder<void>(
           future: processUserData(
-              userDataSnapshot.data!.docs, clientTotalPayments, rows),
+              userDataSnapshot.data!.docs, clientTotalPayments,clientNotPaidPayments, rows),
           builder: (context, snapshot) {
             print('ProcessUserData called'); // Verify if the function is called
             if (snapshot.connectionState == ConnectionState.done) {
@@ -180,28 +181,14 @@ void updateCheckboxValue(bool newValue) async {
                           ],
                         ),
 
-                        // child: TextFormField(
-                        //   controller: _dateCEnd,
-
-                        //   decoration: const InputDecoration(
-
-                        //       // labelText: 'date picker',
-
-                        //       border: OutlineInputBorder()),
-                        //   enabled: false,
-                        // ),
+             
                       ),
-Checkbox(
-  value: _checkboxDone,
-  onChanged: (newValue) {
-    updateCheckboxValue(newValue!);
-  },
-),
+
                     ],
                   ),
                   Row(
                     children: [
-                      DataTableWidget(clientTotalPayments: clientTotalPayments),
+                      DataTableWidget(clientTotalPayments: clientTotalPayments , clientNotPaidPayments: clientNotPaidPayments),
                     ],
                   ),
                 ]),
@@ -222,6 +209,7 @@ Checkbox(
   Future<void> processUserData(
     List<QueryDocumentSnapshot> userDataDocs,
     Map<String, double> clientTotalPayments,
+    Map<String, double> clientNotPaidPayments,
     List<DataRow> rows,
   ) async {
     print(_dateC.text);
@@ -241,36 +229,31 @@ Checkbox(
           await userDataDoc.reference.collection('calls').get();
 
       double totalPayment = 0;
+      double totalNotPaidPayment = 0;
 
       for (QueryDocumentSnapshot callDoc in callsSnapshot.docs) {
         int documentTimestamp = callDoc['timestamp'] as int;
         bool documentPaid =  callDoc['paid'];
-        if(_checkboxDone = true){
-        if (documentTimestamp >= startTimestamp &&
-            documentTimestamp < endTimestamp && documentPaid == true) {
-          // Add the payment to totalPayment
-          totalPayment += callDoc['payment'] as double;
+    
+  
+          if (documentTimestamp >= startTimestamp &&
+            documentTimestamp < endTimestamp) {
+          totalPayment += documentPaid ? callDoc['payment'] : 0.0;
+          totalNotPaidPayment += !documentPaid ? callDoc['payment'] : 0.0;
         }
-
-        }else{
-               if (documentTimestamp >= startTimestamp &&
-            documentTimestamp < endTimestamp && documentPaid == false) {
-          // Add the payment to totalPayment
-          totalPayment += callDoc['payment'] as double;
-        }
-        }
+     
         // totalPayment += callDoc['payment'] as double;
       }
       // Store the total payment for the client
       clientTotalPayments[clientName] = totalPayment;
+      clientNotPaidPayments[clientName] = totalNotPaidPayment;
 
-      // print(totalPayment);
-      // print(clientTotalPayments);
 
       rows.add(DataRow(
         cells: <DataCell>[
           DataCell(Text(clientName)),
           DataCell(Text(totalPayment.toStringAsFixed(2))),
+          DataCell(Text(totalNotPaidPayment.toStringAsFixed(2))),
         
           
         ],
