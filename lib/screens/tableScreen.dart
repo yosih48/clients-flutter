@@ -177,10 +177,15 @@ class _DataTableExampleState extends State<DataTableExample> {
 
                     ],
                   ),
-                  Row(
-                    children: [
-                      DataTableWidget(clientTotalPayments: clientTotalPayments , clientNotPaidPayments: clientNotPaidPayments),
-                    ],
+                    Expanded(
+                    child: ListView(
+                    children: [Row(
+                        children: [
+                          DataTableWidget(clientTotalPayments: clientTotalPayments , clientNotPaidPayments: clientNotPaidPayments),
+                        ],
+                      ),
+                    ]
+                    ),
                   ),
                 ]),
               );
