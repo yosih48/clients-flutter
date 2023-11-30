@@ -23,17 +23,11 @@ class _DataTableExampleState extends State<DataTableExample> {
   final _dateCEnd = TextEditingController(text: '12');
   final _dateCyear = TextEditingController(text: '2023');
   final _dateCEndYear = TextEditingController(text: '2023');
- 
-
 
   @override
   void initState() {
     super.initState();
-   
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -125,8 +119,8 @@ class _DataTableExampleState extends State<DataTableExample> {
         }
 
         return FutureBuilder<void>(
-          future: processUserData(
-              userDataSnapshot.data!.docs, clientTotalPayments,clientNotPaidPayments, rows),
+          future: processUserData(userDataSnapshot.data!.docs,
+              clientTotalPayments, clientNotPaidPayments, rows),
           builder: (context, snapshot) {
             print('ProcessUserData called'); // Verify if the function is called
             if (snapshot.connectionState == ConnectionState.done) {
@@ -143,7 +137,6 @@ class _DataTableExampleState extends State<DataTableExample> {
                           onPressed: () => displayDatePicker(context),
                           child: const Text('מחודש:')),
                       SizedBox(width: 8),
-
                       SizedBox(
                         width: 80,
                         height: 40,
@@ -153,7 +146,6 @@ class _DataTableExampleState extends State<DataTableExample> {
                             Text('${_dateCyear.text}/ ${_dateC.text} '),
                           ],
                         ),
-              
                       ),
                       SizedBox(
                         width: 8,
@@ -171,21 +163,19 @@ class _DataTableExampleState extends State<DataTableExample> {
                             Text('${_dateCEndYear.text}/ ${_dateCEnd.text} '),
                           ],
                         ),
-
-             
                       ),
-
                     ],
                   ),
-                    Expanded(
-                    child: ListView(
-                    children: [Row(
+                  Expanded(
+                    child: ListView(children: [
+                      Row(
                         children: [
-                          DataTableWidget(clientTotalPayments: clientTotalPayments , clientNotPaidPayments: clientNotPaidPayments),
+                          DataTableWidget(
+                              clientTotalPayments: clientTotalPayments,
+                              clientNotPaidPayments: clientNotPaidPayments),
                         ],
                       ),
-                    ]
-                    ),
+                    ]),
                   ),
                 ]),
               );
@@ -215,7 +205,6 @@ class _DataTableExampleState extends State<DataTableExample> {
     int yearEnd = int.parse(_dateCEndYear.text);
     int startTimestamp = DateTime(year, month, 1).millisecondsSinceEpoch;
     int endTimestamp = DateTime(yearEnd, monthEnd, 31).millisecondsSinceEpoch;
-
     for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
       String clientName =
           userDataDoc.get('name')?.toString() ?? 'Unknown Client';
@@ -226,32 +215,43 @@ class _DataTableExampleState extends State<DataTableExample> {
 
       double totalPayment = 0;
       double totalNotPaidPayment = 0;
+    double sumPrice = 0;
 
       for (QueryDocumentSnapshot callDoc in callsSnapshot.docs) {
         int documentTimestamp = callDoc['timestamp'] as int;
-        bool documentPaid =  callDoc['paid'];
-    
-  
-          if (documentTimestamp >= startTimestamp &&
+        bool documentPaid = callDoc['paid'];
+        List productList = [];
+      
+        productList = callDoc['products'] as List<dynamic>;
+        for (var product in productList) {
+          // Assuming each product is a map and has a "price" field
+          double price = product['price'].toDouble();
+          sumPrice += price;
+          print('Product price: $price');
+          print('sumPrice: $sumPrice');
+        }
+        // print(productList);
+
+        // print('products  ${callDoc['products']['price'].toDouble()}');
+        //  double price = callDoc['products']['price'].toDouble();
+        // print('Product price: $price');
+        if (documentTimestamp >= startTimestamp &&
             documentTimestamp < endTimestamp) {
           totalPayment += documentPaid ? callDoc['payment'] : 0.0;
           totalNotPaidPayment += !documentPaid ? callDoc['payment'] : 0.0;
         }
-     
+
         // totalPayment += callDoc['payment'] as double;
       }
       // Store the total payment for the client
-      clientTotalPayments[clientName] = totalPayment;
-      clientNotPaidPayments[clientName] = totalNotPaidPayment;
-
+      clientTotalPayments[clientName] = totalPayment  -sumPrice;
+      clientNotPaidPayments[clientName] = totalNotPaidPayment  ;
 
       rows.add(DataRow(
         cells: <DataCell>[
           DataCell(Text(clientName)),
           DataCell(Text(totalPayment.toStringAsFixed(2))),
           DataCell(Text(totalNotPaidPayment.toStringAsFixed(2))),
-        
-          
         ],
       ));
     }
