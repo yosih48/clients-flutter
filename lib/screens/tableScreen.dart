@@ -223,13 +223,6 @@ class _DataTableExampleState extends State<DataTableExample> {
         List productList = [];
       
         productList = callDoc['products'] as List<dynamic>;
-        for (var product in productList) {
-          // Assuming each product is a map and has a "price" field
-          double price = product['price'].toDouble();
-          sumPrice += price;
-          print('Product price: $price');
-          print('sumPrice: $sumPrice');
-        }
         // print(productList);
 
         // print('products  ${callDoc['products']['price'].toDouble()}');
@@ -239,6 +232,14 @@ class _DataTableExampleState extends State<DataTableExample> {
             documentTimestamp < endTimestamp) {
           totalPayment += documentPaid ? callDoc['payment'] : 0.0;
           totalNotPaidPayment += !documentPaid ? callDoc['payment'] : 0.0;
+        for (var product in productList) {
+          // Assuming each product is a map and has a "price" field
+          double price = product['price'].toDouble();
+          sumPrice += price;
+          print('Product price: $price');
+          print('sumPrice: $sumPrice');
+        }
+
         }
 
         // totalPayment += callDoc['payment'] as double;
