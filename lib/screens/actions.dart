@@ -465,15 +465,39 @@ class _callState extends State<call> {
               SizedBox(height: 8),
 
               Row(
+            
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: paimentController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: InputDecoration(
-                          labelText:
-                              AppLocalizations.of(context)!.extraPayment),
+                    child: Container(
+                      margin: EdgeInsets.only(top: 20,left: 20,right: 20),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+
+                          color:Color(0xff1d1617).withOpacity(0.11),
+                          blurRadius: 40,
+                          spreadRadius: 0.0
+                          )
+                        ]
+                      ),
+                      child: TextField(
+                        controller: paimentController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          contentPadding: EdgeInsets.all(12),
+                          hintText:    AppLocalizations.of(context)!.extraPayment,
+                          border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none
+                    
+                          ),
+                            labelText:
+                                AppLocalizations.of(context)!.extraPayment
+                                ),
+                      ),
                     ),
                   ),
                   // SizedBox(width: 132),
