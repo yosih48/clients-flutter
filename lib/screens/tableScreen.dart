@@ -24,10 +24,10 @@ class DataTableExample extends StatefulWidget {
 }
 
 class _DataTableExampleState extends State<DataTableExample> {
-  final _dateC = TextEditingController(text: '1');
-  final _dateCEnd = TextEditingController(text: '12');
-  final _dateCyear = TextEditingController(text: '2023');
-  final _dateCEndYear = TextEditingController(text: '2023');
+  late TextEditingController _dateC;
+  late TextEditingController _dateCEnd;
+  late TextEditingController _dateCyear;
+  late TextEditingController _dateCEndYear;
 
   Map<String, double> clientTotalPayments = {};
   Map<String, double> clientNotPaidPayments = {};
@@ -40,7 +40,23 @@ class _DataTableExampleState extends State<DataTableExample> {
   @override
   void initState() {
     super.initState();
+        DateTime now = DateTime.now();
+
+    // Initialize controllers with the current month and year
+    _dateC = TextEditingController(text: now.month.toString());
+    _dateCEnd = TextEditingController(text: now.month.toString());
+    _dateCyear = TextEditingController(text: now.year.toString());
+    _dateCEndYear = TextEditingController(text: now.year.toString());
     _loadData();
+  }
+
+    @override
+  void dispose() {
+    _dateC.dispose();
+    _dateCEnd.dispose();
+    _dateCyear.dispose();
+    _dateCEndYear.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
