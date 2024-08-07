@@ -56,7 +56,9 @@
                                "extraPayment": "extraPayment",
                                 "sumHours": "total hours",
                                 "totalCosts": "total costs",
-                                 "toalIncome": "total income"
+                                 "toalIncome": "total income",
+                                 "searchcustomer": "Search Customer"
+                                 
                       
                 
                     
