@@ -43,6 +43,7 @@ class _dropdownState extends State<dropdown> {
   @override
   void initState() {
     super.initState();
+  
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
   }
 
@@ -142,6 +143,7 @@ class _callState extends State<call> {
   double pay = 0;
   void initState() {
     super.initState();
+     
     print('extraPayment1: ${extraPayment}');
     if (widget.data.containsKey('products') &&
         widget.data['products'].isNotEmpty) {
@@ -157,7 +159,7 @@ class _callState extends State<call> {
         );
       }).toList();
     }
-          for (var product in productList) {
+    for (var product in productList) {
       // print('Product Name: ${product.name}');
       // print('productList Price: ${product.discountedPrice}');
       // print('Discounted Price: ${product.discountedPrice}');
@@ -176,14 +178,17 @@ class _callState extends State<call> {
         widget.data.isNotEmpty ? widget.data['payment'].toString() : '0';
 
     _checkboxValue = widget.data.isNotEmpty ? widget.data['paid'] : false;
-    _checkboxParts =  widget.data.containsKey('partsPaid') && widget.data['partsPaid'] == null ? false  :( widget.data['partsPaid']== true? true :false);
+    _checkboxParts =
+        widget.data.containsKey('partsPaid') && widget.data['partsPaid'] == null
+            ? false
+            : (widget.data['partsPaid'] == true ? true : false);
 
     if (widget.data.containsKey('extraPayment')) {
       // if (widget.data.isNotEmpty) {
       extraPayment = widget.data['extraPayment'].toString();
       print('extraPayment: ${extraPayment}');
     }
-    print(' partsPaid: ${ widget.data['partsPaid']}');
+    print(' partsPaid: ${widget.data['partsPaid']}');
     // _checkboxDone = widget.data.isNotEmpty && widget.data.containsKey('done')
     //     ? widget.data['done']
     //     : '';
@@ -278,10 +283,8 @@ class _callState extends State<call> {
     widget.data.remove('hour');
     var time =
         await showTimePicker(context: context, initialTime: TimeOfDay.now());
-  
+
     setState(() {
-
-
       if (time != null) {
         // print('bot Empty  ${time}');
         _timeC.text = "${time.hour}:${time.minute}";
@@ -292,7 +295,6 @@ class _callState extends State<call> {
 
       // }
     });
-
   }
 
   String _dropdownValue = '';
@@ -322,10 +324,12 @@ class _callState extends State<call> {
   // final TextEditingController paimentController =
   // TextEditingController(text: sumPayment);
   // TextEditingController();
+    final TextEditingController paimentController =
+     
+        TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final TextEditingController paimentController =
-        TextEditingController(text: extraPayment);
+   
     //     TextEditingController();
     // print('sumPayment  ${sumPayment}');
     // print('sumPayment  ${sumPayment.runtimeType}');
@@ -358,8 +362,8 @@ class _callState extends State<call> {
                     onDropdownChanged: handleDropdownValueChange,
                     data: widget.data,
                   ),
-                    SizedBox(width: 96),
-     
+                  SizedBox(width: 96),
+
                   Text(
                     AppStrings.paid,
                     style: TextStyle(fontSize: 16),
@@ -384,7 +388,7 @@ class _callState extends State<call> {
                   Checkbox(
                       value: _checkboxDone,
                       onChanged: (newValue) {
-                        // print(newValue);
+                        print(newValue);
 
                         setState(() {
                           _checkboxDone = newValue!;
@@ -392,7 +396,6 @@ class _callState extends State<call> {
                           // print(_checkboxValue);
                         });
                       }),
-          
 
                   // ElevatedButton(
                   //   child: Text('תאריך קריאה'),
@@ -465,38 +468,33 @@ class _callState extends State<call> {
               SizedBox(height: 8),
 
               Row(
-            
                 children: [
                   Expanded(
                     child: Container(
-                      margin: EdgeInsets.only(top: 20,left: 20,right: 20),
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-
-                          color:Color(0xff1d1617).withOpacity(0.11),
-                          blurRadius: 40,
-                          spreadRadius: 0.0
-                          )
-                        ]
-                      ),
+                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
+                      decoration: BoxDecoration(boxShadow: [
+                        BoxShadow(
+                            color: Color(0xff1d1617).withOpacity(0.11),
+                            blurRadius: 40,
+                            spreadRadius: 0.0)
+                      ]),
                       child: TextField(
                         controller: paimentController,
                         keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                         decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.white,
-                          contentPadding: EdgeInsets.all(12),
-                          hintText:    AppLocalizations.of(context)!.extraPayment,
-                          border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
-                    borderSide: BorderSide.none
-                    
-                          ),
+                            filled: true,
+                            fillColor: Colors.white,
+                            contentPadding: EdgeInsets.all(12),
+                            hintText:
+                                AppLocalizations.of(context)!.extraPayment,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide.none),
                             labelText:
-                                AppLocalizations.of(context)!.extraPayment
-                                ),
+                                AppLocalizations.of(context)!.extraPayment),
                       ),
                     ),
                   ),
@@ -562,8 +560,7 @@ class _callState extends State<call> {
                     ),
                   ],
                 ),
-              if (productList.isNotEmpty)
-               SizedBox(height: 10),
+              if (productList.isNotEmpty) SizedBox(height: 10),
               Column(
                 children: productList.map((product) {
                   final productName = product.name;
@@ -626,39 +623,37 @@ class _callState extends State<call> {
                   ),
                 ],
               ),
-                if (productList.isNotEmpty)
-              SizedBox(height: 8),
-                if (productList.isNotEmpty)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    '${AppLocalizations.of(context)!.totalCosts}:',
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  SizedBox(width: 8), // Add spacing between text and box
-                  // PaymentBox(parameter1: 50.0, parameter2: 30.0),
-                  // '$widget.data['payment']'
-                  Text(pay.toString()),
-                   SizedBox(width: 24),
-                           Text(
-                  AppLocalizations.of(context)!.paid,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Checkbox(
-                      value: _checkboxParts,
-                      onChanged: (newValue) {
-                        // print(newValue);
+              if (productList.isNotEmpty) SizedBox(height: 8),
+              if (productList.isNotEmpty)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${AppLocalizations.of(context)!.totalCosts}:',
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    SizedBox(width: 8), // Add spacing between text and box
+                    // PaymentBox(parameter1: 50.0, parameter2: 30.0),
+                    // '$widget.data['payment']'
+                    Text(pay.toString()),
+                    SizedBox(width: 24),
+                    Text(
+                      AppLocalizations.of(context)!.paid,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    Checkbox(
+                        value: _checkboxParts,
+                        onChanged: (newValue) {
+                          // print(newValue);
 
-                        setState(() {
-                          _checkboxParts = newValue!;
+                          setState(() {
+                            _checkboxParts = newValue!;
 
-                          // print(_checkboxValue);
-                        });
-                      }),
-
-                ],
-              ),
+                            // print(_checkboxValue);
+                          });
+                        }),
+                  ],
+                ),
               SizedBox(height: 8),
               // Row(
               //   children: [
@@ -784,9 +779,10 @@ class _callState extends State<call> {
               print('hourCharge: ${hourCharge}');
               print('paimentController.text: ${paimentController.text}');
 
-              double? payment = paimentController.text == 'null'
-                  ? 0
+              double? payment = paimentController.text.isEmpty
+                  ? widget.data['payment']
                   : paimentController.text.toDouble();
+                   print('payment  ${payment}');
               // widget.data.remove('payment');
               // widget.data['payment'] = 0;
               // print('widget.data payment: ${widget.data['payment']}');
@@ -922,7 +918,7 @@ Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
                 'discountedPrice': product.discountedPrice,
               })
           .toList(),
-           'partsPaid':  partsPaid
+      'partsPaid': partsPaid
     });
     print("Call Added");
 
@@ -932,8 +928,18 @@ Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
   }
 }
 
-Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
-    payment, done, extraCharge, List<ProductData> productList,  partsPaid) async {
+Future<void> updateUser(
+    clientID,
+    callID,
+    callDetails,
+    paid,
+    type,
+    hour,
+    payment,
+    done,
+    extraCharge,
+    List<ProductData> productList,
+    partsPaid) async {
   print(clientID);
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
@@ -986,7 +992,7 @@ Future<void> updateUser(clientID, callID, callDetails, paid, type, hour,
                 'discountedPrice': product.discountedPrice,
               })
           .toList(),
-           'partsPaid':  partsPaid
+      'partsPaid': partsPaid
     });
 
     print("Call Updated");
