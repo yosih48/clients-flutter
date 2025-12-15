@@ -11,7 +11,8 @@ import 'componenets/alertDialog.dart';
 import 'objects/clients.dart';
 import 'screens/actions.dart';
 import 'screens/callsinfo.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:clientsf/l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class UserListView extends StatefulWidget {

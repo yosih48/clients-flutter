@@ -11,8 +11,8 @@ import '../componenets/alertDialog.dart';
 import '../componenets/parts.dart';
 import '../objects/clients.dart';
 import '../singelton/AppSingelton.dart';
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();

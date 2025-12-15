@@ -11,7 +11,8 @@ import '../componenets/parts.dart';
 import '../main.dart';
 import '../objects/clients.dart';
 import 'PhoneLogin.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:clientsf/l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'actions.dart';
 

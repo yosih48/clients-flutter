@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:clientsf/l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import '../Constants/AppString.dart';
 
 void showAlertDialog(BuildContext context, String title, {String? subtitle}) {

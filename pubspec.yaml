@@ -61,11 +61,15 @@ dependencies:
  
   csv: ^5.0.2
   font_awesome_flutter: ^10.4.0
-  syncfusion_flutter_datepicker: ^21.2.3
+  syncfusion_flutter_datepicker: ^25.1.35
  
-  month_picker_dialog: ^2.2.1
+  month_picker_dialog: ^6.2.0
   # flutter_month_picker: ^0.0.2
  
+
+
+dependency_overrides:
+  intl: ^0.20.0
 
 dev_dependencies:
   flutter_test:

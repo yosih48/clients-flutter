@@ -5,7 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../componenets/addClientDialof.dart';
 import '../objects/clients.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:clientsf/l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class clientInfo extends StatelessWidget {
   final Todo user;
