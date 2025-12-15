@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:intl/intl.dart';
-
-import '../componenets/tableData.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-// import 'package:flutter_month_picker/flutter_month_picker.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
-
-import '../singelton/AppSingelton.dart';
-
-
+import 'package:intl/intl.dart';
+import '../componenets/tableData.dart';
 
 class DataTableExample extends StatefulWidget {
   const DataTableExample({Key? key}) : super(key: key);
@@ -21,172 +13,242 @@ class DataTableExample extends StatefulWidget {
 }
 
 class _DataTableExampleState extends State<DataTableExample> {
-  late TextEditingController _dateC;
-  late TextEditingController _dateCEnd;
-  late TextEditingController _dateCyear;
-  late TextEditingController _dateCEndYear;
-
+  DateTime _currentMonth = DateTime.now();
+  
   Map<String, double> clientTotalPayments = {};
   Map<String, double> clientNotPaidPayments = {};
-  List<DataRow> rows = [];
-
-  DateTime selected = DateTime.now();
-  DateTime initial = DateTime(1970);
-  DateTime last = DateTime.now();
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-        DateTime now = DateTime.now();
-
-    // Initialize controllers with the current month and year
-    _dateC = TextEditingController(text: now.month.toString());
-    _dateCEnd = TextEditingController(text: now.month.toString());
-    _dateCyear = TextEditingController(text: now.year.toString());
-    _dateCEndYear = TextEditingController(text: now.year.toString());
+    // Initialize to current month
+    _currentMonth = DateTime(DateTime.now().year, DateTime.now().month);
     _loadData();
   }
 
-    @override
-  void dispose() {
-    _dateC.dispose();
-    _dateCEnd.dispose();
-    _dateCyear.dispose();
-    _dateCEndYear.dispose();
-    super.dispose();
-  }
-
   Future<void> _loadData() async {
-    int startTimestamp =
-        DateTime(int.parse(_dateCyear.text), int.parse(_dateC.text), 1)
-            .millisecondsSinceEpoch;
-    int endTimestamp =
-        DateTime(int.parse(_dateCEndYear.text), int.parse(_dateCEnd.text), 31)
-            .millisecondsSinceEpoch;
+    setState(() {
+      _isLoading = true;
+    });
 
-    QuerySnapshot userDataSnapshot = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('user_data')
-        .get();
+    // Start of the month
+    int startTimestamp = DateTime(_currentMonth.year, _currentMonth.month, 1).millisecondsSinceEpoch;
+    // End of the month (last millisecond of the last day)
+    int endTimestamp = DateTime(_currentMonth.year, _currentMonth.month + 1, 0, 23, 59, 59).millisecondsSinceEpoch;
 
-    await processUserData(userDataSnapshot.docs, startTimestamp, endTimestamp);
-    setState(() {});
-  }
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        setState(() => _isLoading = false);
+        return;
+      }
 
-  Future<void> processUserData(
-    List<QueryDocumentSnapshot> userDataDocs,
-    int startTimestamp,
-    int endTimestamp,
-  ) async {
-    clientTotalPayments.clear();
-    clientNotPaidPayments.clear();
-    rows.clear();
-
-    for (QueryDocumentSnapshot userDataDoc in userDataDocs) {
-      String clientName =
-          userDataDoc.get('name')?.toString() ?? 'Unknown Client';
-
-      QuerySnapshot callsSnapshot = await userDataDoc.reference
-          .collection('calls')
-          .where('timestamp', isGreaterThanOrEqualTo: startTimestamp)
-          .where('timestamp', isLessThan: endTimestamp)
+      QuerySnapshot userDataSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('user_data')
           .get();
 
-      double totalPayment = 0;
-      double totalNotPaidPayment = 0;
-      double sumPrice = 0;
+      // OPTIMIZATION: Fetch all client calls in parallel using Future.wait
+      final futures = userDataSnapshot.docs.map((userDataDoc) async {
+        String clientName = userDataDoc.get('name')?.toString() ?? 'Unknown Client';
+        
+        QuerySnapshot callsSnapshot = await userDataDoc.reference
+            .collection('calls')
+            .where('timestamp', isGreaterThanOrEqualTo: startTimestamp)
+            .where('timestamp', isLessThanOrEqualTo: endTimestamp)
+            .get();
 
-      for (QueryDocumentSnapshot callDoc in callsSnapshot.docs) {
-        bool documentPaid = callDoc['paid'];
-        List productList = callDoc['products'] as List<dynamic>;
+        return _processClientCalls(clientName, callsSnapshot.docs);
+      });
 
-        totalPayment += documentPaid ? callDoc['payment'] : 0.0;
-        totalNotPaidPayment += !documentPaid ? callDoc['payment'] : 0.0;
+      final results = await Future.wait(futures);
 
-        for (var product in productList) {
-          sumPrice += product['price'].toDouble();
+      // Aggregate results
+      clientTotalPayments.clear();
+      clientNotPaidPayments.clear();
+      
+      for (var result in results) {
+        if (result != null) {
+          clientTotalPayments[result.clientName] = result.totalPayment;
+          clientNotPaidPayments[result.clientName] = result.totalNotPaid;
         }
       }
 
-      clientTotalPayments[clientName] = totalPayment - sumPrice;
-      clientNotPaidPayments[clientName] = totalNotPaidPayment;
-
-      rows.add(DataRow(
-        cells: <DataCell>[
-          DataCell(Text(clientName)),
-          DataCell(Text(totalPayment.toStringAsFixed(2))),
-          DataCell(Text(totalNotPaidPayment.toStringAsFixed(2))),
-        ],
-      ));
+    } catch (e) {
+      debugPrint("Error loading data: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  Future<void> displayDatePicker(BuildContext context, bool isEndDate) async {
-    var date = await showMonthPicker(
+  ClientStats? _processClientCalls(String clientName, List<QueryDocumentSnapshot> callDocs) {
+    if (callDocs.isEmpty) return null;
+
+    double totalPayment = 0;
+    double totalNotPaidPayment = 0;
+    double sumPrice = 0;
+
+    for (var callDoc in callDocs) {
+      final data = callDoc.data() as Map<String, dynamic>;
+      bool documentPaid = data['paid'] ?? false;
+      List productList = (data['products'] as List<dynamic>?) ?? [];
+
+      double payment = (data['payment'] is int) 
+          ? (data['payment'] as int).toDouble() 
+          : (data['payment'] as double? ?? 0.0);
+
+      if (documentPaid) {
+        totalPayment += payment;
+      } else {
+        totalNotPaidPayment += payment;
+      }
+
+      for (var product in productList) {
+        sumPrice += (product['price'] is int) 
+            ? (product['price'] as int).toDouble() 
+            : (product['price'] as double? ?? 0.0);
+      }
+    }
+
+    return ClientStats(
+      clientName: clientName, 
+      totalPayment: totalPayment - sumPrice, 
+      totalNotPaid: totalNotPaidPayment
+    );
+  }
+
+  Future<void> _pickMonth() async {
+    final picked = await showMonthPicker(
       context: context,
-      initialDate: selected,
-      firstDate: initial,
-      lastDate: last,
+      initialDate: _currentMonth,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2030),
+      // locale: const Locale('he'), 
     );
 
-    if (date != null) {
+    if (picked != null) {
       setState(() {
-        String selectedDate = date.toLocal().toString().split(" ")[0];
-        List<String> dateParts = selectedDate.split("-");
-        int month = int.parse(dateParts[1]);
-        int year = int.parse(dateParts[0]);
-
-        if (isEndDate) {
-          _dateCEnd.text = month.toString();
-          _dateCEndYear.text = year.toString();
-        } else {
-          _dateC.text = month.toString();
-          _dateCyear.text = year.toString();
-        }
+        _currentMonth = picked;
       });
       _loadData();
     }
   }
 
+  void _changeMonth(int offset) {
+    setState(() {
+      _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + offset);
+    });
+    _loadData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text('Data Table Example'),
+        elevation: 0,
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black87),
+        title: const Text('טבלת הכנסות', style: TextStyle(color: Colors.black87)),
       ),
       body: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () => displayDatePicker(context, false),
-                child: const Text('מחודש:'),
-              ),
-              SizedBox(width: 8),
-              Text('${_dateCyear.text}/ ${_dateC.text} '),
-              SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () => displayDatePicker(context, true),
-                child: const Text('עד חודש:'),
-              ),
-              SizedBox(width: 8),
-              Text('${_dateCEndYear.text}/ ${_dateCEnd.text} '),
-            ],
-          ),
+          _buildFilterBar(),
           Expanded(
-            child: ListView(
-              children: [
-                DataTableWidget(
-                  clientTotalPayments: clientTotalPayments,
-                  clientNotPaidPayments: clientNotPaidPayments,
-                ),
-              ],
-            ),
+            child: _isLoading 
+                ? const Center(child: CircularProgressIndicator())
+                : clientTotalPayments.isEmpty 
+                    ? Center(child: Text('אין נתונים ל-${DateFormat('MMMM yyyy').format(_currentMonth)}'))
+                    : SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Card(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: DataTableWidget(
+                                clientTotalPayments: clientTotalPayments,
+                                clientNotPaidPayments: clientNotPaidPayments,
+                              ),
+                          ),
+                        ),
+                      ),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildFilterBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          )
+        ],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: () => _changeMonth(-1),
+            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.blueAccent),
+            tooltip: 'חודש קודם',
+          ),
+          const SizedBox(width: 16),
+          InkWell(
+            onTap: _pickMonth,
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.calendar_month, color: Colors.blueAccent, size: 20),
+                  const SizedBox(width: 10),
+                  Text(
+                    DateFormat('MMMM yyyy').format(_currentMonth),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          IconButton(
+            onPressed: () => _changeMonth(1),
+            icon: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.blueAccent),
+             tooltip: 'חודש הבא',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ClientStats {
+  final String clientName;
+  final double totalPayment;
+  final double totalNotPaid;
+
+  ClientStats({required this.clientName, required this.totalPayment, required this.totalNotPaid});
 }
