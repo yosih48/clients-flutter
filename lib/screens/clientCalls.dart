@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
-import 'package:external_path/external_path.dart';
+// import 'package:external_path/external_path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -162,19 +162,19 @@ class _CallsScreenState extends State<CallsScreen> {
     }
 
     // String csv = const ListToCsvConverter().convert(rows);
-    String csv = '\uFEFF' + const ListToCsvConverter().convert(rows);
+    // String csv = '\uFEFF' + const ListToCsvConverter().convert(rows);
 
-    String dir = await ExternalPath.getExternalStoragePublicDirectory(
-        ExternalPath.DIRECTORY_DOWNLOADS);
-    print("dir $dir");
+    // String dir = await ExternalPath.getExternalStoragePublicDirectory(
+    //     ExternalPath.DIRECTORY_DOWNLOADS);
+    // print("dir $dir");
 
-    // String file = "$dir";
-    // File f = File(file + "/${widget.clientId.name}.csv");
-    String filePath = "$dir/${widget.clientId.name}.csv";
-    File file = File(filePath);
-    await file.writeAsBytes(utf8.encode(csv)); // Ensure UTF-8 encoding
+    // // String file = "$dir";
+    // // File f = File(file + "/${widget.clientId.name}.csv");
+    // String filePath = "$dir/${widget.clientId.name}.csv";
+    // File file = File(filePath);
+    // await file.writeAsBytes(utf8.encode(csv)); // Ensure UTF-8 encoding
 
-    print("CSV file saved at: $filePath");
+    // print("CSV file saved at: $filePath");
 
     // print('request');
     // await f.writeAsBytes(utf8.encode(csv));

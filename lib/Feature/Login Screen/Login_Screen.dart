@@ -52,19 +52,19 @@ class _LoginScreenState extends State<LoginScreen> {
       // and navigate to the next screen if needed.
       print('User logged in: ${userCredential.user?.email}');
           // Retrieve the user token
-    String userToken = await userCredential.user!.getIdToken();
-    print('User token: $userToken');
-       // Save the authentication token
-    await saveAuthToken(userToken);
+    // String userToken = await userCredential.user!.getIdToken();
+    // print('User token: $userToken');
+    //    // Save the authentication token
+    // await saveAuthToken(userToken);
 
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          // builder: (context) => TodoApp(),
-          builder: (context) => AppStarter(),
-        ),
-      );
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(
+    //       // builder: (context) => TodoApp(),
+    //       builder: (context) => AppStarter(),
+    //     ),
+    //   );
     } catch (e) {
       // Handle login errors here (e.g., display an error message)
       print('Login error: $e');
