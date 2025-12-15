@@ -14,6 +14,7 @@ class DataTableExample extends StatefulWidget {
 
 class _DataTableExampleState extends State<DataTableExample> {
   DateTime _currentMonth = DateTime.now();
+  bool _showAllTime = false;
   
   Map<String, double> clientTotalPayments = {};
   Map<String, double> clientNotPaidPayments = {};
@@ -51,14 +52,23 @@ class _DataTableExampleState extends State<DataTableExample> {
           .get();
 
       // OPTIMIZATION: Fetch all client calls in parallel using Future.wait
+      // This avoids the N+1 problem where we wait for each client sequentially.
       final futures = userDataSnapshot.docs.map((userDataDoc) async {
         String clientName = userDataDoc.get('name')?.toString() ?? 'Unknown Client';
         
-        QuerySnapshot callsSnapshot = await userDataDoc.reference
-            .collection('calls')
-            .where('timestamp', isGreaterThanOrEqualTo: startTimestamp)
-            .where('timestamp', isLessThanOrEqualTo: endTimestamp)
-            .get();
+        final callsCollection = userDataDoc.reference.collection('calls');
+        QuerySnapshot callsSnapshot;
+
+        if (_showAllTime) {
+           // Fetch ALL calls for this client
+           callsSnapshot = await callsCollection.get();
+        } else {
+           // Fetch calls for specific month
+           callsSnapshot = await callsCollection
+              .where('timestamp', isGreaterThanOrEqualTo: startTimestamp)
+              .where('timestamp', isLessThanOrEqualTo: endTimestamp)
+              .get();
+        }
 
         return _processClientCalls(clientName, callsSnapshot.docs);
       });
@@ -135,6 +145,7 @@ class _DataTableExampleState extends State<DataTableExample> {
     if (picked != null) {
       setState(() {
         _currentMonth = picked;
+        _showAllTime = false;
       });
       _loadData();
     }
@@ -143,6 +154,14 @@ class _DataTableExampleState extends State<DataTableExample> {
   void _changeMonth(int offset) {
     setState(() {
       _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + offset);
+      _showAllTime = false;
+    });
+    _loadData();
+  }
+
+  void _toggleAllTime() {
+    setState(() {
+      _showAllTime = !_showAllTime;
     });
     _loadData();
   }
@@ -164,7 +183,7 @@ class _DataTableExampleState extends State<DataTableExample> {
             child: _isLoading 
                 ? const Center(child: CircularProgressIndicator())
                 : clientTotalPayments.isEmpty 
-                    ? Center(child: Text('אין נתונים ל-${DateFormat('MMMM yyyy').format(_currentMonth)}'))
+                    ? Center(child: Text(_showAllTime ? 'אין נתונים בכלל' : 'אין נתונים ל-${DateFormat('MMMM yyyy').format(_currentMonth)}'))
                     : SingleChildScrollView(
                         padding: const EdgeInsets.all(16),
                         child: Card(
@@ -187,7 +206,7 @@ class _DataTableExampleState extends State<DataTableExample> {
 
   Widget _buildFilterBar() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -198,47 +217,65 @@ class _DataTableExampleState extends State<DataTableExample> {
           )
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Column(
         children: [
-          IconButton(
-            onPressed: () => _changeMonth(-1),
-            icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.blueAccent),
-            tooltip: 'חודש קודם',
-          ),
-          const SizedBox(width: 16),
-          InkWell(
-            onTap: _pickMonth,
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.blueAccent.withOpacity(0.1),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                onPressed: _showAllTime ? null : () => _changeMonth(-1),
+                icon: Icon(Icons.arrow_back_ios_rounded, color: _showAllTime ? Colors.grey[300] : Colors.blueAccent),
+                tooltip: 'חודש קודם',
+              ),
+              
+              InkWell(
+                onTap: _showAllTime ? null : _pickMonth,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blueAccent.withOpacity(0.3)),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.calendar_month, color: Colors.blueAccent, size: 20),
-                  const SizedBox(width: 10),
-                  Text(
-                    DateFormat('MMMM yyyy').format(_currentMonth),
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent,
-                    ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _showAllTime ? Colors.grey[100] : Colors.blueAccent.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: _showAllTime ? Colors.grey : Colors.blueAccent.withOpacity(0.3)),
                   ),
-                ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.calendar_month, color: _showAllTime ? Colors.grey : Colors.blueAccent, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        _showAllTime ? "סיכום כל הזמנים" : DateFormat('MMMM yyyy').format(_currentMonth),
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: _showAllTime ? Colors.grey[700] : Colors.blueAccent,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+
+              IconButton(
+                onPressed: _showAllTime ? null : () => _changeMonth(1),
+                icon: Icon(Icons.arrow_forward_ios_rounded, color: _showAllTime ? Colors.grey[300] : Colors.blueAccent),
+                 tooltip: 'חודש הבא',
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: _toggleAllTime,
+              icon: Icon(_showAllTime ? Icons.filter_list : Icons.public, size: 18),
+               label: Text(_showAllTime ? "הצג סיכום חודשי" : "הצג סיכום כל הזמנים"),
+               style: OutlinedButton.styleFrom(
+                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                 padding: const EdgeInsets.symmetric(vertical: 12),
+               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          IconButton(
-            onPressed: () => _changeMonth(1),
-            icon: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.blueAccent),
-             tooltip: 'חודש הבא',
-          ),
+          )
         ],
       ),
     );
