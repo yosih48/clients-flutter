@@ -54,10 +54,10 @@ class _dropdownState extends State<dropdown> {
       value: dropdownValue,
       icon: const Icon(Icons.arrow_downward),
       elevation: 16,
-      style: const TextStyle(color: Colors.deepPurple),
+      style: TextStyle(color: Theme.of(context).primaryColor),
       underline: Container(
         height: 2,
-        color: Colors.deepPurpleAccent,
+        color: Theme.of(context).colorScheme.secondary,
       ),
       onChanged: (String? value) {
         // This is called when the user selects an item.
@@ -249,9 +249,7 @@ class _callState extends State<call> {
           actions: <Widget>[
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                // Inherit from Theme
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -260,9 +258,7 @@ class _callState extends State<call> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                // Inherit from Theme
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -324,28 +320,18 @@ class _callState extends State<call> {
   // final TextEditingController paimentController =
   // TextEditingController(text: sumPayment);
   // TextEditingController();
-    final TextEditingController paimentController =
-     
-        TextEditingController();
+  final TextEditingController paimentController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-   
-    //     TextEditingController();
-    // print('sumPayment  ${sumPayment}');
-    // print('sumPayment  ${sumPayment.runtimeType}');
-
-    // String callDetails = widget.data.isNotEmpty ? widget.data['call'] : '';
     final TextEditingController _callDetailsController =
         TextEditingController(text: callDetails);
-    // final TextEditingController paimentController = TextEditingController();
 
     double getSumHourValue() {
       double sumHourValue = 0.0;
-
       String sumHourString = paimentController.text;
-      // print('object ${sumHourString}');
-      if (sumHourString != '0') {
-        sumHourValue = double.parse(sumHourString);
+      if (sumHourString != '0' && sumHourString.isNotEmpty) {
+        sumHourValue = double.tryParse(sumHourString) ?? 0.0;
       }
       return sumHourValue;
     }
@@ -354,530 +340,353 @@ class _callState extends State<call> {
       children: [
         Expanded(
           child: ListView(
+            padding: EdgeInsets.all(16.0),
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  dropdown(
-                    onDropdownChanged: handleDropdownValueChange,
-                    data: widget.data,
-                  ),
-                  SizedBox(width: 96),
-
-                  Text(
-                    AppStrings.paid,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Checkbox(
-                      value: _checkboxValue,
-                      onChanged: (newValue) {
-                        // print(newValue);
-
-                        setState(() {
-                          _checkboxValue = newValue!;
-
-                          // print(_checkboxValue);
-                        });
-                      }),
-                  SizedBox(width: 24),
-                  Text(
-                    AppLocalizations.of(context)!.done,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(width: 4),
-                  Checkbox(
-                      value: _checkboxDone,
-                      onChanged: (newValue) {
-                        print(newValue);
-
-                        setState(() {
-                          _checkboxDone = newValue!;
-
-                          // print(_checkboxValue);
-                        });
-                      }),
-
-                  // ElevatedButton(
-                  //   child: Text('תאריך קריאה'),
-                  //   onPressed: () {
-                  //     // Open the DatePicker in the current screen.
-                  //     // showDatePicker(
-                  //     //   context: arg,
-                  //     //   initialDate: DateTime.now(),
-                  //     //   firstDate: DateTime(2023, 1, 1),
-                  //     //   lastDate: DateTime(2023, 12, 31),
-                  //     // );
-                  //     Navigator.pushNamed(context, '/date');
-                  //   },
-                  // ),
-                ],
-              ),
-              Column(
-                children: <Widget>[
-                  Card(
-                      color: Colors.grey,
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: TextField(
-                          controller: _callDetailsController,
-                          maxLines: 8, //or null
-                          onChanged: (value) {
-                            // Update the callDetails variable whenever the user changes the text
-                            callDetails = value;
-                          },
-                          decoration: InputDecoration.collapsed(
-                              hintText: AppLocalizations.of(context)!
-                                  .calldescription),
-                        ),
-                      ))
-                ],
-              ),
-              SizedBox(
-                height: 8.0,
-              ),
-              if (drop == true)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.callTime,
-                    ),
-                    SizedBox(width: 8.0),
-                    GestureDetector(
-                      onTap: () => displayTimePicker(context),
-                      child: Text(
-                        // _timeC.text.isNotEmpty  ? _timeC.text : 'בחר זמן',
-// _timeC.text.isEmpty? _timeC.text = widget.data['hour'] :  'בחר זמן',
-
-                        widget.data.containsKey('hour')
-                            ? (_timeC.text = widget.data['hour'])
-                            : (_timeC.text.isNotEmpty
-                                ? _timeC.text
-                                : AppLocalizations.of(context)!.chooseTime),
-
-                        //  _timeC.text.isNotEmpty && widget.data.isEmpty ? _timeC.text : (widget.data.isNotEmpty ? widget.data['hour'] : 'בחר זמן'),
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
+              // Dropdown for Call Type
+              DropdownButtonFormField<String>(
+                value: dropdownValue,
+                decoration: InputDecoration(
+                  labelText: 'סוג טיפול',
+                  prefixIcon: Icon(Icons.category),
                 ),
-              // old time method
-              // TimeTextField(
-              //     controller: timeController,
-              //     controllerMinute: minuteController),
-              SizedBox(height: 8),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(top: 20, left: 20, right: 20),
-                      decoration: BoxDecoration(boxShadow: [
-                        BoxShadow(
-                            color: Color(0xff1d1617).withOpacity(0.11),
-                            blurRadius: 40,
-                            spreadRadius: 0.0)
-                      ]),
-                      child: TextField(
-                        controller: paimentController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor: Colors.white,
-                            contentPadding: EdgeInsets.all(12),
-                            hintText:
-                                AppLocalizations.of(context)!.extraPayment,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                                borderSide: BorderSide.none),
-                            labelText:
-                                AppLocalizations.of(context)!.extraPayment),
-                      ),
-                    ),
-                  ),
-                  // SizedBox(width: 132),
-                ],
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${AppLocalizations.of(context)!.paymentAmount}:',
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  SizedBox(width: 8), // Add spacing between text and box
-                  // PaymentBox(parameter1: 50.0, parameter2: 30.0),
-                  // '$widget.data['payment']'
-                  Text(widget.data.isEmpty ? '0' : '${widget.data['payment']}')
-                ],
+                items: list.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  handleDropdownValueChange(value!);
+                  setState(() {
+                    dropdownValue = value;
+                  });
+                },
               ),
               SizedBox(height: 16),
 
-              if (productList.isNotEmpty)
-                Row(
+              // Status Switches
+              Card(
+                margin: EdgeInsets.zero,
+                child: Column(
                   children: [
-                    SizedBox(width: 4.0),
-                    Expanded(
-                      flex: 3,
-                      child: Text(
-                        AppLocalizations.of(context)!.product,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
+                    SwitchListTile(
+                      title: Text(AppStrings.paid),
+                      value: _checkboxValue,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _checkboxValue = value;
+                        });
+                      },
+                      secondary: Icon(Icons.attach_money,
+                          color: _checkboxValue ? Colors.green : Colors.grey),
                     ),
-                    SizedBox(
-                      height: 8.0,
-                    ),
-                    if (productList.isNotEmpty)
-                      SizedBox(
-                        width: 6.0,
-                      ),
-                    Expanded(
-                      flex: 5,
-                      child: Text(
-                        AppLocalizations.of(context)!.costPrice,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 4,
-                      child: Text(
-                        AppLocalizations.of(context)!.finalPrice,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Text(''),
+                    Divider(height: 1),
+                    SwitchListTile(
+                      title: Text(AppLocalizations.of(context)!.done),
+                      value: _checkboxDone,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _checkboxDone = value;
+                        });
+                      },
+                      secondary: Icon(Icons.check_circle,
+                          color: _checkboxDone ? Colors.green : Colors.grey),
                     ),
                   ],
                 ),
-              if (productList.isNotEmpty) SizedBox(height: 10),
-              Column(
-                children: productList.map((product) {
-                  final productName = product.name;
-                  final productPrice = product.price;
-                  final costPrice = product.discountedPrice;
-
-                  return Row(
-                    children: [
-                      SizedBox(width: 4.0),
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          '$productName',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 5,
-                        child: Text(
-                          '$productPrice ₪',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Text(
-                          '$costPrice ₪',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      SizedBox(
-                        //  width: 24,
-                        height: 26,
-                        child: IconButton(
-                          // iconSize: 18,
-                          padding: EdgeInsets.zero,
-                          icon: Icon(Icons.delete),
-                          onPressed: () {
-                            // Delete the product when the delete button is pressed
-                            setState(() {
-                              productList.remove(product);
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  );
-                }).toList(),
               ),
-              SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => _displayDialog(),
-                    child: Text(
-                      AppLocalizations.of(context)!.addParts,
-                      style: TextStyle(color: Colors.red),
+              SizedBox(height: 16),
+
+              // Call Details
+              TextField(
+                controller: _callDetailsController,
+                maxLines: 5,
+                onChanged: (value) {
+                  callDetails = value;
+                },
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.calldescription,
+                  alignLabelWithHint: true,
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.only(bottom: 80), // Align icon to top
+                    child: Icon(Icons.description),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Time Picker
+              if (drop == true)
+                GestureDetector(
+                  onTap: () => displayTimePicker(context),
+                  child: AbsorbPointer(
+                    child: TextFormField(
+                      controller: _timeC,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.callTime,
+                        prefixIcon: Icon(Icons.access_time),
+                        suffixIcon: Icon(Icons.arrow_drop_down),
+                      ),
                     ),
+                  ),
+                ),
+              if (drop == true) SizedBox(height: 16),
+
+              // Extra Payment
+              TextField(
+                controller: paimentController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.extraPayment,
+                  prefixIcon: Icon(Icons.add_card),
+                  suffixText: '₪',
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Total Payment Display
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                      color: Theme.of(context).primaryColor.withOpacity(0.3)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${AppLocalizations.of(context)!.paymentAmount}:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                    Text(
+                      '${widget.data.isEmpty ? '0' : widget.data['payment']} ₪',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 24),
+
+              // Products Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.product,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: () => _displayDialog(),
+                    icon: Icon(Icons.add),
+                    label: Text(AppLocalizations.of(context)!.addParts),
                   ),
                 ],
               ),
-              if (productList.isNotEmpty) SizedBox(height: 8),
-              if (productList.isNotEmpty)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${AppLocalizations.of(context)!.totalCosts}:',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    SizedBox(width: 8), // Add spacing between text and box
-                    // PaymentBox(parameter1: 50.0, parameter2: 30.0),
-                    // '$widget.data['payment']'
-                    Text(pay.toString()),
-                    SizedBox(width: 24),
-                    Text(
-                      AppLocalizations.of(context)!.paid,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Checkbox(
-                        value: _checkboxParts,
-                        onChanged: (newValue) {
-                          // print(newValue);
-
-                          setState(() {
-                            _checkboxParts = newValue!;
-
-                            // print(_checkboxValue);
-                          });
-                        }),
-                  ],
-                ),
               SizedBox(height: 8),
-              // Row(
-              //   children: [
-              //     Text(
-              //       AppStrings.paid,
-              //       style: TextStyle(fontSize: 16),
-              //     ),
-              //     Checkbox(
-              //         value: _checkboxValue,
-              //         onChanged: (newValue) {
-              //           // print(newValue);
 
-              //           setState(() {
-              //             _checkboxValue = newValue!;
+              if (productList.isNotEmpty)
+                Card(
+                  margin: EdgeInsets.zero,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: productList.length,
+                    separatorBuilder: (context, index) => Divider(height: 1),
+                    itemBuilder: (context, index) {
+                      final product = productList[index];
+                      return ListTile(
+                        title: Text(product.name ?? ''),
+                        subtitle: Text(
+                            '${AppLocalizations.of(context)!.costPrice}: ${product.discountedPrice} ₪'),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${product.price} ₪',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                setState(() {
+                                  productList.remove(product);
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
 
-              //             // print(_checkboxValue);
-              //           });
-              //         }),
-              //     SizedBox(width: 24),
-              //     Text(
-              //       AppLocalizations.of(context)!.done,
-              //       style: TextStyle(fontSize: 16),
-              //     ),
-              //     SizedBox(width: 4),
-              //     Checkbox(
-              //         value: _checkboxDone,
-              //         onChanged: (newValue) {
-              //           // print(newValue);
+              if (productList.isNotEmpty) SizedBox(height: 16),
 
-              //           setState(() {
-              //             _checkboxDone = newValue!;
-
-              //             // print(_checkboxValue);
-              //           });
-              //         }),
-              //   ],
-              // ),
-              // SizedBox(height: 8),
-              // Row(
-              //   children: [
-              //     Text(
-              //       AppLocalizations.of(context)!.done,
-              //       style: TextStyle(fontSize: 16),
-              //     ),
-              //     SizedBox(width: 4),
-              //     Checkbox(
-              //         value: _checkboxDone,
-              //         onChanged: (newValue) {
-              //           // print(newValue);
-
-              //           setState(() {
-              //             _checkboxDone = newValue!;
-
-              //             // print(_checkboxValue);
-              //           });
-              //         }),
-              //   ],
-              // ),
-
-              // SizedBox(height: 8),
+              // Total Costs and Parts Paid
+              if (productList.isNotEmpty)
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${AppLocalizations.of(context)!.totalCosts}',
+                              style: TextStyle(color: Colors.grey.shade600),
+                            ),
+                            Text(
+                              '$pay ₪',
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Text(AppLocalizations.of(context)!.paid),
+                          Switch(
+                            value: _checkboxParts,
+                            onChanged: (value) {
+                              setState(() {
+                                _checkboxParts = value;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
-        ElevatedButton(
-          child: Text(AppLocalizations.of(context)!.save),
-          onPressed: () {
-            // someFunction();
-            setState(() {
-              // double sumHourValue = getSumHourValue();
-              double sumHourValue = 0;
-              // print('sumHourValue1: ${sumHourValue}');
-              if (drop == false) {
-                _timeC.text = '0:00';
-              }
-              print('_timeC.text: ${_timeC.text}');
-              int? firstNumber = 0;
-              int? secondNumber = 0;
-              if (_timeC.text.isNotEmpty) {
-                firstNumber = int.tryParse(_timeC.text.substring(0, 1));
-                secondNumber =
-                    int.tryParse(_timeC.text.split(":")[1].substring(0, 1));
-              }
-              print('sumHourValue: ${sumHourValue}');
-              print('secondNumber: ${secondNumber}');
+        Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 4,
+                offset: Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16),
+              ),
+              child: Text(
+                AppLocalizations.of(context)!.save,
+                style: TextStyle(fontSize: 18),
+              ),
+              onPressed: () {
+                setState(() {
+                  double sumHourValue = 0;
+                  if (drop == false) {
+                    _timeC.text = '0:00';
+                  }
+                  
+                  int? firstNumber = 0;
+                  int? secondNumber = 0;
+                  if (_timeC.text.isNotEmpty) {
+                    firstNumber = int.tryParse(_timeC.text.substring(0, 1));
+                    secondNumber =
+                        int.tryParse(_timeC.text.split(":")[1].substring(0, 1));
+                  }
 
-// sum poduct price
-              double newProduct = 0;
+                  double newProduct = 0;
+                  for (var product in productList) {
+                    newProduct += product.discountedPrice!;
+                  }
+                  double sumProduct = newProduct;
 
-              for (var product in productList) {
-                print('Product Name: ${product.name}');
-                // print('productList Price: ${product.discountedPrice}');
-                // print('Discounted Price: ${product.discountedPrice}');
-                newProduct += product.discountedPrice!;
-              }
-              // double oldProduct = 0;
-              // for (var product in products) {
-              //   // print('Product Name: ${product.name}');
-              //   // print('products Price: ${product['discountedPrice']}');
-              //   // print('Discounted Price: ${product.discountedPrice}');
-              //   oldProduct += product['discountedPrice'];
-              // }
-              // double sumProduct = oldProduct + newProduct;
-              double sumProduct = newProduct;
-              // print('sumProductt: ${sumProduct}');
-              // print('newProduct: ${newProduct}');
-              // print('oldProduct: ${oldProduct}');
-              // print('sumHourValue: ${sumHourValue}');
-              // print(sumHourValue.runtimeType);
-              // print('userID  ${widget.user.id}');
+                  if (secondNumber! > 0) {
+                    firstNumber = firstNumber! + 1;
+                  }
+                  int hourCharge = hourlyRate * (firstNumber!);
 
-              // price per hour
-              print('_timeC.text: ${_timeC.text}');
-              print('widget.data hour: ${widget.data['hour']}');
-              if (secondNumber! > 0) {
-                firstNumber = firstNumber! + 1;
-              }
-              print('firstNumber: ${firstNumber}');
-              int hourCharge = hourlyRate * (firstNumber!);
-              // int hourCharge = _timeC.text == widget.data['hour']
-              //     ? 0
-              //     : hourlyRate * (firstNumber! + 1);
+                  double? payment = paimentController.text.isEmpty
+                      ? widget.data['payment']
+                      : double.tryParse(paimentController.text) ?? 0.0;
 
-              print('hourCharge: ${hourCharge}');
-              print('paimentController.text: ${paimentController.text}');
+                  double sumPayment = sumProduct + hourCharge + payment!;
 
-              double? payment = paimentController.text.isEmpty
-                  ? widget.data['payment']
-                  : paimentController.text.toDouble();
-                   print('payment  ${payment}');
-              // widget.data.remove('payment');
-              // widget.data['payment'] = 0;
-              // print('widget.data payment: ${widget.data['payment']}');
-              // calculate total price
-//               double sumPayment = 0;
-//               if (sumHourValue == 0.0) {
-//                 sumPayment = sumHourValue.toDouble() + hourCharge + sumProduct;
-// // print('sumHourValue emptey');
-//               } else {
-//                 sumHourValue < sumProduct
-//                     ? sumPayment =
-//                         sumHourValue.toDouble() + sumProduct + hourCharge
-//                     : sumPayment =
-//                         sumHourValue.toDouble() + hourCharge + newProduct;
-//                 // print('sumHourValue not emptey');
-//               }
+                  if (_callDetailsController.text != '' &&
+                      dropdownValue != '') {
+                    if (widget.data.isEmpty) {
+                      addCall(
+                          widget.user,
+                          _callDetailsController.text,
+                          _checkboxValue,
+                          dropdownValue,
+                          _timeC.text,
+                          sumPayment,
+                          _checkboxDone,
+                          payment,
+                          productList,
+                          _checkboxParts);
+                    } else {
+                      updateUser(
+                          widget.data['usera'],
+                          widget.data['id'],
+                          _callDetailsController.text,
+                          _checkboxValue,
+                          dropdownValue,
+                          _timeC.text,
+                          sumPayment,
+                          _checkboxDone,
+                          payment,
+                          productList,
+                          _checkboxParts);
+                    }
 
-              double sumPayment = sumProduct + hourCharge + payment!;
+                    void resetForm() {
+                      _callDetailsController.text = '';
+                      _timeC.text = '0:00';
+                      _checkboxValue = false;
+                      _checkboxDone = false;
+                      _checkboxParts = false;
+                      _dropdownValue = '';
+                      sumHourValue = 0;
+                      productList.clear();
+                    }
 
-              // print('dropdownValue ${dropdownValue}');
-
-              // print('charge per hour  ${hourCharge}');
-              print('total payment  ${sumPayment}');
-              print('payment  ${payment}');
-              // print('hour first number  ${firstNumber}');
-              // print('call details  ${_callDetailsController.text}');
-              // print('sigelton  ${AppSingelton().hourlyRate}');
-              print('call time ${_timeC.text}');
-
-              // print('dataEmpty ${widget.data}');
-              // if (drop == false) {
-              //   _timeC.text = '0:00';
-              // }
-              if (_callDetailsController.text != '' &&
-                  // _timeC.text != '' &&
-                  sumHourValue != '' &&
-                  dropdownValue != '') {
-                if (widget.data.isEmpty) {
-                  // print('empty');
-                  addCall(
-                      widget.user,
-                      _callDetailsController.text,
-                      _checkboxValue,
-                      dropdownValue,
-                      // formattedTime,
-                      _timeC.text,
-                      sumPayment,
-                      _checkboxDone,
-                      payment,
-                      productList,
-                      _checkboxParts);
-                } else {
-                  updateUser(
-                      widget.data['usera'],
-                      widget.data['id'],
-                      _callDetailsController.text,
-                      _checkboxValue,
-                      dropdownValue,
-                      _timeC.text,
-                      sumPayment,
-                      _checkboxDone,
-                      payment,
-                      productList,
-                      _checkboxParts);
-                }
-
-                void resetForm() {
-                  // Clear text fields
-                  _callDetailsController.text = '';
-                  _timeC.text = '0:00';
-
-                  // Reset checkbox value
-                  _checkboxValue = false;
-                  _checkboxDone = false;
-                  _checkboxParts = false;
-                  // Reset dropdown value
-                  _dropdownValue = '';
-
-                  // Reset other variables as needed
-                  sumHourValue = 0;
-                  productList.clear();
-                }
-
-                resetForm();
-
-                Navigator.of(context).pop();
-              } else {
-                showToast(AppLocalizations.of(context)!.missingDetails);
-              }
-            });
-          },
+                    resetForm();
+                    Navigator.of(context).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(AppLocalizations.of(context)!.missingDetails)),
+                    );
+                  }
+                });
+              },
+            ),
+          ),
         ),
       ],
     );
-    ;
   }
 }
 

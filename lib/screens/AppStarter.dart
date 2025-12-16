@@ -15,6 +15,7 @@ import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'actions.dart';
+import 'package:clientsf/theme.dart';
 
 class AppStarter extends StatefulWidget {
   const AppStarter({super.key});
@@ -62,9 +63,9 @@ class _AppStarterState extends State<AppStarter> {
         Locale('en'), // English
         Locale('he'), // Spanish
       ],
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      themeMode: ThemeMode.system,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
 
       // home: const TodoApp(),
       // home: ProductForm(),

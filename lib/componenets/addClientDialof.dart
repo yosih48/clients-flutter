@@ -38,8 +38,7 @@ Future<void> displayDialog(context, id) async {
               TextField(
                 controller: _textFieldController,
                 decoration: const InputDecoration(
-                  icon: const Icon(Icons.person),
-                  // Text(AppLocalizations.of(context)!.helloWorld),
+                  prefixIcon: const Icon(Icons.person),
                   labelText: 'Name',
                 ),
                 autofocus: true,
@@ -47,17 +46,17 @@ Future<void> displayDialog(context, id) async {
               TextField(
                 controller: _mailFieldController,
                 decoration: const InputDecoration(
-                  icon: const Icon(Icons.email),
-                  hintText: 'Enter a phone email',
-                  labelText: 'email',
+                  prefixIcon: const Icon(Icons.email),
+                  hintText: 'Enter email',
+                  labelText: 'Email',
                 ),
                 autofocus: true,
               ),
               TextField(
                 controller: _phoneFieldController,
                 decoration: const InputDecoration(
-                  icon: const Icon(Icons.phone),
-                  hintText: 'Enter a phone number',
+                  prefixIcon: const Icon(Icons.phone),
+                  hintText: 'Enter phone number',
                   labelText: 'Phone',
                 ),
                 autofocus: true,
@@ -65,9 +64,9 @@ Future<void> displayDialog(context, id) async {
               TextField(
                 controller: _addressFieldController,
                 decoration: const InputDecoration(
-                  icon: const Icon(Icons.maps_home_work),
+                  prefixIcon: const Icon(Icons.maps_home_work),
                   hintText: 'Enter address',
-                  labelText: 'address',
+                  labelText: 'Address',
                 ),
                 autofocus: true,
               ),
@@ -77,9 +76,7 @@ Future<void> displayDialog(context, id) async {
         actions: <Widget>[
           OutlinedButton(
             style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              // Inherit from Theme
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -104,9 +101,7 @@ Future<void> displayDialog(context, id) async {
           // ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              // Inherit from Theme
             ),
             onPressed: () {
               Navigator.of(context).pop();

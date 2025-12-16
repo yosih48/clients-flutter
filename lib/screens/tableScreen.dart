@@ -169,12 +169,12 @@ class _DataTableExampleState extends State<DataTableExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      // backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Inherited by default
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black87),
-        title: const Text('טבלת הכנסות', style: TextStyle(color: Colors.black87)),
+        // elevation: 0, // Inherited
+        // backgroundColor: Theme.of(context).appBarTheme.backgroundColor, // Inherited
+        // iconTheme: Theme.of(context).appBarTheme.iconTheme, // Inherited
+        title: Text('טבלת הכנסות'),
       ),
       body: Column(
         children: [
@@ -208,7 +208,7 @@ class _DataTableExampleState extends State<DataTableExample> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -224,7 +224,7 @@ class _DataTableExampleState extends State<DataTableExample> {
             children: [
               IconButton(
                 onPressed: _showAllTime ? null : () => _changeMonth(-1),
-                icon: Icon(Icons.arrow_back_ios_rounded, color: _showAllTime ? Colors.grey[300] : Colors.blueAccent),
+                icon: Icon(Icons.arrow_back_ios_rounded, color: _showAllTime ? Colors.grey : Theme.of(context).primaryColor),
                 tooltip: 'חודש קודם',
               ),
               
@@ -234,21 +234,21 @@ class _DataTableExampleState extends State<DataTableExample> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: _showAllTime ? Colors.grey[100] : Colors.blueAccent.withOpacity(0.1),
+                    color: _showAllTime ? Theme.of(context).disabledColor.withOpacity(0.1) : Theme.of(context).primaryColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: _showAllTime ? Colors.grey : Colors.blueAccent.withOpacity(0.3)),
+                    border: Border.all(color: _showAllTime ? Colors.grey : Theme.of(context).primaryColor.withOpacity(0.3)),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.calendar_month, color: _showAllTime ? Colors.grey : Colors.blueAccent, size: 20),
+                      Icon(Icons.calendar_month, color: _showAllTime ? Colors.grey : Theme.of(context).primaryColor, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         _showAllTime ? "סיכום כל הזמנים" : DateFormat('MMMM yyyy').format(_currentMonth),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: _showAllTime ? Colors.grey[700] : Colors.blueAccent,
+                          color: _showAllTime ? Colors.grey : Theme.of(context).primaryColor,
                         ),
                       ),
                     ],
@@ -258,7 +258,7 @@ class _DataTableExampleState extends State<DataTableExample> {
 
               IconButton(
                 onPressed: _showAllTime ? null : () => _changeMonth(1),
-                icon: Icon(Icons.arrow_forward_ios_rounded, color: _showAllTime ? Colors.grey[300] : Colors.blueAccent),
+                icon: Icon(Icons.arrow_forward_ios_rounded, color: _showAllTime ? Colors.grey : Theme.of(context).primaryColor),
                  tooltip: 'חודש הבא',
               ),
             ],

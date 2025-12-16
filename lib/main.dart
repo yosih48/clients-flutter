@@ -22,6 +22,7 @@ import 'todoItem.dart';
 import 'componenets/datePick.dart';
 import 'objects/clients.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:clientsf/theme.dart';
 
 // Future< void> main()
 // async{
@@ -67,9 +68,9 @@ class TodoApp extends StatelessWidget {
         Locale('en'), // English
         Locale('he'), // Spanish
       ],
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      themeMode: ThemeMode.system, // Support system dark/light mode preference
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       home: MyHomePage(title: AppLocalizations.of(context)!.clients),
     );
   }
