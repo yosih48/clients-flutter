@@ -1,112 +1,117 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:url_launcher/url_launcher.dart';
-
-import '../componenets/addClientDialof.dart';
-import '../objects/clients.dart';
+import 'package:clientsf/objects/clients.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import '../componenets/addClientDialof.dart';
 
 class clientInfo extends StatelessWidget {
   final Todo user;
   const clientInfo({super.key, required this.user});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.blue[50],
-        body: Container(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // CircleAvatar(
-              //   radius: 50,
-              //   // backgroundImage: AssetImage('asset/images/avtar.png'),
-              // ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                '${user.name}',
+      appBar: AppBar(
+        title: Text(user.name ?? ''),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              displayDialog(context, '${user.id}');
+            },
+            tooltip: AppLocalizations.of(context)!.editClient,
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CircleAvatar(
+              radius: 50,
+              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              child: Text(
+                user.name != null && user.name!.isNotEmpty
+                    ? user.name![0].toUpperCase()
+                    : '?',
                 style: TextStyle(
-                  fontFamily: 'Sacramento',
-                  fontSize: 20,
+                  fontSize: 40,
+                  color: Theme.of(context).primaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(
-                height: 2,
-              ),
-              // Text(
-              //  ' flutter',
-              //   style: TextStyle(fontSize: 15, fontFamily: 'EBGaramond'),
-              // ),
-              SizedBox(
-                height: 10,
-                width: 150,
-                child: Divider(
-                  thickness: 1,
-                  color: Colors.black,
-                ),
-              ),
-              Card(
-                margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                color: Colors.grey,
-                child: GestureDetector(
-                  onTap: () {
-                    final phoneNumber =
-                        '${user.phone}'; // Replace with the actual phone number
-                    _launchPhoneDialer(phoneNumber);
-                  },
-                  child: ListTile(
-                    leading: Icon(Icons.phone),
-                    title: Text('${user.phone}'),
-                  ),
-                ),
-              ),
-
-              GestureDetector(
-                onTap: () {
-                  launchEmailSubmission('${user.email}');
-                },
-                child: Card(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  color: Colors.grey,
-                  child: ListTile(
-                    leading: Icon(Icons.mail),
-                    title: Text('${user.email}'),
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  // openGoogleMaps('latitude,longitude');
-                  openWaze('${user.address}');
-                },
-                child: Card(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                  color: Colors.grey,
-                  child: ListTile(
-                    leading: Icon(Icons.maps_home_work),
-                    title: Text('${user.address}'),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              user.name ?? '',
+              style: Theme.of(context).textTheme.headlineMedium,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 24),
+            _buildInfoCard(
+              context,
+              icon: Icons.phone,
+              text: user.phone ?? '',
+              onTap: () => _launchPhoneDialer(user.phone ?? ''),
+            ),
+            _buildInfoCard(
+              context,
+              icon: Icons.mail,
+              text: user.email ?? '',
+              onTap: () => launchEmailSubmission(user.email ?? ''),
+            ),
+            _buildInfoCard(
+              context,
+              icon: Icons.map,
+              text: user.address ?? '',
+              onTap: () => openWaze(user.address ?? ''),
+            ),
+            SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
                 onPressed: () {
                   displayDialog(context, '${user.id}');
-                  // Navigator.of(context).pop();
                 },
-                child: Text(AppLocalizations.of(context)!.editClient),
+                icon: Icon(Icons.edit),
+                label: Text(AppLocalizations.of(context)!.editClient),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(BuildContext context,
+      {required IconData icon, required String text, required VoidCallback onTap}) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Icon(icon, color: Theme.of(context).primaryColor),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  text,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 

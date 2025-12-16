@@ -628,7 +628,7 @@ class _callState extends State<call> {
                   int hourCharge = hourlyRate * (firstNumber!);
 
                   double? payment = paimentController.text.isEmpty
-                      ? widget.data['payment']
+                      ? (widget.data['payment'] as num?)?.toDouble()
                       : double.tryParse(paimentController.text) ?? 0.0;
 
                   double sumPayment = sumProduct + hourCharge + payment!;
