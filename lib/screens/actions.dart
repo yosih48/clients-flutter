@@ -33,6 +33,12 @@ final List<Map<String, dynamic>> computerModels = [
   {'key': 'DELL I5 נייח', 'price': 0},
 ];
 
+const List<String> officeVersions = [
+  'Office 19',
+  'Office 21',
+  'Office 24',
+];
+
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
   final Map<dynamic, dynamic> data;
@@ -151,9 +157,9 @@ class _callState extends State<call> {
 
   // New fields state
   String? _selectedComputerProduct;
+
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _officeVersionController =
-      TextEditingController();
+  String? _selectedOfficeVersion;
   bool _windowsLicense = false;
   bool _officeLicense = false;
 
@@ -214,7 +220,7 @@ class _callState extends State<call> {
     if (widget.data.isNotEmpty) {
       _selectedComputerProduct = widget.data['computerProduct'];
       _quantityController.text = widget.data['quantity']?.toString() ?? '';
-      _officeVersionController.text = widget.data['officeVersion'] ?? '';
+      _selectedOfficeVersion = widget.data['officeVersion'];
       _windowsLicense = widget.data['windowsLicense'] ?? false;
       _officeLicense = widget.data['officeLicense'] ?? false;
     }
@@ -486,7 +492,13 @@ class _callState extends State<call> {
                   }
                   return DropdownMenuItem<String>(
                     value: model['key'],
-                    child: Text('$label - ${model['price']} ₪'),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(label),
+                        Text('${model['price']} ₪'),
+                      ],
+                    ),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -510,12 +522,23 @@ class _callState extends State<call> {
               SizedBox(height: 16),
 
               // Office Version
-              TextField(
-                controller: _officeVersionController,
+              DropdownButtonFormField<String>(
+                value: _selectedOfficeVersion,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.officeVersion,
                   prefixIcon: Icon(Icons.work),
                 ),
+                items: officeVersions.map((String version) {
+                  return DropdownMenuItem<String>(
+                    value: version,
+                    child: Text(version),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedOfficeVersion = value;
+                  });
+                },
               ),
               SizedBox(height: 16),
 
@@ -757,7 +780,7 @@ class _callState extends State<call> {
                         _checkboxParts,
                         computerProduct: _selectedComputerProduct,
                         quantity: int.tryParse(_quantityController.text),
-                        officeVersion: _officeVersionController.text,
+                        officeVersion: _selectedOfficeVersion,
                         windowsLicense: _windowsLicense,
                         officeLicense: _officeLicense,
                       );
@@ -776,7 +799,7 @@ class _callState extends State<call> {
                         _checkboxParts,
                         computerProduct: _selectedComputerProduct,
                         quantity: int.tryParse(_quantityController.text),
-                        officeVersion: _officeVersionController.text,
+                        officeVersion: _selectedOfficeVersion,
                         windowsLicense: _windowsLicense,
                         officeLicense: _officeLicense,
                       );
@@ -793,7 +816,7 @@ class _callState extends State<call> {
                       productList.clear();
                       _selectedComputerProduct = null;
                       _quantityController.clear();
-                      _officeVersionController.clear();
+                      _selectedOfficeVersion = null;
                       _windowsLicense = false;
                       _officeLicense = false;
                     }
