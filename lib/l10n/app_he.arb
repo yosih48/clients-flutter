@@ -54,13 +54,14 @@
                       "sumHours": "סך שעות",
                        "totalCosts": "סך עלויות",
                        "toalIncome": "טבלת הכנסות",
-                       "searchcustomer": "חפש לקוח"
-             
-          
-    
-
-            
-    
-       
-
+                       "searchcustomer": "חפש לקוח",
+                       "quantity": "כמות",
+                       "officeVersion": "גרסת אופיס",
+                       "windowsLicense": "רשיון WINDOWS",
+                       "officeLicense": "רשיון OFFICE",
+                       "selectProduct": "בחר מוצר",
+    "miniDell": "Mini Dell",
+    "hpI5": "HP i5",
+    "lenovoI7": "Lenovo i7",
+    "macMini": "Mac Mini"
 }

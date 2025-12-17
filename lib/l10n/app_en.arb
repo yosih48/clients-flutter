@@ -56,11 +56,15 @@
                                "extraPayment": "extraPayment",
                                 "sumHours": "total hours",
                                 "totalCosts": "total costs",
-                                 "toalIncome": "total income",
-                                 "searchcustomer": "Search Customer"
-                                 
-                      
-                
-                    
-            
+                                "searchcustomer": "search customer",
+                                       "quantity": "quantity",
+                       "officeVersion": "office Version",
+                       "windowsLicense": "רשיון WINDOWS",
+                       "officeLicense": "רשיון OFFICE",
+                       "selectProduct": "בחר מוצר",
+                                
+    "miniDell": "Mini Dell",
+    "hpI5": "HP i5",
+    "lenovoI7": "Lenovo i7",
+    "macMini": "Mac Mini"
 }

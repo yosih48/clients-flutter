@@ -5,6 +5,11 @@ class Calls {
     required this.paid,
     required this.type,
     required this.completed,
+    this.computerProduct,
+    this.quantity,
+    this.officeVersion,
+    this.windowsLicense,
+    this.officeLicense,
     // this.phone
   });
   final String id;
@@ -13,6 +18,11 @@ class Calls {
   String type;
   bool completed;
   // int? phone;
+  String? computerProduct;
+  int? quantity;
+  String? officeVersion;
+  bool? windowsLicense;
+  bool? officeLicense;
 
   factory Calls.fromJson(Map<String, dynamic> json) => Calls(
         id: json["id"],
@@ -20,5 +30,10 @@ class Calls {
         paid: json["paid"],
         type: json["first_name"],
         completed: json["completed"],
+        computerProduct: json["computerProduct"],
+        quantity: json["quantity"],
+        officeVersion: json["officeVersion"],
+        windowsLicense: json["windowsLicense"],
+        officeLicense: json["officeLicense"],
       );
 }

@@ -26,6 +26,13 @@ const List<String> list = <String>[
   'בית הלקוח',
 ];
 
+final List<Map<String, dynamic>> computerModels = [
+  {'key': 'מחשב מיני HP I5-13', 'price': 1300},
+  {'key': 'נייד DELL i5', 'price': 1382},
+  {'key': 'נייד HP U5', 'price': 1335},
+  {'key': 'DELL I5 נייח', 'price': 0},
+];
+
 class dropdown extends StatefulWidget {
   final Function(String) onDropdownChanged;
   final Map<dynamic, dynamic> data;
@@ -43,7 +50,7 @@ class _dropdownState extends State<dropdown> {
   @override
   void initState() {
     super.initState();
-  
+
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
   }
 
@@ -141,9 +148,18 @@ class _callState extends State<call> {
   List<Object> products = [];
   List<ProductData> productList = [];
   double pay = 0;
+
+  // New fields state
+  String? _selectedComputerProduct;
+  final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _officeVersionController =
+      TextEditingController();
+  bool _windowsLicense = false;
+  bool _officeLicense = false;
+
   void initState() {
     super.initState();
-     
+
     print('extraPayment1: ${extraPayment}');
     if (widget.data.containsKey('products') &&
         widget.data['products'].isNotEmpty) {
@@ -193,6 +209,16 @@ class _callState extends State<call> {
     //     ? widget.data['done']
     //     : '';
     dropdownValue = widget.data.isNotEmpty ? widget.data['type'] : list.first;
+
+    // Initialize new fields
+    if (widget.data.isNotEmpty) {
+      _selectedComputerProduct = widget.data['computerProduct'];
+      _quantityController.text = widget.data['quantity']?.toString() ?? '';
+      _officeVersionController.text = widget.data['officeVersion'] ?? '';
+      _windowsLicense = widget.data['windowsLicense'] ?? false;
+      _officeLicense = widget.data['officeLicense'] ?? false;
+    }
+
     getPrefs();
   }
 
@@ -249,8 +275,8 @@ class _callState extends State<call> {
           actions: <Widget>[
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                // Inherit from Theme
-              ),
+                  // Inherit from Theme
+                  ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -258,8 +284,8 @@ class _callState extends State<call> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                // Inherit from Theme
-              ),
+                  // Inherit from Theme
+                  ),
               onPressed: () {
                 Navigator.of(context).pop();
                 handleProductListChanged(productList);
@@ -408,7 +434,8 @@ class _callState extends State<call> {
                   labelText: AppLocalizations.of(context)!.calldescription,
                   alignLabelWithHint: true,
                   prefixIcon: Padding(
-                    padding: const EdgeInsets.only(bottom: 80), // Align icon to top
+                    padding:
+                        const EdgeInsets.only(bottom: 80), // Align icon to top
                     child: Icon(Icons.description),
                   ),
                 ),
@@ -431,6 +458,87 @@ class _callState extends State<call> {
                   ),
                 ),
               if (drop == true) SizedBox(height: 16),
+
+              // Computer Product Selection
+              DropdownButtonFormField<String>(
+                value: _selectedComputerProduct,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.selectProduct,
+                  prefixIcon: Icon(Icons.computer),
+                ),
+                items: computerModels.map((model) {
+                  String label = '';
+                  switch (model['key']) {
+                    case 'miniDell':
+                      label = AppLocalizations.of(context)!.miniDell;
+                      break;
+                    case 'hpI5':
+                      label = AppLocalizations.of(context)!.hpI5;
+                      break;
+                    case 'lenovoI7':
+                      label = AppLocalizations.of(context)!.lenovoI7;
+                      break;
+                    case 'macMini':
+                      label = AppLocalizations.of(context)!.macMini;
+                      break;
+                    default:
+                      label = model['key'];
+                  }
+                  return DropdownMenuItem<String>(
+                    value: model['key'],
+                    child: Text('$label - ${model['price']} ₪'),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedComputerProduct = value;
+                  });
+                },
+              ),
+              SizedBox(height: 16),
+
+              // Quantity
+              TextField(
+                controller: _quantityController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.quantity,
+                  prefixIcon: Icon(Icons.format_list_numbered),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Office Version
+              TextField(
+                controller: _officeVersionController,
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.officeVersion,
+                  prefixIcon: Icon(Icons.work),
+                ),
+              ),
+              SizedBox(height: 16),
+
+              // Licenses
+              CheckboxListTile(
+                title: Text(AppLocalizations.of(context)!.windowsLicense),
+                value: _windowsLicense,
+                onChanged: (value) {
+                  setState(() {
+                    _windowsLicense = value ?? false;
+                  });
+                },
+              ),
+              CheckboxListTile(
+                title: Text(AppLocalizations.of(context)!.officeLicense),
+                value: _officeLicense,
+                onChanged: (value) {
+                  setState(() {
+                    _officeLicense = value ?? false;
+                  });
+                },
+              ),
+              SizedBox(height: 16),
 
               // Extra Payment
               TextField(
@@ -607,7 +715,7 @@ class _callState extends State<call> {
                   if (drop == false) {
                     _timeC.text = '0:00';
                   }
-                  
+
                   int? firstNumber = 0;
                   int? secondNumber = 0;
                   if (_timeC.text.isNotEmpty) {
@@ -637,29 +745,41 @@ class _callState extends State<call> {
                       dropdownValue != '') {
                     if (widget.data.isEmpty) {
                       addCall(
-                          widget.user,
-                          _callDetailsController.text,
-                          _checkboxValue,
-                          dropdownValue,
-                          _timeC.text,
-                          sumPayment,
-                          _checkboxDone,
-                          payment,
-                          productList,
-                          _checkboxParts);
+                        widget.user,
+                        _callDetailsController.text,
+                        _checkboxValue,
+                        dropdownValue,
+                        _timeC.text,
+                        sumPayment,
+                        _checkboxDone,
+                        payment,
+                        productList,
+                        _checkboxParts,
+                        computerProduct: _selectedComputerProduct,
+                        quantity: int.tryParse(_quantityController.text),
+                        officeVersion: _officeVersionController.text,
+                        windowsLicense: _windowsLicense,
+                        officeLicense: _officeLicense,
+                      );
                     } else {
                       updateUser(
-                          widget.data['usera'],
-                          widget.data['id'],
-                          _callDetailsController.text,
-                          _checkboxValue,
-                          dropdownValue,
-                          _timeC.text,
-                          sumPayment,
-                          _checkboxDone,
-                          payment,
-                          productList,
-                          _checkboxParts);
+                        widget.data['usera'],
+                        widget.data['id'],
+                        _callDetailsController.text,
+                        _checkboxValue,
+                        dropdownValue,
+                        _timeC.text,
+                        sumPayment,
+                        _checkboxDone,
+                        payment,
+                        productList,
+                        _checkboxParts,
+                        computerProduct: _selectedComputerProduct,
+                        quantity: int.tryParse(_quantityController.text),
+                        officeVersion: _officeVersionController.text,
+                        windowsLicense: _windowsLicense,
+                        officeLicense: _officeLicense,
+                      );
                     }
 
                     void resetForm() {
@@ -671,13 +791,20 @@ class _callState extends State<call> {
                       _dropdownValue = '';
                       sumHourValue = 0;
                       productList.clear();
+                      _selectedComputerProduct = null;
+                      _quantityController.clear();
+                      _officeVersionController.clear();
+                      _windowsLicense = false;
+                      _officeLicense = false;
                     }
 
                     resetForm();
                     Navigator.of(context).pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(AppLocalizations.of(context)!.missingDetails)),
+                      SnackBar(
+                          content: Text(
+                              AppLocalizations.of(context)!.missingDetails)),
                     );
                   }
                 });
@@ -690,8 +817,23 @@ class _callState extends State<call> {
   }
 }
 
-Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
-    List<ProductData> productList, partsPaid) async {
+Future<void> addCall(
+  client,
+  call,
+  paid,
+  type,
+  hour,
+  payment,
+  done,
+  extraCharge,
+  List<ProductData> productList,
+  partsPaid, {
+  String? computerProduct,
+  int? quantity,
+  String? officeVersion,
+  bool? windowsLicense,
+  bool? officeLicense,
+}) async {
   User? user = FirebaseAuth.instance.currentUser;
   // print('userID  ${client.name}');
   // print('nainuserID  ${user}');
@@ -727,7 +869,12 @@ Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
                 'discountedPrice': product.discountedPrice,
               })
           .toList(),
-      'partsPaid': partsPaid
+      'partsPaid': partsPaid,
+      'computerProduct': computerProduct,
+      'quantity': quantity,
+      'officeVersion': officeVersion,
+      'windowsLicense': windowsLicense,
+      'officeLicense': officeLicense,
     });
     print("Call Added");
 
@@ -738,17 +885,23 @@ Future<void> addCall(client, call, paid, type, hour, payment, done, extraCharge,
 }
 
 Future<void> updateUser(
-    clientID,
-    callID,
-    callDetails,
-    paid,
-    type,
-    hour,
-    payment,
-    done,
-    extraCharge,
-    List<ProductData> productList,
-    partsPaid) async {
+  clientID,
+  callID,
+  callDetails,
+  paid,
+  type,
+  hour,
+  payment,
+  done,
+  extraCharge,
+  List<ProductData> productList,
+  partsPaid, {
+  String? computerProduct,
+  int? quantity,
+  String? officeVersion,
+  bool? windowsLicense,
+  bool? officeLicense,
+}) async {
   print(clientID);
   User? user = FirebaseAuth.instance.currentUser;
   CollectionReference userCollection =
@@ -801,7 +954,12 @@ Future<void> updateUser(
                 'discountedPrice': product.discountedPrice,
               })
           .toList(),
-      'partsPaid': partsPaid
+      'partsPaid': partsPaid,
+      'computerProduct': computerProduct,
+      'quantity': quantity,
+      'officeVersion': officeVersion,
+      'windowsLicense': windowsLicense,
+      'officeLicense': officeLicense,
     });
 
     print("Call Updated");

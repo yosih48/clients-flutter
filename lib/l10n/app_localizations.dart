@@ -416,17 +416,65 @@ abstract class AppLocalizations {
   /// **'total costs'**
   String get totalCosts;
 
-  /// No description provided for @toalIncome.
-  ///
-  /// In en, this message translates to:
-  /// **'total income'**
-  String get toalIncome;
-
   /// No description provided for @searchcustomer.
   ///
   /// In en, this message translates to:
-  /// **'Search Customer'**
+  /// **'search customer'**
   String get searchcustomer;
+
+  /// No description provided for @quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'quantity'**
+  String get quantity;
+
+  /// No description provided for @officeVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'office Version'**
+  String get officeVersion;
+
+  /// No description provided for @windowsLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'רשיון WINDOWS'**
+  String get windowsLicense;
+
+  /// No description provided for @officeLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'רשיון OFFICE'**
+  String get officeLicense;
+
+  /// No description provided for @selectProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'בחר מוצר'**
+  String get selectProduct;
+
+  /// No description provided for @miniDell.
+  ///
+  /// In en, this message translates to:
+  /// **'Mini Dell'**
+  String get miniDell;
+
+  /// No description provided for @hpI5.
+  ///
+  /// In en, this message translates to:
+  /// **'HP i5'**
+  String get hpI5;
+
+  /// No description provided for @lenovoI7.
+  ///
+  /// In en, this message translates to:
+  /// **'Lenovo i7'**
+  String get lenovoI7;
+
+  /// No description provided for @macMini.
+  ///
+  /// In en, this message translates to:
+  /// **'Mac Mini'**
+  String get macMini;
 }
 
 class _AppLocalizationsDelegate

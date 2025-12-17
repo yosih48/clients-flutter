@@ -168,8 +168,32 @@ class AppLocalizationsHe extends AppLocalizations {
   String get totalCosts => 'סך עלויות';
 
   @override
-  String get toalIncome => 'טבלת הכנסות';
+  String get searchcustomer => 'חפש לקוח';
 
   @override
-  String get searchcustomer => 'חפש לקוח';
+  String get quantity => 'כמות';
+
+  @override
+  String get officeVersion => 'גרסת אופיס';
+
+  @override
+  String get windowsLicense => 'רשיון WINDOWS';
+
+  @override
+  String get officeLicense => 'רשיון OFFICE';
+
+  @override
+  String get selectProduct => 'בחר מוצר';
+
+  @override
+  String get miniDell => 'Mini Dell';
+
+  @override
+  String get hpI5 => 'HP i5';
+
+  @override
+  String get lenovoI7 => 'Lenovo i7';
+
+  @override
+  String get macMini => 'Mac Mini';
 }
