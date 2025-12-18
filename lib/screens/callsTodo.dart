@@ -22,8 +22,15 @@ import 'package:intl/intl.dart';
 import '../componenets/alertDialog.dart';
 import 'callsInfo.dart';
 
-class callsTodo extends StatelessWidget {
+class callsTodo extends StatefulWidget {
   const callsTodo({super.key});
+
+  @override
+  State<callsTodo> createState() => _callsTodoState();
+}
+
+class _callsTodoState extends State<callsTodo> {
+  bool _showInProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +39,46 @@ class callsTodo extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.todo),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SegmentedButton<bool>(
+              segments: const <ButtonSegment<bool>>[
+                ButtonSegment<bool>(
+                    value: false,
+                    label: Text('To Do'),
+                    icon: Icon(Icons.list)),
+                ButtonSegment<bool>(
+                    value: true,
+                    label: Text('In Progress'),
+                    icon: Icon(Icons.work_history)),
+              ],
+              selected: <bool>{_showInProgress},
+              onSelectionChanged: (Set<bool> newSelection) {
+                setState(() {
+                  _showInProgress = newSelection.first;
+                });
+              },
+            ),
+          ),
+        ),
       ),
       body: SafeArea(
         child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collectionGroup('calls')
-                .where('done', isEqualTo: false)
-                .where('userRef',
-                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                .snapshots(),
+            stream: _showInProgress
+                ? FirebaseFirestore.instance
+                    .collectionGroup('calls')
+                    .where('inProgress', isEqualTo: true)
+                    .where('userRef',
+                        isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                    .snapshots()
+                : FirebaseFirestore.instance
+                    .collectionGroup('calls')
+                    .where('done', isEqualTo: false)
+                    .where('userRef',
+                        isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                    .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (snapshot.hasError) {
@@ -58,8 +96,9 @@ class callsTodo extends StatelessWidget {
                   padding: EdgeInsets.all(16),
                   itemCount: callDocs.length,
                   itemBuilder: (context, index) {
-                    Map<String, dynamic> callData = callDocs[index].data();
-                    
+                    Map<String, dynamic> callData =
+                        callDocs[index].data() as Map<String, dynamic>;
+
                     return InkWell(
                       onTap: () {
                         Navigator.push(
@@ -75,9 +114,13 @@ class callsTodo extends StatelessWidget {
                         child: ListTile(
                           contentPadding: EdgeInsets.all(16),
                           leading: CircleAvatar(
-                            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                            backgroundColor: Theme.of(context)
+                                .primaryColor
+                                .withOpacity(0.1),
                             child: Text(
-                              callData['clientName'].isNotEmpty ? callData['clientName'][0].toUpperCase() : '?',
+                              callData['clientName'].isNotEmpty
+                                  ? callData['clientName'][0].toUpperCase()
+                                  : '?',
                               style: TextStyle(
                                 color: Theme.of(context).primaryColor,
                                 fontWeight: FontWeight.bold,
@@ -94,7 +137,10 @@ class callsTodo extends StatelessWidget {
                               SizedBox(height: 4),
                               Text(
                                 callData['type'],
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 callData['call'],
@@ -104,7 +150,8 @@ class callsTodo extends StatelessWidget {
                               ),
                             ],
                           ),
-                          trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+                          trailing: Icon(Icons.arrow_forward_ios,
+                              size: 16, color: Colors.grey),
                         ),
                       ),
                     );
@@ -115,11 +162,17 @@ class callsTodo extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle_outline, size: 64, color: Colors.grey),
+                      Icon(Icons.check_circle_outline,
+                          size: 64, color: Colors.grey),
                       SizedBox(height: 16),
                       Text(
-                        'No pending calls',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey),
+                        _showInProgress
+                            ? 'No calls in progress'
+                            : 'No pending calls',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge
+                            ?.copyWith(color: Colors.grey),
                       ),
                     ],
                   ),
