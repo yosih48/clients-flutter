@@ -25,7 +25,7 @@ class CallsScreen extends StatefulWidget {
 
 class _CallsScreenState extends State<CallsScreen> {
   ValueNotifier<String?> _selectedCharacterNotifier =
-      ValueNotifier<String?>('');
+      ValueNotifier<String?>('both');
 
   Future<double> fetchDataFromFirestore() async {
     // Reference to the collection in Firestore
@@ -124,52 +124,6 @@ class _CallsScreenState extends State<CallsScreen> {
     super.dispose();
   }
 
-  void onRadioButtonSelected(String? character) {}
-
-  String? selectedCharacter;
-
-  void _displayFilterDialog(BuildContext context) {
-    fetchDataFromFirestore();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.filtering),
-          content: Container(
-            height: 200.0,
-            child: Column(
-              children: [
-                RadioButtonExample(
-                  onOptionSelected: (character) {
-                    selectedCharacter = character;
-                  },
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            OutlinedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text(AppLocalizations.of(context)!.cancel),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                onRadioButtonSelected(selectedCharacter ?? 'ff');
-                setState(() {
-                  _selectedCharacterNotifier.value = selectedCharacter;
-                });
-              },
-              child: Text(AppLocalizations.of(context)!.add),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     String? clientName = widget.clientId.name;
@@ -183,21 +137,51 @@ class _CallsScreenState extends State<CallsScreen> {
             Text(
               clientName!,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onPrimary
+                        .withOpacity(0.8),
                   ),
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.filter_list),
-            onPressed: () => _displayFilterDialog(context),
-            tooltip: AppLocalizations.of(context)!.filtering,
-          ),
-        ],
       ),
       body: Column(
         children: [
+          // Filter Dropdown
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: DropdownButtonFormField<String>(
+              value: _selectedCharacterNotifier.value,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context)!.filtering,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: 'both',
+                  child: Text('ללא סינון'),
+                ),
+                DropdownMenuItem(
+                  value: 'paid',
+                  child: Text('שולם'),
+                ),
+                DropdownMenuItem(
+                  value: 'notpaid',
+                  child: Text('לא שולם'),
+                ),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  _selectedCharacterNotifier.value = value;
+                });
+              },
+            ),
+          ),
           // Total Balance Card
           Container(
             width: double.infinity,
@@ -242,10 +226,11 @@ class _CallsScreenState extends State<CallsScreen> {
 
                     return Text(
                       '${totalPayment.toStringAsFixed(2)} ₪',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.error,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.error,
+                                fontWeight: FontWeight.bold,
+                              ),
                     );
                   },
                 ),
@@ -285,7 +270,10 @@ class _CallsScreenState extends State<CallsScreen> {
                         SizedBox(height: 16),
                         Text(
                           'No calls found',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.grey),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(color: Colors.grey),
                         ),
                       ],
                     ),
@@ -320,7 +308,8 @@ class _CallsScreenState extends State<CallsScreen> {
                                   onConfirm: () async {
                                     await FirebaseFirestore.instance
                                         .collection('users')
-                                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                                        .doc(FirebaseAuth
+                                            .instance.currentUser!.uid)
                                         .collection('user_data')
                                         .doc(widget.clientId.id)
                                         .collection('calls')
@@ -329,7 +318,8 @@ class _CallsScreenState extends State<CallsScreen> {
                                   },
                                 );
                               },
-                              backgroundColor: Theme.of(context).colorScheme.error,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
                               foregroundColor: Colors.white,
                               icon: Icons.delete,
                               label: AppLocalizations.of(context)!.delete,
@@ -355,16 +345,22 @@ class _CallsScreenState extends State<CallsScreen> {
                                 children: [
                                   // Date Column
                                   Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         formattedDate,
-                                        style: Theme.of(context).textTheme.bodySmall,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall,
                                       ),
                                       SizedBox(height: 4),
                                       Icon(
-                                        paid ? Icons.check_circle : Icons.pending,
-                                        color: paid ? Colors.green : Colors.orange,
+                                        paid
+                                            ? Icons.check_circle
+                                            : Icons.pending,
+                                        color:
+                                            paid ? Colors.green : Colors.orange,
                                         size: 20,
                                       ),
                                     ],
@@ -373,11 +369,14 @@ class _CallsScreenState extends State<CallsScreen> {
                                   // Details Column
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           callDetails,
-                                          style: Theme.of(context).textTheme.bodyLarge,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -388,7 +387,10 @@ class _CallsScreenState extends State<CallsScreen> {
                                   // Payment Column
                                   Text(
                                     '$payment ₪',
-                                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: Theme.of(context).primaryColor,
                                         ),
