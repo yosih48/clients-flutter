@@ -26,6 +26,7 @@ class CallsScreen extends StatefulWidget {
 class _CallsScreenState extends State<CallsScreen> {
   ValueNotifier<String?> _selectedCharacterNotifier =
       ValueNotifier<String?>('both');
+  bool _isDescending = true;
 
   Future<double> fetchDataFromFirestore() async {
     // Reference to the collection in Firestore
@@ -124,6 +125,21 @@ class _CallsScreenState extends State<CallsScreen> {
     super.dispose();
   }
 
+  Stream<QuerySnapshot> _getCallsStream() {
+    Query query = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('user_data')
+        .doc(widget.clientId.id)
+        .collection('calls');
+
+    if (_selectedCharacterNotifier.value != 'both') {
+      query = query.where('paid', isEqualTo: _getFilterValue());
+    }
+
+    return query.orderBy('timestamp', descending: _isDescending).snapshots();
+  }
+
   @override
   Widget build(BuildContext context) {
     String? clientName = widget.clientId.name;
@@ -145,6 +161,16 @@ class _CallsScreenState extends State<CallsScreen> {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+            icon: Icon(_isDescending ? Icons.arrow_downward : Icons.arrow_upward),
+            onPressed: () {
+              setState(() {
+                _isDescending = !_isDescending;
+              });
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -241,14 +267,7 @@ class _CallsScreenState extends State<CallsScreen> {
           // Calls List
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .collection('user_data')
-                  .doc(widget.clientId.id)
-                  .collection('calls')
-                  .where('paid', isEqualTo: _getFilterValue())
-                  .snapshots(),
+              stream: _getCallsStream(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
