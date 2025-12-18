@@ -128,51 +128,84 @@ class _UserListViewState extends State<UserListView> {
                           ],
                         ),
                         child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(color: Colors.grey.shade200),
+                          ),
                           margin: EdgeInsets.zero, // Managed by ListView padding
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               ListTile(
-                                contentPadding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                                contentPadding: EdgeInsets.all(16),
                                 leading: CircleAvatar(
-                                  backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                                  radius: 28,
+                                  backgroundColor: Theme.of(context)
+                                      .primaryColor
+                                      .withOpacity(0.1),
                                   child: Text(
-                                    user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
+                                    user.name.isNotEmpty
+                                        ? user.name[0].toUpperCase()
+                                        : '?',
                                     style: TextStyle(
                                       color: Theme.of(context).primaryColor,
                                       fontWeight: FontWeight.bold,
+                                      fontSize: 20,
                                     ),
                                   ),
                                 ),
                                 title: Text(
                                   user.name,
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if (user.phone != null && user.phone.isNotEmpty)
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 4.0),
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.phone, size: 14, color: Colors.grey),
-                                            SizedBox(width: 4),
-                                            Text(user.phone, style: Theme.of(context).textTheme.bodyMedium),
-                                          ],
-                                        ),
+                                    SizedBox(height: 8),
+                                    if (user.phone != null &&
+                                        user.phone.isNotEmpty)
+                                      Row(
+                                        children: [
+                                          Icon(Icons.phone,
+                                              size: 16,
+                                              color: Colors.grey.shade600),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            user.phone,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                    color:
+                                                        Colors.grey.shade700),
+                                          ),
+                                        ],
                                       ),
-                                    if (user.address != null && user.address.isNotEmpty)
+                                    if (user.address != null &&
+                                        user.address.isNotEmpty)
                                       Padding(
                                         padding: const EdgeInsets.only(top: 4.0),
                                         child: Row(
                                           children: [
-                                            Icon(Icons.location_on, size: 14, color: Colors.grey),
-                                            SizedBox(width: 4),
+                                            Icon(Icons.location_on,
+                                                size: 16,
+                                                color: Colors.grey.shade600),
+                                            SizedBox(width: 8),
                                             Expanded(
                                               child: Text(
                                                 user.address,
-                                                style: Theme.of(context).textTheme.bodyMedium,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                        color: Colors
+                                                            .grey.shade700),
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
@@ -182,48 +215,56 @@ class _UserListViewState extends State<UserListView> {
                                   ],
                                 ),
                               ),
+                              Divider(height: 1, thickness: 1),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                                child: Wrap(
-                                  alignment: WrapAlignment.end,
-                                  spacing: 8.0,
-                                  runSpacing: 8.0,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6.0, vertical: 4.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     TextButton.icon(
-                                      icon: Icon(Icons.info_outline, size: 18),
-                                      label: Text(AppLocalizations.of(context)!.clientInfo),
+                                      icon: Icon(Icons.info_outline, size: 20),
+                                      label: Text(AppLocalizations.of(context)!
+                                          .clientInfo),
                                       onPressed: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => clientInfo(user: user),
+                                            builder: (context) =>
+                                                clientInfo(user: user),
                                           ),
                                         );
                                       },
                                     ),
                                     TextButton.icon(
-                                      icon: Icon(Icons.history, size: 18),
-                                      label: Text("History"), // Localize if possible
+                                      icon: Icon(Icons.history, size: 20),
+                                      label: Text("History"),
                                       onPressed: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => CallsScreen(clientId: user),
+                                            builder: (context) =>
+                                                CallsScreen(clientId: user),
                                           ),
                                         );
                                       },
                                     ),
-                                    FilledButton.icon( // Use FilledButton for primary action if available, or ElevatedButton
-                                      icon: Icon(Icons.add, size: 18),
-                                      label: Text(AppLocalizations.of(context)!.openTicket),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    TextButton.icon(
+                                      icon: Icon(Icons.add_circle_outline,
+                                          size: 20),
+                                      label: Text(AppLocalizations.of(context)!
+                                          .openTicket),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor:
+                                            Theme.of(context).primaryColor,
                                       ),
                                       onPressed: () {
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => actions(user: user),
+                                            builder: (context) =>
+                                                actions(user: user),
                                           ),
                                         );
                                       },
