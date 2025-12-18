@@ -26,6 +26,7 @@ class ClientServiceScreen extends StatelessWidget {
     final extraPayment = call['extraPayment'];
     final partsPaid = call['partsPaid'] ?? false;
     final done = call['done'] ?? false;
+    final inProgress = call['inProgress'] ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,6 +56,9 @@ class ClientServiceScreen extends StatelessWidget {
                     Divider(),
                     _buildInfoRow(context, AppLocalizations.of(context)!.done, done ? AppLocalizations.of(context)!.yes : AppLocalizations.of(context)!.no, 
                       valueColor: done ? Colors.green : Colors.red),
+                    Divider(),
+                    _buildInfoRow(context, 'In Progress', inProgress ? AppLocalizations.of(context)!.yes : AppLocalizations.of(context)!.no, 
+                      valueColor: inProgress ? Colors.blue : Colors.grey),
                   ],
                 ),
               ),
@@ -191,6 +195,7 @@ class ClientServiceScreen extends StatelessWidget {
                     'officeVersion': call['officeVersion'],
                     'windowsLicense': call['windowsLicense'],
                     'officeLicense': call['officeLicense'],
+                    'inProgress': call['inProgress'],
                     'fromScreen1': true
                   });
                 },

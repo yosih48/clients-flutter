@@ -132,6 +132,7 @@ class _actionsState extends State<actions> {
 bool _checkboxValue = false;
 bool _checkboxDone = false;
 bool _checkboxParts = false;
+bool _inProgress = false;
 
 class call extends StatefulWidget {
   final user;
@@ -162,6 +163,7 @@ class _callState extends State<call> {
   String? _selectedOfficeVersion;
   bool _windowsLicense = false;
   bool _officeLicense = false;
+  bool _inProgress = false;
 
   void initState() {
     super.initState();
@@ -223,6 +225,7 @@ class _callState extends State<call> {
       _selectedOfficeVersion = widget.data['officeVersion'];
       _windowsLicense = widget.data['windowsLicense'] ?? false;
       _officeLicense = widget.data['officeLicense'] ?? false;
+      _inProgress = widget.data['inProgress'] ?? false;
     }
 
     getPrefs();
@@ -423,6 +426,18 @@ class _callState extends State<call> {
                       },
                       secondary: Icon(Icons.check_circle,
                           color: _checkboxDone ? Colors.green : Colors.grey),
+                    ),
+                    Divider(height: 1),
+                    SwitchListTile(
+                      title: Text('In Progress'), // TODO: Add localization
+                      value: _inProgress,
+                      onChanged: (bool value) {
+                        setState(() {
+                          _inProgress = value;
+                        });
+                      },
+                      secondary: Icon(Icons.work_history,
+                          color: _inProgress ? Colors.blue : Colors.grey),
                     ),
                   ],
                 ),
@@ -783,6 +798,7 @@ class _callState extends State<call> {
                         officeVersion: _selectedOfficeVersion,
                         windowsLicense: _windowsLicense,
                         officeLicense: _officeLicense,
+                        inProgress: _inProgress,
                       );
                     } else {
                       updateUser(
@@ -802,6 +818,7 @@ class _callState extends State<call> {
                         officeVersion: _selectedOfficeVersion,
                         windowsLicense: _windowsLicense,
                         officeLicense: _officeLicense,
+                        inProgress: _inProgress,
                       );
                     }
 
@@ -819,6 +836,7 @@ class _callState extends State<call> {
                       _selectedOfficeVersion = null;
                       _windowsLicense = false;
                       _officeLicense = false;
+                      _inProgress = false;
                     }
 
                     resetForm();
@@ -856,6 +874,7 @@ Future<void> addCall(
   String? officeVersion,
   bool? windowsLicense,
   bool? officeLicense,
+  bool? inProgress,
 }) async {
   User? user = FirebaseAuth.instance.currentUser;
   // print('userID  ${client.name}');
@@ -898,6 +917,7 @@ Future<void> addCall(
       'officeVersion': officeVersion,
       'windowsLicense': windowsLicense,
       'officeLicense': officeLicense,
+      'inProgress': inProgress,
     });
     print("Call Added");
 
@@ -924,6 +944,7 @@ Future<void> updateUser(
   String? officeVersion,
   bool? windowsLicense,
   bool? officeLicense,
+  bool? inProgress,
 }) async {
   print(clientID);
   User? user = FirebaseAuth.instance.currentUser;
@@ -983,6 +1004,7 @@ Future<void> updateUser(
       'officeVersion': officeVersion,
       'windowsLicense': windowsLicense,
       'officeLicense': officeLicense,
+      'inProgress': inProgress,
     });
 
     print("Call Updated");
