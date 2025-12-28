@@ -14,6 +14,8 @@ import '../singelton/AppSingelton.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../services/airtable_service.dart';
+
 final TextEditingController _textFieldController = TextEditingController();
 final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
@@ -26,12 +28,7 @@ const List<String> list = <String>[
   'בית הלקוח',
 ];
 
-final List<Map<String, dynamic>> computerModels = [
-  {'key': 'מחשב מיני HP I5-13', 'price': 1300},
-  {'key': 'נייד DELL i5', 'price': 1382},
-  {'key': 'נייד HP U5', 'price': 1335},
-  {'key': 'DELL I5 נייח', 'price': 0},
-];
+List<Map<String, dynamic>> computerModels = [];
 
 const List<String> officeVersions = [
   'Office 19',
@@ -229,6 +226,14 @@ class _callState extends State<call> {
     }
 
     getPrefs();
+    _fetchComputerModels();
+  }
+
+  Future<void> _fetchComputerModels() async {
+    final models = await AirtableService().fetchComputerModels();
+    setState(() {
+      computerModels = models;
+    });
   }
 
   void handleProductListChanged(List<ProductData> updatedList) {
@@ -482,6 +487,7 @@ class _callState extends State<call> {
 
               // Computer Product Selection
               DropdownButtonFormField<String>(
+                isExpanded: true,
                 value: _selectedComputerProduct,
                 decoration: InputDecoration(
                   labelText: AppLocalizations.of(context)!.selectProduct,

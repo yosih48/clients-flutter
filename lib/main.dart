@@ -31,9 +31,12 @@ import 'package:clientsf/theme.dart';
 //   runApp(const TodoApp());
 // }
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await dotenv.load(fileName: ".env");
   // runApp(const TodoApp());
   runApp(AppStarter());
 }
