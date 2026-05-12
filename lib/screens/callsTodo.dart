@@ -1,25 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:clientsf/theme.dart';
+import 'package:clientsf/widgets/app_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:intl/intl.dart';
 
-import '../componenets/alertDialog.dart';
-import 'callsInfo.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:clientsf/l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:intl/intl.dart';
-
-import '../componenets/alertDialog.dart';
 import 'callsInfo.dart';
 
 class callsTodo extends StatefulWidget {
@@ -34,151 +19,220 @@ class _callsTodoState extends State<callsTodo> {
 
   @override
   Widget build(BuildContext context) {
-    String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    final loc = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.todo),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SegmentedButton<bool>(
-              segments: const <ButtonSegment<bool>>[
-                ButtonSegment<bool>(
-                    value: false,
-                    label: Text('To Do'),
-                    icon: Icon(Icons.list)),
-                ButtonSegment<bool>(
-                    value: true,
-                    label: Text('In Progress'),
-                    icon: Icon(Icons.work_history)),
-              ],
-              selected: <bool>{_showInProgress},
-              onSelectionChanged: (Set<bool> newSelection) {
-                setState(() {
-                  _showInProgress = newSelection.first;
-                });
-              },
-            ),
-          ),
-        ),
-      ),
+      appBar: AppBar(title: Text(loc.todo)),
       body: SafeArea(
-        child: StreamBuilder<QuerySnapshot>(
-            stream: _showInProgress
-                ? FirebaseFirestore.instance
-                    .collectionGroup('calls')
-                    .where('inProgress', isEqualTo: true)
-                    .where('userRef',
-                        isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                    .snapshots()
-                : FirebaseFirestore.instance
-                    .collectionGroup('calls')
-                    .where('done', isEqualTo: false)
-                    .where('userRef',
-                        isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                    .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
+        child: Column(
+          children: [
+            // Segmented tab control
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(AppRadius.pill),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _SegmentTab(
+                        label: 'To Do',
+                        icon: Icons.list_rounded,
+                        selected: !_showInProgress,
+                        onTap: () =>
+                            setState(() => _showInProgress = false),
+                      ),
+                    ),
+                    Expanded(
+                      child: _SegmentTab(
+                        label: 'In Progress',
+                        icon: Icons.work_history_rounded,
+                        selected: _showInProgress,
+                        onTap: () =>
+                            setState(() => _showInProgress = true),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _showInProgress
+                    ? FirebaseFirestore.instance
+                        .collectionGroup('calls')
+                        .where('inProgress', isEqualTo: true)
+                        .where('userRef',
+                            isEqualTo:
+                                FirebaseAuth.instance.currentUser!.uid)
+                        .snapshots()
+                    : FirebaseFirestore.instance
+                        .collectionGroup('calls')
+                        .where('done', isEqualTo: false)
+                        .where('userRef',
+                            isEqualTo:
+                                FirebaseAuth.instance.currentUser!.uid)
+                        .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                        child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(
+                        child: CircularProgressIndicator());
+                  }
+                  if (!(snapshot.hasData) ||
+                      snapshot.data!.docs.isEmpty) {
+                    return EmptyState(
+                      icon: _showInProgress
+                          ? Icons.work_history_rounded
+                          : Icons.check_circle_outline_rounded,
+                      title: _showInProgress
+                          ? 'No calls in progress'
+                          : 'All caught up',
+                      subtitle: _showInProgress
+                          ? 'Start working on a ticket to see it here'
+                          : 'No pending tickets right now',
+                    );
+                  }
 
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              }
-
-              if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
-                List callDocs = snapshot.data!.docs;
-
-                return ListView.builder(
-                  padding: EdgeInsets.all(16),
-                  itemCount: callDocs.length,
-                  itemBuilder: (context, index) {
-                    Map<String, dynamic> callData =
-                        callDocs[index].data() as Map<String, dynamic>;
-
-                    return InkWell(
-                      onTap: () {
-                        Navigator.push(
+                  final callDocs = snapshot.data!.docs;
+                  return ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+                    itemCount: callDocs.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final callData =
+                          callDocs[index].data() as Map<String, dynamic>;
+                      return SoftCard(
+                        padding: const EdgeInsets.all(16),
+                        onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ClientServiceScreen(
-                                call: callData, user: callData['clientRef']),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        margin: EdgeInsets.only(bottom: 12),
-                        child: ListTile(
-                          contentPadding: EdgeInsets.all(16),
-                          leading: CircleAvatar(
-                            backgroundColor: Theme.of(context)
-                                .primaryColor
-                                .withOpacity(0.1),
-                            child: Text(
-                              callData['clientName'].isNotEmpty
-                                  ? callData['clientName'][0].toUpperCase()
-                                  : '?',
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            builder: (_) => ClientServiceScreen(
+                              call: callData,
+                              user: callData['clientRef'],
                             ),
                           ),
-                          title: Text(
-                            callData['clientName'],
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 4),
-                              Text(
-                                callData['type'],
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                callData['call'],
-                                style: Theme.of(context).textTheme.bodyMedium,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                          trailing: Icon(Icons.arrow_forward_ios,
-                              size: 16, color: Colors.grey),
                         ),
-                      ),
-                    );
-                  },
-                );
-              } else {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.check_circle_outline,
-                          size: 64, color: Colors.grey),
-                      SizedBox(height: 16),
-                      Text(
-                        _showInProgress
-                            ? 'No calls in progress'
-                            : 'No pending calls',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge
-                            ?.copyWith(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                );
-              }
-            }),
+                        child: Row(
+                          children: [
+                            InitialAvatar(
+                                name: callData['clientName'] ?? '?',
+                                size: 48),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    callData['clientName'] ?? '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(
+                                            fontWeight: FontWeight.w700),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    callData['call'] ?? '',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                            color: AppColors.inkMuted),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  StatusPill.info(
+                                      callData['type']?.toString() ??
+                                          '',
+                                      icon: Icons.handyman_outlined),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Icon(
+                              Directionality.of(context) ==
+                                      TextDirection.rtl
+                                  ? Icons.chevron_left_rounded
+                                  : Icons.chevron_right_rounded,
+                              color: AppColors.inkMuted,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SegmentTab extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _SegmentTab({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: selected
+              ? Theme.of(context).colorScheme.surface
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+          boxShadow: selected ? AppShadows.soft : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: selected
+                  ? Theme.of(context).colorScheme.primary
+                  : AppColors.inkMuted,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: selected
+                    ? Theme.of(context).colorScheme.onSurface
+                    : AppColors.inkMuted,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

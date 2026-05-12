@@ -1,10 +1,8 @@
 import 'package:clientsf/l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:clientsf/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import '../main.dart';
+import 'package:flutter/material.dart';
 import 'alertDialog.dart';
 
 final TextEditingController _textFieldController = TextEditingController();
@@ -12,139 +10,152 @@ final TextEditingController _mailFieldController = TextEditingController();
 final TextEditingController _phoneFieldController = TextEditingController();
 final TextEditingController _addressFieldController = TextEditingController();
 
-Future<void> displayDialog(context, id) async {
-  // print(context);
+Future<void> displayDialog(BuildContext context, String? id) async {
   return showDialog<void>(
     context: context,
-    // T: false,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(
-          AppLocalizations.of(context)!.clientInfo,
-        ),
-        // Text(AppLocalizations.of(context)!.helloWorld),
-        // content: TextField(
-        //   controller: _textFieldController,
-        //   decoration: const InputDecoration(hintText: 'Type your todo'),
-        //   autofocus: true,
-        // ),
-        content: Container(
-          height: 300.0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Text(AppLocalizations.of(context)!.helloWorld),
+      final loc = AppLocalizations.of(context)!;
+      final theme = Theme.of(context);
+      final isEdit = id != null;
 
-              TextField(
-                controller: _textFieldController,
-                decoration: const InputDecoration(
-                  prefixIcon: const Icon(Icons.person),
-                  labelText: 'Name',
+      return Dialog(
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.xl)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 460),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [
+                          AppColors.primary,
+                          AppColors.primaryDark,
+                        ]),
+                        borderRadius:
+                            BorderRadius.circular(AppRadius.md),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                          isEdit
+                              ? Icons.edit_rounded
+                              : Icons.person_add_alt_1_rounded,
+                          color: Colors.white),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        isEdit ? loc.editClient : loc.clientInfo,
+                        style: theme.textTheme.titleLarge,
+                      ),
+                    ),
+                  ],
                 ),
-                autofocus: true,
-              ),
-              TextField(
-                controller: _mailFieldController,
-                decoration: const InputDecoration(
-                  prefixIcon: const Icon(Icons.email),
-                  hintText: 'Enter email',
-                  labelText: 'Email',
+                const SizedBox(height: 22),
+                Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _textFieldController,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.person_outline_rounded),
+                            labelText: 'Name',
+                          ),
+                          autofocus: true,
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: _mailFieldController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.mail_outline_rounded),
+                            labelText: 'Email',
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: _phoneFieldController,
+                          keyboardType: TextInputType.phone,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.phone_outlined),
+                            labelText: 'Phone',
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: _addressFieldController,
+                          decoration: const InputDecoration(
+                            prefixIcon: Icon(Icons.place_outlined),
+                            labelText: 'Address',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                autofocus: true,
-              ),
-              TextField(
-                controller: _phoneFieldController,
-                decoration: const InputDecoration(
-                  prefixIcon: const Icon(Icons.phone),
-                  hintText: 'Enter phone number',
-                  labelText: 'Phone',
+                const SizedBox(height: 22),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(loc.cancel),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          if (id != null) {
+                            updateUserb(
+                                id,
+                                _textFieldController.text,
+                                _mailFieldController.text,
+                                _addressFieldController.text,
+                                _phoneFieldController.text);
+                          } else {
+                            addUser(
+                                _textFieldController.text,
+                                _mailFieldController.text,
+                                _addressFieldController.text,
+                                _phoneFieldController.text);
+                          }
+                        },
+                        child: Text(isEdit ? loc.edit : loc.addUser),
+                      ),
+                    ),
+                  ],
                 ),
-                autofocus: true,
-              ),
-              TextField(
-                controller: _addressFieldController,
-                decoration: const InputDecoration(
-                  prefixIcon: const Icon(Icons.maps_home_work),
-                  hintText: 'Enter address',
-                  labelText: 'Address',
-                ),
-                autofocus: true,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        actions: <Widget>[
-          OutlinedButton(
-            style: OutlinedButton.styleFrom(
-              // Inherit from Theme
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text(
-              AppLocalizations.of(context)!.cancel,
-            ),
-          ),
-          // ElevatedButton(
-          //   style: ElevatedButton.styleFrom(
-          //     shape: RoundedRectangleBorder(
-          //       borderRadius: BorderRadius.circular(12),
-          //     ),
-          //   ),
-          //   onPressed: () {
-          //     Navigator.of(context).pop();
-          //     _addTodoItem(_textFieldController.text,
-          //         _mailFieldController.text, _addressFieldController.text);
-          //     print(_todos);
-          //   },
-          //   child: const Text('Add'),
-          // ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              // Inherit from Theme
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-              if (id != null) {
-                print(id);
-                print('not null');
-                updateUserb(
-                    id,
-                    _textFieldController.text,
-                    _mailFieldController.text,
-                    _addressFieldController.text,
-                    _phoneFieldController.text);
-              } else {
-                print(id);
-                print('null');
-                addUser(_textFieldController.text, _mailFieldController.text,
-                    _addressFieldController.text, _phoneFieldController.text);
-              }
-            },
-            child: Text(
-              AppLocalizations.of(context)!.addUser,
-            ),
-          ),
-        ],
       );
     },
   );
 }
 
 CollectionReference clients = FirebaseFirestore.instance.collection('users');
+
 Future<void> addUser(name, email, address, phone) async {
-  User? user = FirebaseAuth.instance.currentUser;
-  String clientId = generateClientId();
+  final user = FirebaseAuth.instance.currentUser;
   if (user != null) {
-    CollectionReference userCollection =
+    final userCollection =
         FirebaseFirestore.instance.collection('users');
-    DocumentReference userDoc =
+    final userDoc =
         userCollection.doc(user.uid).collection('user_data').doc();
 
-    //  CollectionReference usersCollection =
-    //     FirebaseFirestore.instance.collection('users');
-    // Call the user's CollectionReference to add a new user
-    // print(id);
     try {
       await userDoc.set({
         'name': name,
@@ -153,108 +164,41 @@ Future<void> addUser(name, email, address, phone) async {
         'phone': phone,
       });
 
-      print("User data added to Firestore");
       showToast('נשמר בהצלחה');
       _textFieldController.clear();
       _mailFieldController.clear();
       _phoneFieldController.clear();
       _addressFieldController.clear();
     } catch (error) {
-      print("Failed to add user data to Firestore: $error");
+      debugPrint("Failed to add user data to Firestore: $error");
     }
-
-    // return clients.doc(clientId).set({
-    //   'id': clientId,
-    //   'name': name,
-    //   'email': email,
-    //   'address': address,
-    //   'phone': phone,
-    // })
-    //     // .then((value) => print("User Added") )
-    //     .then((value) {
-    //   print("User Added");
-    //   showToast('נשמר בהצלחה');
-    //   _textFieldController.clear();
-    //   _mailFieldController.clear();
-    //   _phoneFieldController.clear();
-    //   _addressFieldController.clear();
-    // }).catchError((error) => print("Failed to add user: $error"));
-  } else {
-    print("User is not authenticated");
   }
 }
-// Future<void> updateUser(id, name, email, address, phone){
-// print(phone);
-// return clients.doc(id).update({
-// 'name': name,
-// 'email': email,
-// 'address': address,
-// 'phone': phone,
 
-// }).then((value){
-
-// print('user updated');
-//   showToast('עודכן בהצלחה');
-//       _textFieldController.clear();
-//     _mailFieldController.clear();
-//     _phoneFieldController.clear();
-//     _addressFieldController.clear();
-
-// })
-// .catchError((error)=> print('${error} '));
-// }
 Future<void> updateUserb(id, name, email, address, phone) {
-  User? user = FirebaseAuth.instance.currentUser;
-  CollectionReference userCollection =
-      FirebaseFirestore.instance.collection('users');
-  DocumentReference userDoc =
-      userCollection.doc(user!.uid).collection('user_data').doc();
-  // print(phone);
-  // print(user!.uid);
-  // print(id);
+  final user = FirebaseAuth.instance.currentUser;
+  final Map<String, dynamic> updatedData = {};
+  if (name != null && name.isNotEmpty) updatedData['name'] = name;
+  if (email != null && email.isNotEmpty) updatedData['email'] = email;
+  if (address != null && address.isNotEmpty) updatedData['address'] = address;
+  if (phone != null && phone.isNotEmpty) updatedData['phone'] = phone;
 
-  Map<String, dynamic> updatedData = {};
-
-  // Update 'name' field if a new value is provided and not empty
-  if (name != null && name.isNotEmpty) {
-    updatedData['name'] = name;
-  }
-
-  // Update 'email' field if a new value is provided and not empty
-  if (email != null && email.isNotEmpty) {
-    updatedData['email'] = email;
-  }
-
-  // Update 'address' field if a new value is provided and not empty
-  if (address != null && address.isNotEmpty) {
-    updatedData['address'] = address;
-  }
-
-  // Update 'phone' field if a new value is provided and not empty
-  if (phone != null && phone.isNotEmpty) {
-    updatedData['phone'] = phone;
-  }
-
-  return  clients
+  return clients
       .doc(user!.uid)
       .collection('user_data')
       .doc(id)
       .update(updatedData)
       .then((value) {
-    print('User updated');
     showToast('עודכן בהצלחה');
     _textFieldController.clear();
     _mailFieldController.clear();
     _phoneFieldController.clear();
     _addressFieldController.clear();
   }).catchError((error) {
-    print('Error updating user: $error');
+    debugPrint('Error updating user: $error');
   });
 }
 
 String generateClientId() {
-  // Implement your logic to generate a unique client ID
-  // This can be a randomly generated string, a combination of user input, or any other unique identifier generation method
-  // For simplicity, we will use a timestamp-based ID in this example
   return DateTime.now().millisecondsSinceEpoch.toString();
 }

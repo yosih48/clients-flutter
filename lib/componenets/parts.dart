@@ -1,155 +1,85 @@
+import 'package:clientsf/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:clientsf/l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 class ProductForm extends StatefulWidget {
   final Function(List<ProductData>) onProductListChanged;
 
-  const ProductForm({required this.onProductListChanged});
+  const ProductForm({super.key, required this.onProductListChanged});
 
   @override
-  _ProductFormState createState() => _ProductFormState();
+  State<ProductForm> createState() => _ProductFormState();
 }
 
 class _ProductFormState extends State<ProductForm> {
-  List<ProductData> products = [];
+  final List<ProductData> products = [];
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        ListTile(
-          onTap: () {
-            setState(() {
-              products.add(ProductData());
-            });
-          },
-          leading: Icon(Icons.add),
-          // title: Text(AppLocalizations.of(context)!.addParts),
-          title: Text('הוסף מוצר'),
-        ),
-        for (var val in products)
-          ListTile(
-            title: Row(
+        for (final val in products) ...[
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(AppRadius.md),
+            ),
+            child: Column(
               children: [
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'שם מוצר',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        val.name = value;
-                      });
-                      widget.onProductListChanged(products);
-                    },
-                  ),
+                TextFormField(
+                  decoration: const InputDecoration(labelText: 'שם מוצר'),
+                  onChanged: (value) {
+                    setState(() => val.name = value);
+                    widget.onProductListChanged(products);
+                  },
                 ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'מחיר עלות',
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        decoration:
+                            const InputDecoration(labelText: 'מחיר עלות'),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          setState(() =>
+                              val.price = double.tryParse(value) ?? 0.0);
+                          widget.onProductListChanged(products);
+                        },
+                      ),
                     ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        val.price = double.tryParse(value) ?? 0.0;
-                      });
-                      widget.onProductListChanged(products);
-                    },
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      labelText: 'מחיר ללקוח',
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextFormField(
+                        decoration:
+                            const InputDecoration(labelText: 'מחיר ללקוח'),
+                        keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          setState(() => val.discountedPrice =
+                              double.tryParse(value) ?? 0.0);
+                          widget.onProductListChanged(products);
+                        },
+                      ),
                     ),
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        val.discountedPrice = double.tryParse(value) ?? 0.0;
-                      });
-                      widget.onProductListChanged(products);
-                    },
-                  ),
+                  ],
                 ),
               ],
             ),
-          )
+          ),
+        ],
+        SizedBox(
+          width: double.infinity,
+          child: OutlinedButton.icon(
+            onPressed: () =>
+                setState(() => products.add(ProductData())),
+            icon: const Icon(Icons.add_rounded, size: 18),
+            label: const Text('הוסף מוצר'),
+          ),
+        ),
       ],
     );
-    // return Expanded(
-    //   child: ListView.builder(
-    //     shrinkWrap: true,
-    //     itemCount: products.length + 1,
-    //     itemBuilder: (context, index) {
-    //       if (index == products.length) {
-    //         return ListTile(
-    //           onTap: () {
-    //             setState(() {
-    //               products.add(ProductData());
-    //             });
-    //           },
-    //           leading: Icon(Icons.add),
-    //           title: Text('Add Product'),
-    //         );
-    //       }
-    //       return ListTile(
-    //         title: Row(
-    //           children: [
-    //             Expanded(
-    //               child: TextFormField(
-    //                 decoration: InputDecoration(
-    //                   labelText: 'Product Name',
-    //                 ),
-    //                 onChanged: (value) {
-    //                      setState(() {
-    //                     products[index].name = value;
-    //                   });
-    //                    widget.onProductListChanged(products);
-    //                 },
-
-    //               ),
-    //             ),
-    //             SizedBox(width: 10),
-    //             Expanded(
-    //               child: TextFormField(
-    //                 decoration: InputDecoration(
-    //                   labelText: 'Price',
-    //                 ),
-    //                 keyboardType: TextInputType.number,
-    //                 onChanged: (value) {
-    //                       setState(() {
-    //                     products[index].price = double.tryParse(value) ?? 0.0;
-    //                   });
-    //                   widget.onProductListChanged(products);
-    //                 },
-    //               ),
-    //             ),
-    //             SizedBox(width: 10),
-    //             Expanded(
-    //               child: TextFormField(
-    //                 decoration: InputDecoration(
-    //                   labelText: 'Discounted Price',
-    //                 ),
-    //                 keyboardType: TextInputType.number,
-    //                 onChanged: (value) {
-    //      setState(() {
-    //                     products[index].discountedPrice =
-    //                         double.tryParse(value) ?? 0.0;
-    //                   });
-    //                   widget.onProductListChanged(products);
-    //                 },
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // );
   }
 }
 
@@ -162,7 +92,7 @@ class ProductData {
     this.price,
     this.discountedPrice,
   });
-    factory ProductData.fromDynamic(dynamic json) {
+  factory ProductData.fromDynamic(dynamic json) {
     return ProductData(
       name: json['name'],
       price: json['price']?.toDouble(),

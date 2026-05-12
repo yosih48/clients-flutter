@@ -1,3 +1,5 @@
+import 'package:clientsf/theme.dart';
+import 'package:clientsf/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:clientsf/objects/clients.dart';
@@ -10,75 +12,123 @@ class clientInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(user.name ?? ''),
+        title: const Text(''),
         actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              displayDialog(context, '${user.id}');
-            },
-            tooltip: AppLocalizations.of(context)!.editClient,
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: IconButton(
+              icon: const Icon(Icons.edit_rounded),
+              tooltip: loc.editClient,
+              onPressed: () => displayDialog(context, user.id),
+            ),
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-              child: Text(
-                user.name != null && user.name!.isNotEmpty
-                    ? user.name![0].toUpperCase()
-                    : '?',
-                style: TextStyle(
-                  fontSize: 40,
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Column(
+                children: [
+                  InitialAvatar(name: user.name, size: 96),
+                  const SizedBox(height: 18),
+                  Text(
+                    user.name ?? '',
+                    style: Theme.of(context).textTheme.headlineLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  if ((user.email ?? '').isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      user.email!,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.inkMuted,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ],
+                ],
               ),
             ),
-            SizedBox(height: 16),
-            Text(
-              user.name ?? '',
-              style: Theme.of(context).textTheme.headlineMedium,
-              textAlign: TextAlign.center,
+            const SizedBox(height: 28),
+
+            // Quick actions row
+            Row(
+              children: [
+                Expanded(
+                  child: _QuickAction(
+                    icon: Icons.call_rounded,
+                    label: 'Call',
+                    color: AppColors.success,
+                    onTap: () => _launchPhoneDialer(user.phone ?? ''),
+                    enabled: (user.phone ?? '').isNotEmpty,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _QuickAction(
+                    icon: Icons.mail_outline_rounded,
+                    label: 'Email',
+                    color: AppColors.primary,
+                    onTap: () => launchEmailSubmission(user.email ?? ''),
+                    enabled: (user.email ?? '').isNotEmpty,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _QuickAction(
+                    icon: Icons.directions_rounded,
+                    label: 'Directions',
+                    color: AppColors.warning,
+                    onTap: () => openWaze(user.address ?? ''),
+                    enabled: (user.address ?? '').isNotEmpty,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 24),
-            _buildInfoCard(
-              context,
-              icon: Icons.phone,
-              text: user.phone ?? '',
-              onTap: () => _launchPhoneDialer(user.phone ?? ''),
+
+            const SizedBox(height: 24),
+
+            // Contact details
+            SoftCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: [
+                  _DetailTile(
+                    icon: Icons.phone_outlined,
+                    label: 'Phone',
+                    value: user.phone,
+                    onTap: () => _launchPhoneDialer(user.phone ?? ''),
+                  ),
+                  _DetailTile(
+                    icon: Icons.mail_outline_rounded,
+                    label: 'Email',
+                    value: user.email,
+                    onTap: () => launchEmailSubmission(user.email ?? ''),
+                  ),
+                  _DetailTile(
+                    icon: Icons.place_outlined,
+                    label: 'Address',
+                    value: user.address,
+                    onTap: () => openWaze(user.address ?? ''),
+                    isLast: true,
+                  ),
+                ],
+              ),
             ),
-            _buildInfoCard(
-              context,
-              icon: Icons.mail,
-              text: user.email ?? '',
-              onTap: () => launchEmailSubmission(user.email ?? ''),
-            ),
-            _buildInfoCard(
-              context,
-              icon: Icons.map,
-              text: user.address ?? '',
-              onTap: () => openWaze(user.address ?? ''),
-            ),
-            SizedBox(height: 24),
+
+            const SizedBox(height: 28),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  displayDialog(context, '${user.id}');
-                },
-                icon: Icon(Icons.edit),
-                label: Text(AppLocalizations.of(context)!.editClient),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                ),
+              child: OutlinedButton.icon(
+                onPressed: () => displayDialog(context, user.id),
+                icon: const Icon(Icons.edit_rounded, size: 20),
+                label: Text(loc.editClient),
               ),
             ),
           ],
@@ -86,36 +136,133 @@ class clientInfo extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildInfoCard(BuildContext context,
-      {required IconData icon, required String text, required VoidCallback onTap}) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Icon(icon, color: Theme.of(context).primaryColor),
-              SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  text,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+class _QuickAction extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  final bool enabled;
+
+  const _QuickAction({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+    this.enabled = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: enabled ? 1 : 0.5,
+      child: SoftCard(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        onTap: enabled ? onTap : null,
+        child: Column(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.12),
+                shape: BoxShape.circle,
               ),
-              Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-            ],
-          ),
+              alignment: Alignment.center,
+              child: Icon(icon, color: color, size: 22),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              label,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w600, fontSize: 13),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// link to phone call
+class _DetailTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String? value;
+  final VoidCallback onTap;
+  final bool isLast;
+
+  const _DetailTile({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onTap,
+    this.isLast = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasValue = (value ?? '').isNotEmpty;
+    final dir = Directionality.of(context);
+
+    return InkWell(
+      onTap: hasValue ? onTap : null,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.10),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(icon,
+                      size: 20, color: Theme.of(context).colorScheme.primary),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(label,
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(color: AppColors.inkMuted)),
+                      const SizedBox(height: 2),
+                      Text(
+                        hasValue ? value! : '—',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: hasValue ? null : AppColors.inkFaint),
+                      ),
+                    ],
+                  ),
+                ),
+                if (hasValue)
+                  Icon(
+                    dir == TextDirection.rtl
+                        ? Icons.chevron_left_rounded
+                        : Icons.chevron_right_rounded,
+                    color: AppColors.inkMuted,
+                  ),
+              ],
+            ),
+          ),
+          if (!isLast)
+            Divider(
+                height: 1, color: Theme.of(context).dividerColor, indent: 70),
+        ],
+      ),
+    );
+  }
+}
+
 void _launchPhoneDialer(String phoneNumber) async {
   final url = 'tel:$phoneNumber';
   if (await canLaunch(url)) {
@@ -125,51 +272,30 @@ void _launchPhoneDialer(String phoneNumber) async {
   }
 }
 
-// link to phone gmail
-void sendEmail(String emailAddress) async {
-  final Uri emailLaunchUri = Uri(
-    scheme: 'mailto',
-    path: emailAddress,
-  );
-
-  if (await canLaunch(emailLaunchUri.toString())) {
-    await launch(emailLaunchUri.toString());
-  } else {
-    throw 'Could not launch email';
-  }
-}
-
-// email option2
 void launchEmailSubmission(String emailAddress) async {
   final Uri params = Uri(
       scheme: 'mailto',
       path: emailAddress,
       queryParameters: {'subject': 'Default Subject', 'body': 'Default body'});
-  String url = params.toString();
+  final String url = params.toString();
   if (await canLaunch(url)) {
     await launch(url);
-  } else {
-    print('Could not launch $url');
   }
 }
 
-// link to phone waze
 void openWaze(String address) async {
   final Uri wazeUri = Uri(
     scheme: 'waze',
     path: '/ul',
     queryParameters: {'ll': address},
   );
-
   if (await canLaunch(wazeUri.toString())) {
     await launch(wazeUri.toString());
   } else {
     openGoogleMaps(address);
-    // throw 'Could not launch Waze';
   }
 }
 
-// link to phone maps
 void openGoogleMaps(String address) async {
   final Uri mapsUri = Uri(
     scheme: 'https',
@@ -177,10 +303,7 @@ void openGoogleMaps(String address) async {
     path: '/maps/search/',
     queryParameters: {'api': '1', 'query': address},
   );
-
   if (await canLaunch(mapsUri.toString())) {
     await launch(mapsUri.toString());
-  } else {
-    throw 'Could not launch Google Maps';
   }
 }
