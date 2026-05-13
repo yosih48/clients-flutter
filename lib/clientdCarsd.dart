@@ -42,12 +42,26 @@ class _UserListViewState extends State<UserListView> {
               prefixIcon: const Icon(Icons.search_rounded),
               suffixIcon: searchQuery.isEmpty
                   ? null
-                  : IconButton(
-                      icon: const Icon(Icons.close_rounded, size: 20),
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() => searchQuery = '');
-                      },
+                  : Padding(
+                      padding: const EdgeInsetsDirectional.only(end: 8),
+                      child: IconButton(
+                        tooltip: 'Clear',
+                        icon: Container(
+                          width: 22,
+                          height: 22,
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceMuted,
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: const Icon(Icons.close_rounded,
+                              size: 14, color: AppColors.inkMuted),
+                        ),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => searchQuery = '');
+                        },
+                      ),
                     ),
             ),
             onChanged: (value) =>

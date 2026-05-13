@@ -348,7 +348,21 @@ class _CallTile extends StatelessWidget {
     final callDetails = call['call'] ?? '';
     final paid = call['paid'] ?? false;
     final timestamp = call['timestamp'];
-    final payment = call['payment'];
+
+    // Display the actual profit: what the client paid (extraPayment) minus
+    // the cost of parts. Computed on display so old records with the legacy
+    // formula are corrected too.
+    final extraNum = call['extraPayment'];
+    final extra = extraNum is num
+        ? extraNum.toDouble()
+        : double.tryParse(extraNum?.toString() ?? '') ?? 0;
+    // Parts cost = "מחיר עלות" (cost-to-me) stored as 'price', not 'discountedPrice'.
+    final partsCost = (call['products'] as List?)?.fold<double>(0, (a, p) {
+          final d = p['price'];
+          return a + (d is num ? d.toDouble() : 0);
+        }) ??
+        0;
+    final profit = extra - partsCost;
     final formattedDate = timestamp != null
         ? DateFormat('dd MMM').format(
             DateTime.fromMillisecondsSinceEpoch(timestamp))
@@ -471,7 +485,7 @@ class _CallTile extends StatelessWidget {
             ),
             const SizedBox(width: 12),
             Text(
-              '${payment ?? 0} ₪',
+              '${profit.toStringAsFixed(profit.truncateToDouble() == profit ? 0 : 1)} ₪',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,

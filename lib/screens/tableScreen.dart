@@ -20,7 +20,9 @@ class _DataTableExampleState extends State<DataTableExample> {
 
   Map<String, double> clientTotalPayments = {};
   Map<String, double> clientNotPaidPayments = {};
+  Map<String, double> clientNetProfit = {};
   bool _isLoading = false;
+  String? _lastError;
 
   @override
   void initState() {
@@ -30,7 +32,10 @@ class _DataTableExampleState extends State<DataTableExample> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _lastError = null;
+    });
 
     final int startTimestamp =
         DateTime(_currentMonth.year, _currentMonth.month, 1)
@@ -72,14 +77,17 @@ class _DataTableExampleState extends State<DataTableExample> {
 
       clientTotalPayments.clear();
       clientNotPaidPayments.clear();
+      clientNetProfit.clear();
       for (final result in results) {
         if (result != null) {
           clientTotalPayments[result.clientName] = result.totalPayment;
           clientNotPaidPayments[result.clientName] = result.totalNotPaid;
+          clientNetProfit[result.clientName] = result.netProfit;
         }
       }
-    } catch (e) {
-      debugPrint("Error loading data: $e");
+    } catch (e, st) {
+      debugPrint("Error loading data: $e\n$st");
+      _lastError = '$e';
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -88,35 +96,37 @@ class _DataTableExampleState extends State<DataTableExample> {
   ClientStats? _processClientCalls(
       String clientName, List<QueryDocumentSnapshot> callDocs) {
     if (callDocs.isEmpty) return null;
-    double totalPayment = 0;
-    double totalNotPaidPayment = 0;
-    double sumPrice = 0;
+
+    double totalPaidGross = 0;   // what paid clients actually paid (extraPayment)
+    double totalUnpaidGross = 0; // pending — what unpaid clients still owe
+    double paidPartsCost = 0;    // parts cost for paid jobs only
+
+    double asDouble(dynamic v) =>
+        v is num ? v.toDouble() : double.tryParse(v?.toString() ?? '') ?? 0;
 
     for (final callDoc in callDocs) {
       final data = callDoc.data() as Map<String, dynamic>;
-      final bool documentPaid = data['paid'] ?? false;
-      final List productList = (data['products'] as List<dynamic>?) ?? [];
-      final double payment = (data['payment'] is int)
-          ? (data['payment'] as int).toDouble()
-          : (data['payment'] as double? ?? 0.0);
+      final bool paid = data['paid'] ?? false;
+      final double extra = asDouble(data['extraPayment']);
+      final List products = (data['products'] as List<dynamic>?) ?? [];
+      // Parts cost = what the parts cost ME ("מחיר עלות" → 'price'),
+      // not what I charged the client for them ('discountedPrice').
+      final double partsCost =
+          products.fold<double>(0, (a, p) => a + asDouble(p['price']));
 
-      if (documentPaid) {
-        totalPayment += payment;
+      if (paid) {
+        totalPaidGross += extra;
+        paidPartsCost += partsCost;
       } else {
-        totalNotPaidPayment += payment;
-      }
-
-      for (final product in productList) {
-        sumPrice += (product['price'] is int)
-            ? (product['price'] as int).toDouble()
-            : (product['price'] as double? ?? 0.0);
+        totalUnpaidGross += extra;
       }
     }
 
     return ClientStats(
       clientName: clientName,
-      totalPayment: totalPayment - sumPrice,
-      totalNotPaid: totalNotPaidPayment,
+      totalPayment: totalPaidGross,
+      totalNotPaid: totalUnpaidGross,
+      netProfit: totalPaidGross - paidPartsCost,
     );
   }
 
@@ -153,6 +163,8 @@ class _DataTableExampleState extends State<DataTableExample> {
   double get _paidTotal => clientTotalPayments.values.fold(0, (a, b) => a + b);
   double get _outstandingTotal =>
       clientNotPaidPayments.values.fold(0, (a, b) => a + b);
+  double get _netProfitTotal =>
+      clientNetProfit.values.fold(0, (a, b) => a + b);
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +186,7 @@ class _DataTableExampleState extends State<DataTableExample> {
                       color: AppColors.success,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: _StatCard(
                       label: 'לתשלום',
@@ -183,12 +195,31 @@ class _DataTableExampleState extends State<DataTableExample> {
                       color: AppColors.warning,
                     ),
                   ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _StatCard(
+                      label: 'Net',
+                      value: _netProfitTotal,
+                      icon: Icons.trending_up_rounded,
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ],
               ),
             ),
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
+                : _lastError != null
+                    ? Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: EmptyState(
+                          icon: Icons.error_outline_rounded,
+                          title: 'Could not load data',
+                          subtitle:
+                              'Firestore returned an error — most often a missing composite index. Open the link printed in the debug console to create it.\n\n$_lastError',
+                        ),
+                      )
                 : clientTotalPayments.isEmpty
                     ? EmptyState(
                         icon: Icons.bar_chart_rounded,
@@ -196,15 +227,12 @@ class _DataTableExampleState extends State<DataTableExample> {
                             ? 'אין נתונים בכלל'
                             : 'אין נתונים ל-${DateFormat('MMMM yyyy').format(_currentMonth)}',
                       )
-                    : SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-                        child: SoftCard(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                          child: DataTableWidget(
-                            clientTotalPayments: clientTotalPayments,
-                            clientNotPaidPayments: clientNotPaidPayments,
-                          ),
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 8, bottom: 16),
+                        child: DataTableWidget(
+                          clientTotalPayments: clientTotalPayments,
+                          clientNotPaidPayments: clientNotPaidPayments,
+                          clientNetProfit: clientNetProfit,
                         ),
                       ),
           ),
@@ -303,38 +331,69 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final whole = value.truncateToDouble() == value;
+    final formatted =
+        whole ? value.toStringAsFixed(0) : value.toStringAsFixed(1);
+
     return SoftCard(
-      padding: const EdgeInsets.all(16),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.14),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            alignment: Alignment.center,
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label,
-                    style: TextStyle(
-                        color: AppColors.inkMuted,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600)),
-                const SizedBox(height: 2),
-                Text(
-                  '${value.toStringAsFixed(2)} ₪',
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.2),
+          Row(
+            children: [
+              Container(
+                width: 26,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.14),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: Icon(icon, color: color, size: 14),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: AppColors.inkMuted,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                  ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(
+                  formatted,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.4,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                ),
+                const SizedBox(width: 3),
+                Text(
+                  '₪',
+                  style: TextStyle(
+                    color: AppColors.inkMuted,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ],
             ),
@@ -347,11 +406,14 @@ class _StatCard extends StatelessWidget {
 
 class ClientStats {
   final String clientName;
-  final double totalPayment;
-  final double totalNotPaid;
+  final double totalPayment; // gross paid (extraPayment of paid calls)
+  final double totalNotPaid; // gross pending (extraPayment of unpaid calls)
+  final double netProfit;    // realized profit = paid gross − parts cost of paid calls
 
-  ClientStats(
-      {required this.clientName,
-      required this.totalPayment,
-      required this.totalNotPaid});
+  ClientStats({
+    required this.clientName,
+    required this.totalPayment,
+    required this.totalNotPaid,
+    required this.netProfit,
+  });
 }

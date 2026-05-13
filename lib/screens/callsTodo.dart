@@ -79,8 +79,16 @@ class _callsTodoState extends State<callsTodo> {
                         .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Center(
-                        child: Text('Error: ${snapshot.error}'));
+                    debugPrint('callsTodo query error: ${snapshot.error}');
+                    return Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: EmptyState(
+                        icon: Icons.error_outline_rounded,
+                        title: 'Could not load calls',
+                        subtitle:
+                            'Firestore returned an error. This is usually a missing composite index — open the link printed in the debug console to create it.\n\n${snapshot.error}',
+                      ),
+                    );
                   }
                   if (snapshot.connectionState ==
                       ConnectionState.waiting) {
