@@ -60,13 +60,13 @@ void showDialogw(BuildContext context, {required VoidCallback onConfirm}) {
               ),
               const SizedBox(height: 18),
               Text(
-                'האם אתה בטוח שברצונך למחוק?',
+                loc.areYouSureDelete,
                 style: Theme.of(context).textTheme.titleMedium,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                'This action cannot be undone.',
+                loc.actionCannotBeUndone,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.inkMuted),
                 textAlign: TextAlign.center,

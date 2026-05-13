@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -47,9 +48,10 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AuthScaffold(
-      title: 'Verify your number',
-      subtitle: 'Enter the 6-digit code sent to ${widget.phoneNumber ?? ''}',
+      title: loc.verifyNumber,
+      subtitle: loc.enterCodeSentTo(widget.phoneNumber ?? ''),
       icon: Icons.sms_outlined,
       children: [
         Form(
@@ -86,7 +88,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                   Theme.of(context).colorScheme.primary.withOpacity(0.08),
             ),
             validator: (v) =>
-                (v == null || v.length < 6) ? 'Please enter all digits' : null,
+                (v == null || v.length < 6) ? loc.pleaseEnterAllDigits : null,
             onChanged: (value) => setState(() => currentText = value),
             beforeTextPaste: (_) => true,
             onCompleted: (_) {},
@@ -96,19 +98,19 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              '*Please fill in all the cells properly',
-              style: TextStyle(color: AppColors.danger, fontSize: 12),
+              '*${loc.fillCellsProperly}',
+              style: const TextStyle(color: AppColors.danger, fontSize: 12),
             ),
           ),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Didn't receive the code?",
+            Text(loc.didntReceiveCode,
                 style: TextStyle(color: AppColors.inkMuted)),
             TextButton(
-              onPressed: () => _snack('OTP resend'),
-              child: const Text('Resend'),
+              onPressed: () => _snack(loc.otpResend),
+              child: Text(loc.resend),
             ),
           ],
         ),
@@ -123,17 +125,17 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                 setState(() => hasError = true);
               } else {
                 setState(() => hasError = false);
-                _snack('OTP verified');
+                _snack(loc.otpVerified);
               }
             },
-            child: const Text('Verify'),
+            child: Text(loc.verify),
           ),
         ),
         const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Want to try again?',
+            Text(loc.wantTryAgain,
                 style: TextStyle(color: AppColors.inkMuted)),
             TextButton(
               onPressed: () {
@@ -141,7 +143,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => LoginScreen()));
               },
-              child: const Text('Sign in'),
+              child: Text(loc.signIn),
             ),
           ],
         ),

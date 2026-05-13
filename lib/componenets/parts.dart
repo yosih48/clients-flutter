@@ -1,3 +1,4 @@
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,7 @@ class _ProductFormState extends State<ProductForm> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -29,7 +31,7 @@ class _ProductFormState extends State<ProductForm> {
             child: Column(
               children: [
                 TextFormField(
-                  decoration: const InputDecoration(labelText: 'שם מוצר'),
+                  decoration: InputDecoration(labelText: loc.productName),
                   onChanged: (value) {
                     setState(() => val.name = value);
                     widget.onProductListChanged(products);
@@ -41,7 +43,7 @@ class _ProductFormState extends State<ProductForm> {
                     Expanded(
                       child: TextFormField(
                         decoration:
-                            const InputDecoration(labelText: 'מחיר עלות'),
+                            InputDecoration(labelText: loc.costPrice),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           setState(() =>
@@ -54,7 +56,7 @@ class _ProductFormState extends State<ProductForm> {
                     Expanded(
                       child: TextFormField(
                         decoration:
-                            const InputDecoration(labelText: 'מחיר ללקוח'),
+                            InputDecoration(labelText: loc.finalPrice),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           setState(() => val.discountedPrice =
@@ -75,7 +77,7 @@ class _ProductFormState extends State<ProductForm> {
             onPressed: () =>
                 setState(() => products.add(ProductData())),
             icon: const Icon(Icons.add_rounded, size: 18),
-            label: const Text('הוסף מוצר'),
+            label: Text(loc.addProduct),
           ),
         ),
       ],

@@ -1,3 +1,4 @@
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/theme.dart';
 import 'package:clientsf/widgets/app_widgets.dart';
 import 'package:flutter/material.dart';
@@ -168,8 +169,9 @@ class _DataTableExampleState extends State<DataTableExample> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('טבלת הכנסות')),
+      appBar: AppBar(title: Text(loc.incomeTable)),
       body: Column(
         children: [
           _buildFilterBar(),
@@ -180,7 +182,7 @@ class _DataTableExampleState extends State<DataTableExample> {
                 children: [
                   Expanded(
                     child: _StatCard(
-                      label: 'שולם',
+                      label: loc.statusPaid,
                       value: _paidTotal,
                       icon: Icons.check_circle_outline_rounded,
                       color: AppColors.success,
@@ -189,7 +191,7 @@ class _DataTableExampleState extends State<DataTableExample> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _StatCard(
-                      label: 'לתשלום',
+                      label: loc.totalToCharge,
                       value: _outstandingTotal,
                       icon: Icons.schedule_rounded,
                       color: AppColors.warning,
@@ -198,7 +200,7 @@ class _DataTableExampleState extends State<DataTableExample> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _StatCard(
-                      label: 'Net',
+                      label: loc.net,
                       value: _netProfitTotal,
                       icon: Icons.trending_up_rounded,
                       color: AppColors.primary,
@@ -215,17 +217,18 @@ class _DataTableExampleState extends State<DataTableExample> {
                         padding: const EdgeInsets.all(24),
                         child: EmptyState(
                           icon: Icons.error_outline_rounded,
-                          title: 'Could not load data',
+                          title: loc.couldNotLoadData,
                           subtitle:
-                              'Firestore returned an error — most often a missing composite index. Open the link printed in the debug console to create it.\n\n$_lastError',
+                              '${loc.firestoreIndexError}\n\n$_lastError',
                         ),
                       )
                 : clientTotalPayments.isEmpty
                     ? EmptyState(
                         icon: Icons.bar_chart_rounded,
                         title: _showAllTime
-                            ? 'אין נתונים בכלל'
-                            : 'אין נתונים ל-${DateFormat('MMMM yyyy').format(_currentMonth)}',
+                            ? loc.noDataAllTime
+                            : loc.noDataForMonth(
+                                DateFormat('MMMM yyyy').format(_currentMonth)),
                       )
                     : Padding(
                         padding: const EdgeInsets.only(top: 8, bottom: 16),
@@ -242,8 +245,9 @@ class _DataTableExampleState extends State<DataTableExample> {
   }
 
   Widget _buildFilterBar() {
+    final loc = AppLocalizations.of(context)!;
     final monthLabel = _showAllTime
-        ? 'סיכום כל הזמנים'
+        ? loc.allTimeSummary
         : DateFormat('MMMM yyyy').format(_currentMonth);
 
     return Padding(
@@ -257,7 +261,7 @@ class _DataTableExampleState extends State<DataTableExample> {
                 CircleIconButton(
                   icon: Icons.chevron_left_rounded,
                   onTap: _showAllTime ? null : () => _changeMonth(-1),
-                  tooltip: 'חודש קודם',
+                  tooltip: loc.previousMonth,
                 ),
                 Expanded(
                   child: InkWell(
@@ -292,7 +296,7 @@ class _DataTableExampleState extends State<DataTableExample> {
                 CircleIconButton(
                   icon: Icons.chevron_right_rounded,
                   onTap: _showAllTime ? null : () => _changeMonth(1),
-                  tooltip: 'חודש הבא',
+                  tooltip: loc.nextMonth,
                 ),
               ],
             ),
@@ -307,8 +311,9 @@ class _DataTableExampleState extends State<DataTableExample> {
                       ? Icons.filter_list_rounded
                       : Icons.public_rounded,
                   size: 18),
-              label:
-                  Text(_showAllTime ? "הצג סיכום חודשי" : "הצג סיכום כל הזמנים"),
+              label: Text(_showAllTime
+                  ? loc.showMonthlySummary
+                  : loc.showAllTimeSummary),
             ),
           ),
         ],

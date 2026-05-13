@@ -1,6 +1,7 @@
 // ignore_for_file: await_only_futures
 
 import 'package:clientsf/componenets/auth.dart';
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/screens/AppStarter.dart';
 import 'package:clientsf/theme.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (_) => const AppStarter()),
       );
     } catch (e) {
-      showToast('שם משתמש או סיסמה לא נכונים');
+      if (!mounted) return;
+      showToast(AppLocalizations.of(context)!.invalidCredentials);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -49,18 +51,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AuthScaffold(
-      title: 'Welcome back',
-      subtitle: 'Sign in to manage your clients and calls',
+      title: loc.welcomeBack,
+      subtitle: loc.signInSubtitle,
       icon: Icons.waving_hand_rounded,
       children: [
         TextField(
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            prefixIcon: Icon(Icons.mail_outline_rounded),
+          decoration: InputDecoration(
+            labelText: loc.email,
+            prefixIcon: const Icon(Icons.mail_outline_rounded),
           ),
         ),
         const SizedBox(height: 14),
@@ -70,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
           textInputAction: TextInputAction.done,
           onSubmitted: (_) => login(),
           decoration: InputDecoration(
-            labelText: 'Password',
+            labelText: loc.password,
             prefixIcon: const Icon(Icons.lock_outline_rounded),
             suffixIcon: IconButton(
               icon: Icon(_obscurePassword
@@ -87,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
           child: TextButton(
             onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => ForgotPasswordScreen())),
-            child: const Text("Can't log in?"),
+            child: Text(loc.cantLogIn),
           ),
         ),
         const SizedBox(height: 8),
@@ -102,19 +105,19 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: Colors.white),
                   )
-                : const Text('Sign in'),
+                : Text(loc.signIn),
           ),
         ),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Don't have an account?",
+            Text(loc.noAccountYet,
                 style: TextStyle(color: AppColors.inkMuted)),
             TextButton(
               onPressed: () => Navigator.of(context)
                   .push(MaterialPageRoute(builder: (_) => SignupScreen())),
-              child: const Text('Sign up'),
+              child: Text(loc.signUp),
             ),
           ],
         ),

@@ -50,9 +50,10 @@ class _actionsState extends State<actions> {
         : {};
     final isEdit = data.isNotEmpty;
 
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEdit ? 'Edit ticket' : 'New ticket'),
+        title: Text(isEdit ? loc.editTicket : loc.newTicket),
         leading: IconButton(
           icon: const Icon(Icons.close_rounded),
           onPressed: () => Navigator.of(context).maybePop(),
@@ -317,7 +318,7 @@ class _CallFormState extends State<_CallForm> {
               const SizedBox(height: 20),
 
               // 2. Service type picker
-              _SectionLabel('Service type'),
+              _SectionLabel(loc.serviceType),
               _ServiceTypePicker(
                 selected: _serviceType,
                 onChanged: (v) => setState(() => _serviceType = v),
@@ -325,20 +326,20 @@ class _CallFormState extends State<_CallForm> {
               const SizedBox(height: 24),
 
               // 3. Status chips
-              _SectionLabel('Status'),
+              _SectionLabel(loc.status),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   _StatusChip(
-                    label: 'שולם',
+                    label: loc.statusPaid,
                     icon: Icons.payments_outlined,
                     selected: _paid,
                     color: AppColors.success,
                     onTap: () => setState(() => _paid = !_paid),
                   ),
                   _StatusChip(
-                    label: 'In progress',
+                    label: loc.statusInProgress,
                     icon: Icons.work_history_rounded,
                     selected: _inProgress,
                     color: AppColors.primary,
@@ -365,13 +366,13 @@ class _CallFormState extends State<_CallForm> {
                   controller: _detailsCtrl,
                   maxLines: 5,
                   minLines: 4,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
+                    contentPadding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 12),
-                    hintText: 'What did you do for this client?',
+                    hintText: loc.descriptionHint,
                   ),
                 ),
               ),
@@ -454,7 +455,7 @@ class _CallFormState extends State<_CallForm> {
 
               // 7. Advanced (hardware / licenses) – collapsible
               _ExpandableSection(
-                title: 'Hardware & licenses',
+                title: loc.hardwareAndLicenses,
                 subtitle: _advancedSummary(loc),
                 expanded: _showAdvanced,
                 onToggle: () =>
@@ -588,7 +589,7 @@ class _CallFormState extends State<_CallForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Total',
+                    Text(loc.total,
                         style: TextStyle(
                             color: AppColors.inkMuted,
                             fontSize: 11,
@@ -607,7 +608,7 @@ class _CallFormState extends State<_CallForm> {
                 Expanded(
                   child: ElevatedButton.icon(
                     icon: const Icon(Icons.check_rounded, size: 20),
-                    label: Text(widget.isEdit ? 'Save changes' : loc.save),
+                    label: Text(widget.isEdit ? loc.saveChanges : loc.save),
                     onPressed: () => _save(loc),
                   ),
                 ),
@@ -621,11 +622,11 @@ class _CallFormState extends State<_CallForm> {
 
   String _advancedSummary(AppLocalizations loc) {
     final bits = <String>[];
-    if (_selectedComputerProduct != null) bits.add('Hardware');
-    if (_selectedOfficeVersion != null) bits.add('Office');
-    if (_windowsLicense) bits.add('Win license');
-    if (_officeLicense) bits.add('Office license');
-    return bits.isEmpty ? 'Optional details' : bits.join(' · ');
+    if (_selectedComputerProduct != null) bits.add(loc.summaryHardware);
+    if (_selectedOfficeVersion != null) bits.add(loc.summaryOffice);
+    if (_windowsLicense) bits.add(loc.summaryWinLicense);
+    if (_officeLicense) bits.add(loc.summaryOfficeLicense);
+    return bits.isEmpty ? loc.optionalDetails : bits.join(' · ');
   }
 }
 
@@ -681,7 +682,9 @@ class _TotalHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  paid ? 'Total · paid' : 'Total to charge',
+                  paid
+                      ? AppLocalizations.of(context)!.totalPaidLabel
+                      : AppLocalizations.of(context)!.totalToCharge,
                   style: const TextStyle(
                       color: Colors.white70,
                       fontWeight: FontWeight.w600,
@@ -943,7 +946,7 @@ class _PartsSection extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 4, bottom: 8, left: 26),
               child: Text(
-                'No parts added',
+                loc.noPartsAdded,
                 style: TextStyle(
                     color: AppColors.inkMuted, fontSize: 12),
               ),

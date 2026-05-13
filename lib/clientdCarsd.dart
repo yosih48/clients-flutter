@@ -45,7 +45,7 @@ class _UserListViewState extends State<UserListView> {
                   : Padding(
                       padding: const EdgeInsetsDirectional.only(end: 8),
                       child: IconButton(
-                        tooltip: 'Clear',
+                        tooltip: loc.clear,
                         icon: Container(
                           width: 22,
                           height: 22,
@@ -106,11 +106,11 @@ class _UserListViewState extends State<UserListView> {
                 return EmptyState(
                   icon: Icons.people_outline_rounded,
                   title: searchQuery.isEmpty
-                      ? 'No clients yet'
-                      : 'No matching clients',
+                      ? loc.noClientsYet
+                      : loc.noMatchingClients,
                   subtitle: searchQuery.isEmpty
-                      ? 'Tap the + button to add your first client'
-                      : 'Try a different search term',
+                      ? loc.noClientsHint
+                      : loc.tryDifferentSearch,
                 );
               }
 
@@ -239,7 +239,7 @@ class _ClientCard extends StatelessWidget {
                 Expanded(
                   child: _CardAction(
                     icon: Icons.history_rounded,
-                    label: 'History',
+                    label: loc.history,
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(

@@ -1,4 +1,5 @@
 import 'package:clientsf/Feature/auth_scaffold.dart';
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -39,21 +40,23 @@ class _PhoneLoginPageState extends State<PhoneLoginPage> {
         codeAutoRetrievalTimeout: _codeAutoRetrievalTimeout,
       );
     } catch (e) {
-      _snack('Failed to verify phone number. Please try again.');
+      _snack(AppLocalizations.of(context)!.phoneVerifyFail);
     }
   }
 
   void _verificationCompleted(PhoneAuthCredential credential) async {
     try {
       await _auth.signInWithCredential(credential);
-      _snack('Phone number automatically verified.');
+      if (!mounted) return;
+      _snack(AppLocalizations.of(context)!.phoneVerifiedAuto);
     } catch (_) {
-      _snack('Failed to sign in. Please try again.');
+      if (!mounted) return;
+      _snack(AppLocalizations.of(context)!.signInFail);
     }
   }
 
   void _verificationFailed(FirebaseAuthException exception) {
-    _snack('Failed to verify phone number. Please try again.');
+    _snack(AppLocalizations.of(context)!.phoneVerifyFail);
   }
 
   void _codeSent(String verificationId, int? resendToken) {
@@ -71,28 +74,31 @@ class _PhoneLoginPageState extends State<PhoneLoginPage> {
         smsCode: _codeController.text,
       );
       await _auth.signInWithCredential(credential);
-      _snack('Phone number verified successfully.');
+      if (!mounted) return;
+      _snack(AppLocalizations.of(context)!.phoneVerifiedSuccess);
     } catch (_) {
-      _snack('Failed to sign in. Please try again.');
+      if (!mounted) return;
+      _snack(AppLocalizations.of(context)!.signInFail);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return ScaffoldMessenger(
       key: _scaffoldKey,
       child: AuthScaffold(
-        title: 'Welcome back',
-        subtitle: 'Sign in with your phone number',
+        title: loc.welcomeBack,
+        subtitle: loc.phoneLoginSubtitle,
         icon: Icons.smartphone_rounded,
         children: [
           TextField(
             controller: _phoneController,
             keyboardType: TextInputType.phone,
-            decoration: const InputDecoration(
-              labelText: 'Phone number',
+            decoration: InputDecoration(
+              labelText: loc.phoneNumber,
               hintText: '+972…',
-              prefixIcon: Icon(Icons.phone_outlined),
+              prefixIcon: const Icon(Icons.phone_outlined),
             ),
           ),
           const SizedBox(height: 16),
@@ -100,12 +106,12 @@ class _PhoneLoginPageState extends State<PhoneLoginPage> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: _verifyPhone,
-              child: const Text('Send verification code'),
+              child: Text(loc.sendVerificationCode),
             ),
           ),
           const SizedBox(height: 24),
           Text(
-            'Verification code',
+            loc.verificationCode,
             style: Theme.of(context).textTheme.labelLarge,
           ),
           const SizedBox(height: 8),
@@ -138,7 +144,7 @@ class _PhoneLoginPageState extends State<PhoneLoginPage> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: _signInWithPhoneNumber,
-              child: const Text('Sign in'),
+              child: Text(loc.signIn),
             ),
           ),
           const SizedBox(height: 8),
@@ -147,7 +153,7 @@ class _PhoneLoginPageState extends State<PhoneLoginPage> {
             children: [
               TextButton(
                 onPressed: signOut,
-                child: const Text('Sign out'),
+                child: Text(loc.signout),
               ),
             ],
           ),

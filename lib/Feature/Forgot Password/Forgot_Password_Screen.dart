@@ -1,3 +1,4 @@
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -15,17 +16,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AuthScaffold(
-      title: 'Reset password',
-      subtitle: "We'll send a verification code to your phone",
+      title: loc.resetPassword,
+      subtitle: loc.resetPasswordSubtitle,
       icon: Icons.lock_reset_rounded,
       children: [
         TextField(
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            prefixIcon: Icon(Icons.mail_outline_rounded),
+          decoration: InputDecoration(
+            labelText: loc.email,
+            prefixIcon: const Icon(Icons.mail_outline_rounded),
           ),
         ),
         const SizedBox(height: 20),
@@ -38,22 +40,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     const PinCodeVerificationScreen(phoneNumber: '0102756960'),
               ));
             },
-            child: const Text('Continue'),
+            child: Text(loc.continueLabel),
           ),
         ),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Remember it?',
-                style: TextStyle(color: AppColors.inkMuted)),
+            Text(loc.rememberIt, style: TextStyle(color: AppColors.inkMuted)),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => LoginScreen()));
               },
-              child: const Text('Sign in'),
+              child: Text(loc.signIn),
             ),
           ],
         ),

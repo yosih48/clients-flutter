@@ -1,3 +1,4 @@
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/singelton/AppSingelton.dart';
 import 'package:clientsf/theme.dart';
 import 'package:clientsf/widgets/app_widgets.dart';
@@ -37,12 +38,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(loc.settings)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
         children: [
-          _SectionTitle('Work'),
+          _SectionTitle(loc.sectionWork),
           SoftCard(
             padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
             child: Column(
@@ -66,11 +68,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('שווי שעת עבודה',
-                              style: TextStyle(
+                          Text(loc.hourlyRateNative,
+                              style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14)),
-                          Text('Hourly rate',
+                          Text(loc.hourlyRate,
                               style: TextStyle(
                                   color: AppColors.inkMuted,
                                   fontSize: 12)),
@@ -102,45 +104,45 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           const SizedBox(height: 24),
-          _SectionTitle('Account'),
+          _SectionTitle(loc.sectionAccount),
           SoftCard(
             padding: EdgeInsets.zero,
             child: Column(
               children: [
                 _SettingsTile(
                     icon: Icons.phone_outlined,
-                    label: 'Phone number',
+                    label: loc.phoneNumber,
                     onTap: () {}),
                 _Divider(),
                 _SettingsTile(
                     icon: Icons.mail_outline_rounded,
-                    label: 'Email',
+                    label: loc.email,
                     onTap: () {}),
                 _Divider(),
                 _SettingsTile(
                     icon: Icons.logout_rounded,
-                    label: 'Sign out',
+                    label: loc.signout,
                     color: AppColors.danger,
                     onTap: () {}),
               ],
             ),
           ),
           const SizedBox(height: 24),
-          _SectionTitle('Security'),
+          _SectionTitle(loc.sectionSecurity),
           SoftCard(
             padding: EdgeInsets.zero,
             child: Column(
               children: [
                 _SwitchTile(
                   icon: Icons.phonelink_lock_outlined,
-                  label: 'Lock app in background',
+                  label: loc.lockInBackground,
                   value: lockAppSwitchVal,
                   onChanged: (v) => setState(() => lockAppSwitchVal = v),
                 ),
                 _Divider(),
                 _SwitchTile(
                   icon: Icons.fingerprint_rounded,
-                  label: 'Use fingerprint',
+                  label: loc.useFingerprint,
                   value: fingerprintSwitchVal,
                   onChanged: (v) =>
                       setState(() => fingerprintSwitchVal = v),
@@ -148,7 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 _Divider(),
                 _SwitchTile(
                   icon: Icons.lock_outline_rounded,
-                  label: 'Change password',
+                  label: loc.changePassword,
                   value: changePassSwitchVal,
                   onChanged: (v) => setState(() => changePassSwitchVal = v),
                 ),
@@ -156,19 +158,19 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ),
           const SizedBox(height: 24),
-          _SectionTitle('Misc'),
+          _SectionTitle(loc.sectionMisc),
           SoftCard(
             padding: EdgeInsets.zero,
             child: Column(
               children: [
                 _SettingsTile(
                     icon: Icons.description_outlined,
-                    label: 'Terms of service',
+                    label: loc.termsOfService,
                     onTap: () {}),
                 _Divider(),
                 _SettingsTile(
                     icon: Icons.copyright_outlined,
-                    label: 'Open source & licenses',
+                    label: loc.openSourceLicenses,
                     onTap: () {}),
               ],
             ),

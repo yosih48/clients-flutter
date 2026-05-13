@@ -115,19 +115,20 @@ class ClientServiceScreen extends StatelessWidget {
                   StatusPill.success(loc.done,
                       icon: Icons.check_circle_outline_rounded)
                 else
-                  StatusPill.warning('Open',
+                  StatusPill.warning(loc.statusOpen,
                       icon: Icons.radio_button_unchecked_rounded),
                 if (inProgress)
-                  StatusPill.info('In progress', icon: Icons.work_history),
+                  StatusPill.info(loc.statusInProgress,
+                      icon: Icons.work_history),
                 if (partsPaid)
-                  StatusPill.success('Parts paid',
+                  StatusPill.success(loc.partsPaidLabel,
                       icon: Icons.inventory_2_outlined),
               ],
             ),
             const SizedBox(height: 20),
 
             // General info
-            _Section(title: 'General'),
+            _Section(title: loc.sectionGeneral),
             SoftCard(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
               child: Column(
@@ -146,7 +147,7 @@ class ClientServiceScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            _Section(title: 'Payment'),
+            _Section(title: loc.sectionPayment),
             SoftCard(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
               child: Column(
@@ -166,7 +167,7 @@ class ClientServiceScreen extends StatelessWidget {
                   ],
                   Divider(color: Theme.of(context).dividerColor, height: 1),
                   InfoRow(
-                    label: 'Parts paid',
+                    label: loc.partsPaidLabel,
                     value: partsPaid ? loc.yes : loc.no,
                     valueColor:
                         partsPaid ? AppColors.success : AppColors.inkMuted,
@@ -180,7 +181,7 @@ class ClientServiceScreen extends StatelessWidget {
                 windowsLicense ||
                 officeLicense) ...[
               const SizedBox(height: 20),
-              _Section(title: 'Additional'),
+              _Section(title: loc.sectionAdditional),
               SoftCard(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 18, vertical: 6),

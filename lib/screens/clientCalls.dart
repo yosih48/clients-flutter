@@ -61,15 +61,16 @@ class _CallsScreenState extends State<CallsScreen> {
   void _generateCsvFile(List<dynamic> data) async {
     await [Permission.storage].request();
     if (!mounted) return;
+    final loc = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Export Complete'),
-        content: const Text('Data has been exported.'),
+        title: Text(loc.exportComplete),
+        content: Text(loc.exportSuccessMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(loc.ok),
           ),
         ],
       ),
@@ -115,7 +116,7 @@ class _CallsScreenState extends State<CallsScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: _isDescending ? 'Newest first' : 'Oldest first',
+            tooltip: _isDescending ? loc.newestFirst : loc.oldestFirst,
             icon: Icon(
               _isDescending
                   ? Icons.south_rounded
@@ -143,20 +144,20 @@ class _CallsScreenState extends State<CallsScreen> {
             child: Row(
               children: [
                 _FilterChip(
-                  label: 'All',
+                  label: loc.all,
                   selected: _filter == 'both',
                   onTap: () => setState(() => _filter = 'both'),
                 ),
                 const SizedBox(width: 8),
                 _FilterChip(
-                  label: 'שולם',
+                  label: loc.statusPaid,
                   selected: _filter == 'paid',
                   onTap: () => setState(() => _filter = 'paid'),
                   color: AppColors.success,
                 ),
                 const SizedBox(width: 8),
                 _FilterChip(
-                  label: 'לא שולם',
+                  label: loc.statusPending,
                   selected: _filter == 'notpaid',
                   onTap: () => setState(() => _filter = 'notpaid'),
                   color: AppColors.warning,
@@ -177,10 +178,10 @@ class _CallsScreenState extends State<CallsScreen> {
                 }
                 final calls = snapshot.data!.docs;
                 if (calls.isEmpty) {
-                  return const EmptyState(
+                  return EmptyState(
                     icon: Icons.history_rounded,
-                    title: 'No calls yet',
-                    subtitle: 'New service tickets will appear here',
+                    title: loc.noCallsYet,
+                    subtitle: loc.noCallsHint,
                   );
                 }
                 return ListView.separated(
@@ -206,7 +207,7 @@ class _CallsScreenState extends State<CallsScreen> {
           _generateCsvFile(data);
         },
         icon: const Icon(Icons.file_download_outlined),
-        label: const Text('Export'),
+        label: Text(loc.export),
       ),
     );
   }
@@ -462,7 +463,7 @@ class _CallTile extends StatelessWidget {
                 children: [
                   Text(
                     callDetails.toString().isEmpty
-                        ? '(no description)'
+                        ? loc.noDescription
                         : callDetails,
                     style: theme.textTheme.bodyLarge
                         ?.copyWith(fontWeight: FontWeight.w600),
@@ -473,10 +474,10 @@ class _CallTile extends StatelessWidget {
                   Row(
                     children: [
                       if (paid)
-                        StatusPill.success('שולם',
+                        StatusPill.success(loc.statusPaid,
                             icon: Icons.check_rounded)
                       else
-                        StatusPill.warning('ממתין',
+                        StatusPill.warning(loc.statusPending,
                             icon: Icons.schedule_rounded),
                     ],
                   ),

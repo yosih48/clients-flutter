@@ -1,3 +1,4 @@
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,14 +29,15 @@ class _SignupScreenState extends State<SignupScreen> {
         email: emailController.text.trim(),
         password: passwordController.text,
       );
-      showToast('נרשמת בהצלחה');
       if (!mounted) return;
+      showToast(AppLocalizations.of(context)!.signedUpSuccess);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => LoginScreen()),
       );
     } catch (_) {
-      showToast('שגיאת הרשמה');
+      if (!mounted) return;
+      showToast(AppLocalizations.of(context)!.signUpError);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -43,34 +45,35 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return AuthScaffold(
-      title: 'Create account',
-      subtitle: 'Get started in a few seconds',
+      title: loc.createAccount,
+      subtitle: loc.signUpSubtitle,
       icon: Icons.person_add_alt_1_rounded,
       children: [
         TextField(
           controller: nameController,
-          decoration: const InputDecoration(
-            labelText: 'Full name',
-            prefixIcon: Icon(Icons.person_outline_rounded),
+          decoration: InputDecoration(
+            labelText: loc.fullName,
+            prefixIcon: const Icon(Icons.person_outline_rounded),
           ),
         ),
         const SizedBox(height: 14),
         TextField(
           controller: phoneController,
           keyboardType: TextInputType.phone,
-          decoration: const InputDecoration(
-            labelText: 'Phone number',
-            prefixIcon: Icon(Icons.phone_outlined),
+          decoration: InputDecoration(
+            labelText: loc.phoneNumber,
+            prefixIcon: const Icon(Icons.phone_outlined),
           ),
         ),
         const SizedBox(height: 14),
         TextField(
           controller: emailController,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            prefixIcon: Icon(Icons.mail_outline_rounded),
+          decoration: InputDecoration(
+            labelText: loc.email,
+            prefixIcon: const Icon(Icons.mail_outline_rounded),
           ),
         ),
         const SizedBox(height: 14),
@@ -78,7 +81,7 @@ class _SignupScreenState extends State<SignupScreen> {
           controller: passwordController,
           obscureText: _obscurePassword,
           decoration: InputDecoration(
-            labelText: 'Password',
+            labelText: loc.password,
             prefixIcon: const Icon(Icons.lock_outline_rounded),
             suffixIcon: IconButton(
               icon: Icon(_obscurePassword
@@ -93,9 +96,9 @@ class _SignupScreenState extends State<SignupScreen> {
         TextField(
           controller: confirmPasswordController,
           obscureText: _obscurePassword,
-          decoration: const InputDecoration(
-            labelText: 'Confirm password',
-            prefixIcon: Icon(Icons.lock_outline_rounded),
+          decoration: InputDecoration(
+            labelText: loc.confirmPassword,
+            prefixIcon: const Icon(Icons.lock_outline_rounded),
           ),
         ),
         const SizedBox(height: 20),
@@ -109,18 +112,18 @@ class _SignupScreenState extends State<SignupScreen> {
                     width: 20,
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: Colors.white))
-                : const Text('Sign up'),
+                : Text(loc.signUp),
           ),
         ),
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Already have an account?',
+            Text(loc.haveAccount,
                 style: TextStyle(color: AppColors.inkMuted)),
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Sign in'),
+              child: Text(loc.signIn),
             ),
           ],
         ),

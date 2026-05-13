@@ -67,9 +67,10 @@ Future<void> displayDialog(BuildContext context, String? id) async {
                       children: [
                         TextField(
                           controller: _textFieldController,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.person_outline_rounded),
-                            labelText: 'Name',
+                          decoration: InputDecoration(
+                            prefixIcon:
+                                const Icon(Icons.person_outline_rounded),
+                            labelText: loc.clientName,
                           ),
                           autofocus: true,
                         ),
@@ -77,26 +78,26 @@ Future<void> displayDialog(BuildContext context, String? id) async {
                         TextField(
                           controller: _mailFieldController,
                           keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.mail_outline_rounded),
-                            labelText: 'Email',
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.mail_outline_rounded),
+                            labelText: loc.email,
                           ),
                         ),
                         const SizedBox(height: 12),
                         TextField(
                           controller: _phoneFieldController,
                           keyboardType: TextInputType.phone,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.phone_outlined),
-                            labelText: 'Phone',
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.phone_outlined),
+                            labelText: loc.phoneLabel,
                           ),
                         ),
                         const SizedBox(height: 12),
                         TextField(
                           controller: _addressFieldController,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.place_outlined),
-                            labelText: 'Address',
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.place_outlined),
+                            labelText: loc.addressLabel,
                           ),
                         ),
                       ],

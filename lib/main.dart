@@ -105,7 +105,7 @@ class _AppDrawer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'App Making',
+                          loc.appName,
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium
@@ -145,7 +145,7 @@ class _AppDrawer extends StatelessWidget {
             ),
             _DrawerItem(
               icon: Icons.bar_chart_rounded,
-              label: 'טבלת הכנסות',
+              label: loc.incomeTable,
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(context,

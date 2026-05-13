@@ -1,3 +1,4 @@
+import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:clientsf/theme.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +19,7 @@ class DataTableWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final names = clientTotalPayments.keys.toList();
     double totalPaid = 0;
     double totalUnpaid = 0;
@@ -33,7 +35,7 @@ class DataTableWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Header
-          _HeaderRow(),
+          _HeaderRow(loc: loc),
           Divider(height: 1, color: Theme.of(context).dividerColor),
           // Rows
           for (int i = 0; i < names.length; i++) ...[
@@ -55,7 +57,7 @@ class DataTableWidget extends StatelessWidget {
                 Expanded(
                   flex: 4,
                   child: Text(
-                    'סהכ',
+                    loc.totalRow,
                     style: const TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 14,
@@ -80,6 +82,9 @@ class DataTableWidget extends StatelessWidget {
 }
 
 class _HeaderRow extends StatelessWidget {
+  final AppLocalizations loc;
+  const _HeaderRow({required this.loc});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,10 +92,18 @@ class _HeaderRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          Expanded(flex: 4, child: _HeaderLabel('שם לקוח', align: TextAlign.start)),
-          Expanded(flex: 3, child: _HeaderLabel('שולם', align: TextAlign.end)),
-          Expanded(flex: 3, child: _HeaderLabel('לתשלום', align: TextAlign.end)),
-          Expanded(flex: 3, child: _HeaderLabel('Net', align: TextAlign.end)),
+          Expanded(
+              flex: 4,
+              child: _HeaderLabel(loc.clientName, align: TextAlign.start)),
+          Expanded(
+              flex: 3,
+              child: _HeaderLabel(loc.statusPaid, align: TextAlign.end)),
+          Expanded(
+              flex: 3,
+              child:
+                  _HeaderLabel(loc.totalToCharge, align: TextAlign.end)),
+          Expanded(
+              flex: 3, child: _HeaderLabel(loc.net, align: TextAlign.end)),
         ],
       ),
     );

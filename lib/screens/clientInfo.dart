@@ -63,7 +63,7 @@ class clientInfo extends StatelessWidget {
                 Expanded(
                   child: _QuickAction(
                     icon: Icons.call_rounded,
-                    label: 'Call',
+                    label: loc.callAction,
                     color: AppColors.success,
                     onTap: () => _launchPhoneDialer(user.phone ?? ''),
                     enabled: (user.phone ?? '').isNotEmpty,
@@ -73,7 +73,7 @@ class clientInfo extends StatelessWidget {
                 Expanded(
                   child: _QuickAction(
                     icon: Icons.mail_outline_rounded,
-                    label: 'Email',
+                    label: loc.emailAction,
                     color: AppColors.primary,
                     onTap: () => launchEmailSubmission(user.email ?? ''),
                     enabled: (user.email ?? '').isNotEmpty,
@@ -83,7 +83,7 @@ class clientInfo extends StatelessWidget {
                 Expanded(
                   child: _QuickAction(
                     icon: Icons.directions_rounded,
-                    label: 'Directions',
+                    label: loc.directionsAction,
                     color: AppColors.warning,
                     onTap: () => openWaze(user.address ?? ''),
                     enabled: (user.address ?? '').isNotEmpty,
@@ -101,19 +101,19 @@ class clientInfo extends StatelessWidget {
                 children: [
                   _DetailTile(
                     icon: Icons.phone_outlined,
-                    label: 'Phone',
+                    label: loc.phoneLabel,
                     value: user.phone,
                     onTap: () => _launchPhoneDialer(user.phone ?? ''),
                   ),
                   _DetailTile(
                     icon: Icons.mail_outline_rounded,
-                    label: 'Email',
+                    label: loc.emailLabel,
                     value: user.email,
                     onTap: () => launchEmailSubmission(user.email ?? ''),
                   ),
                   _DetailTile(
                     icon: Icons.place_outlined,
-                    label: 'Address',
+                    label: loc.addressLabel,
                     value: user.address,
                     onTap: () => openWaze(user.address ?? ''),
                     isLast: true,

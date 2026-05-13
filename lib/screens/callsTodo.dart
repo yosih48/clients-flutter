@@ -40,7 +40,7 @@ class _callsTodoState extends State<callsTodo> {
                   children: [
                     Expanded(
                       child: _SegmentTab(
-                        label: 'To Do',
+                        label: loc.todoTab,
                         icon: Icons.list_rounded,
                         selected: !_showInProgress,
                         onTap: () =>
@@ -49,7 +49,7 @@ class _callsTodoState extends State<callsTodo> {
                     ),
                     Expanded(
                       child: _SegmentTab(
-                        label: 'In Progress',
+                        label: loc.inProgressTab,
                         icon: Icons.work_history_rounded,
                         selected: _showInProgress,
                         onTap: () =>
@@ -84,9 +84,9 @@ class _callsTodoState extends State<callsTodo> {
                       padding: const EdgeInsets.all(24),
                       child: EmptyState(
                         icon: Icons.error_outline_rounded,
-                        title: 'Could not load calls',
+                        title: loc.couldNotLoadCalls,
                         subtitle:
-                            'Firestore returned an error. This is usually a missing composite index — open the link printed in the debug console to create it.\n\n${snapshot.error}',
+                            '${loc.firestoreIndexError}\n\n${snapshot.error}',
                       ),
                     );
                   }
@@ -102,11 +102,11 @@ class _callsTodoState extends State<callsTodo> {
                           ? Icons.work_history_rounded
                           : Icons.check_circle_outline_rounded,
                       title: _showInProgress
-                          ? 'No calls in progress'
-                          : 'All caught up',
+                          ? loc.noCallsInProgress
+                          : loc.allCaughtUp,
                       subtitle: _showInProgress
-                          ? 'Start working on a ticket to see it here'
-                          : 'No pending tickets right now',
+                          ? loc.noCallsInProgressHint
+                          : loc.noPendingTickets,
                     );
                   }
 
