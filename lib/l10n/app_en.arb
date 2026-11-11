@@ -264,5 +264,7 @@
   "@openForDays": {"placeholders": {"count": {"type": "int"}}},
   "serviceRemote": "Remote support",
   "serviceEquipmentSale": "Equipment sale",
-  "serviceAtClient": "At client's home"
+  "serviceAtClient": "At client's home",
+  "periodMonthly": "Monthly",
+  "periodAllTime": "All time"
 }

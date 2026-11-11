@@ -1,178 +1,226 @@
 import 'package:clientsf/l10n/app_localizations.dart';
+import 'package:clientsf/objects/clients.dart';
+import 'package:clientsf/screens/tableScreen.dart';
 import 'package:clientsf/theme.dart';
 import 'package:flutter/material.dart';
 
-/// Full-width table laid out as flexible rows so it always spans the screen
-/// regardless of how many clients are shown. Four columns: name, paid (שולם),
-/// unpaid (לתשלום), and net (realized profit).
-class DataTableWidget extends StatelessWidget {
-  final Map<String, double> clientTotalPayments;
-  final Map<String, double> clientNotPaidPayments;
-  final Map<String, double> clientNetProfit;
+enum _SortColumn { name, paid, unpaid, net }
+
+/// Full-width income table laid out as flexible rows. Four columns: name,
+/// paid (שולם), unpaid (לתשלום) and net (realized profit). Column headers
+/// sort the rows; tapping a row opens that client.
+class DataTableWidget extends StatefulWidget {
+  final List<ClientStats> stats;
+  final ValueChanged<Todo> onClientTap;
 
   const DataTableWidget({
     super.key,
-    required this.clientTotalPayments,
-    required this.clientNotPaidPayments,
-    required this.clientNetProfit,
+    required this.stats,
+    required this.onClientTap,
   });
+
+  @override
+  State<DataTableWidget> createState() => _DataTableWidgetState();
+}
+
+class _DataTableWidgetState extends State<DataTableWidget> {
+  _SortColumn _sortBy = _SortColumn.net;
+  bool _descending = true;
+
+  void _sort(_SortColumn column) {
+    setState(() {
+      if (_sortBy == column) {
+        _descending = !_descending;
+      } else {
+        _sortBy = column;
+        // Names read naturally A→Z, amounts biggest first.
+        _descending = column != _SortColumn.name;
+      }
+    });
+  }
+
+  List<ClientStats> get _sorted {
+    int compare(ClientStats a, ClientStats b) {
+      switch (_sortBy) {
+        case _SortColumn.name:
+          return a.clientName.toLowerCase().compareTo(b.clientName.toLowerCase());
+        case _SortColumn.paid:
+          return a.totalPayment.compareTo(b.totalPayment);
+        case _SortColumn.unpaid:
+          return a.totalNotPaid.compareTo(b.totalNotPaid);
+        case _SortColumn.net:
+          return a.netProfit.compareTo(b.netProfit);
+      }
+    }
+
+    final list = [...widget.stats]..sort(compare);
+    return _descending ? list.reversed.toList() : list;
+  }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final names = clientTotalPayments.keys.toList();
-    double totalPaid = 0;
-    double totalUnpaid = 0;
-    double totalNet = 0;
-    for (final name in names) {
-      totalPaid += clientTotalPayments[name] ?? 0;
-      totalUnpaid += clientNotPaidPayments[name] ?? 0;
-      totalNet += clientNetProfit[name] ?? 0;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final rows = _sorted;
+
+    double totalPaid = 0, totalUnpaid = 0, totalNet = 0;
+    for (final s in rows) {
+      totalPaid += s.totalPayment;
+      totalUnpaid += s.totalNotPaid;
+      totalNet += s.netProfit;
     }
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Header
-          _HeaderRow(loc: loc),
-          Divider(height: 1, color: Theme.of(context).dividerColor),
-          // Rows
-          for (int i = 0; i < names.length; i++) ...[
-            _ClientRow(
-              name: names[i],
-              paid: clientTotalPayments[names[i]] ?? 0,
-              unpaid: clientNotPaidPayments[names[i]] ?? 0,
-              net: clientNetProfit[names[i]] ?? 0,
-              isEven: i.isEven,
-            ),
-          ],
-          // Totals
-          Container(
-            color: AppColors.primarySoft.withOpacity(0.45),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    Widget header(String label, _SortColumn column, int flex,
+        {TextAlign align = TextAlign.end}) {
+      final active = _sortBy == column;
+      final color = active ? scheme.primary : scheme.onSurfaceVariant;
+      return Expanded(
+        flex: flex,
+        child: InkWell(
+          onTap: () => _sort(column),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
             child: Row(
+              mainAxisAlignment: align == TextAlign.start
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
               children: [
-                Expanded(
-                  flex: 4,
+                Flexible(
                   child: Text(
-                    loc.totalRow,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 14,
-                        color: AppColors.primary),
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
-                _NumCell(value: totalPaid, color: AppColors.success, bold: true),
-                _NumCell(value: totalUnpaid, color: AppColors.warning, bold: true),
-                _NumCell(
-                    value: totalNet,
-                    color: totalNet >= 0
-                        ? AppColors.primary
-                        : AppColors.danger,
-                    bold: true),
+                if (active)
+                  Icon(
+                    _descending
+                        ? Icons.arrow_downward_rounded
+                        : Icons.arrow_upward_rounded,
+                    size: 13,
+                    color: color,
+                  ),
               ],
             ),
           ),
-        ],
-      ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          color: scheme.surfaceContainerHighest.withOpacity(isDark ? 1 : 0.6),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            children: [
+              header(loc.clientName, _SortColumn.name, 4,
+                  align: TextAlign.start),
+              header(loc.statusPaid, _SortColumn.paid, 3),
+              header(loc.totalToCharge, _SortColumn.unpaid, 3),
+              header(loc.net, _SortColumn.net, 3),
+            ],
+          ),
+        ),
+        Divider(height: 1, color: theme.dividerColor),
+        for (int i = 0; i < rows.length; i++)
+          _ClientRow(
+            stats: rows[i],
+            striped: i.isOdd,
+            onTap: () => widget.onClientTap(rows[i].client),
+          ),
+        // Totals
+        Container(
+          color: scheme.primary.withOpacity(isDark ? 0.18 : 0.10),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Text(
+                  loc.totalRow,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                      color: scheme.primary),
+                ),
+              ),
+              _NumCell(value: totalPaid, color: AppColors.success, bold: true),
+              _NumCell(
+                  value: totalUnpaid, color: _unpaidColor, bold: true),
+              _NumCell(
+                  value: totalNet,
+                  color: totalNet >= 0 ? scheme.primary : AppColors.danger,
+                  bold: true),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
 
-class _HeaderRow extends StatelessWidget {
-  final AppLocalizations loc;
-  const _HeaderRow({required this.loc});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.surfaceMuted.withOpacity(0.5),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Expanded(
-              flex: 4,
-              child: _HeaderLabel(loc.clientName, align: TextAlign.start)),
-          Expanded(
-              flex: 3,
-              child: _HeaderLabel(loc.statusPaid, align: TextAlign.end)),
-          Expanded(
-              flex: 3,
-              child:
-                  _HeaderLabel(loc.totalToCharge, align: TextAlign.end)),
-          Expanded(
-              flex: 3, child: _HeaderLabel(loc.net, align: TextAlign.end)),
-        ],
-      ),
-    );
-  }
-}
-
-class _HeaderLabel extends StatelessWidget {
-  final String text;
-  final TextAlign align;
-  const _HeaderLabel(this.text, {required this.align});
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      textAlign: align,
-      style: TextStyle(
-        color: AppColors.inkMuted,
-        fontSize: 11,
-        fontWeight: FontWeight.w800,
-        letterSpacing: 0.8,
-      ),
-    );
-  }
-}
+/// Darker than AppColors.warning so it stays readable on white.
+const Color _unpaidColor = Color(0xFFD9822B);
 
 class _ClientRow extends StatelessWidget {
-  final String name;
-  final double paid;
-  final double unpaid;
-  final double net;
-  final bool isEven;
+  final ClientStats stats;
+  final bool striped;
+  final VoidCallback onTap;
 
   const _ClientRow({
-    required this.name,
-    required this.paid,
-    required this.unpaid,
-    required this.net,
-    required this.isEven,
+    required this.stats,
+    required this.striped,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: isEven ? Colors.transparent : AppColors.surfaceMuted.withOpacity(0.25),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 4,
-            child: Text(
-              name,
-              style: const TextStyle(
-                  fontSize: 14, fontWeight: FontWeight.w600),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
+    final scheme = Theme.of(context).colorScheme;
+    final faint = scheme.onSurfaceVariant.withOpacity(0.6);
+    final paid = stats.totalPayment;
+    final unpaid = stats.totalNotPaid;
+    final net = stats.netProfit;
+
+    return Material(
+      color: striped
+          ? scheme.surfaceContainerHighest.withOpacity(0.35)
+          : Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Text(
+                  stats.clientName,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              _NumCell(
+                  value: paid, color: paid > 0 ? AppColors.success : faint),
+              _NumCell(
+                  value: unpaid, color: unpaid > 0 ? _unpaidColor : faint),
+              _NumCell(
+                  value: net,
+                  color: net == 0
+                      ? faint
+                      : (net > 0 ? scheme.primary : AppColors.danger)),
+            ],
           ),
-          _NumCell(
-              value: paid,
-              color: paid > 0 ? AppColors.success : AppColors.inkFaint),
-          _NumCell(
-              value: unpaid,
-              color: unpaid > 0 ? AppColors.warning : AppColors.inkFaint),
-          _NumCell(
-              value: net,
-              color: net == 0
-                  ? AppColors.inkFaint
-                  : (net > 0 ? AppColors.primary : AppColors.danger)),
-        ],
+        ),
       ),
     );
   }
@@ -182,12 +230,14 @@ class _NumCell extends StatelessWidget {
   final double value;
   final Color color;
   final bool bold;
-  const _NumCell({required this.value, required this.color, this.bold = false});
+  const _NumCell(
+      {required this.value, required this.color, this.bold = false});
 
   @override
   Widget build(BuildContext context) {
     final whole = value.truncateToDouble() == value;
-    final formatted = whole ? value.toStringAsFixed(0) : value.toStringAsFixed(1);
+    final formatted =
+        whole ? value.toStringAsFixed(0) : value.toStringAsFixed(1);
     return Expanded(
       flex: 3,
       child: Text(

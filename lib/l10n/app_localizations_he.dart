@@ -791,4 +791,10 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get serviceAtClient => 'בית הלקוח';
+
+  @override
+  String get periodMonthly => 'חודשי';
+
+  @override
+  String get periodAllTime => 'כל הזמן';
 }

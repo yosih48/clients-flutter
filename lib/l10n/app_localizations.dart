@@ -1525,6 +1525,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'At client\'s home'**
   String get serviceAtClient;
+
+  /// No description provided for @periodMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get periodMonthly;
+
+  /// No description provided for @periodAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get periodAllTime;
 }
 
 class _AppLocalizationsDelegate

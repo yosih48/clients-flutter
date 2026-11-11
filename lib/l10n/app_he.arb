@@ -263,5 +263,7 @@
   "@openForDays": {"placeholders": {"count": {"type": "int"}}},
   "serviceRemote": "טיפול מרחוק",
   "serviceEquipmentSale": "מכירת ציוד",
-  "serviceAtClient": "בית הלקוח"
+  "serviceAtClient": "בית הלקוח",
+  "periodMonthly": "חודשי",
+  "periodAllTime": "כל הזמן"
 }

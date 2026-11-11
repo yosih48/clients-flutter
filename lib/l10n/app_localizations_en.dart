@@ -794,4 +794,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get serviceAtClient => 'At client\'s home';
+
+  @override
+  String get periodMonthly => 'Monthly';
+
+  @override
+  String get periodAllTime => 'All time';
 }
