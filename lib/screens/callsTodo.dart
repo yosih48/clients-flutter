@@ -84,11 +84,9 @@ class _callsTodoState extends State<callsTodo> {
 
   @override
   Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-
     return Scaffold(
-      appBar: AppBar(title: Text(loc.todo)),
       body: SafeArea(
+        bottom: false,
         child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
           stream: _clientsStream,
           builder: (context, clientsSnap) =>
@@ -118,21 +116,20 @@ class _callsTodoState extends State<callsTodo> {
   ) {
     final loc = AppLocalizations.of(context)!;
     final error = notDoneSnap.error ?? inProgressSnap.error;
-    final loading = !notDoneSnap.hasData ||
-        !inProgressSnap.hasData ||
-        !clientsSnap.hasData;
+    final loading =
+        !notDoneSnap.hasData || !inProgressSnap.hasData || !clientsSnap.hasData;
 
     final clientIds = clientsSnap.data?.docs.map((d) => d.id).toSet();
     bool isOrphan(_TodoCall c) =>
-        clientIds != null && c.clientId != null && !clientIds.contains(c.clientId);
+        clientIds != null &&
+        c.clientId != null &&
+        !clientIds.contains(c.clientId);
 
     // Each call lands in exactly one tab: in progress wins over to-do.
-    final todo = _toCalls(notDoneSnap.data)
-        .where((c) => !c.inProgress)
-        .toList();
-    final inProgress = _toCalls(inProgressSnap.data)
-        .where((c) => !c.done)
-        .toList();
+    final todo =
+        _toCalls(notDoneSnap.data).where((c) => !c.inProgress).toList();
+    final inProgress =
+        _toCalls(inProgressSnap.data).where((c) => !c.done).toList();
 
     final orphans = [...todo, ...inProgress].where(isOrphan).toList();
     int oldestFirst(_TodoCall a, _TodoCall b) =>
@@ -176,6 +173,13 @@ class _callsTodoState extends State<callsTodo> {
 
     return Column(
       children: [
+        PageHeader(
+          overline: loading
+              ? null
+              : loc.openCallsSummary(
+                  visibleTodo.length + visibleInProgress.length),
+          title: loc.todo,
+        ),
         // Segmented tab control
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
@@ -364,8 +368,8 @@ class _TodoTile extends StatelessWidget {
             icon: Icons.task_alt_rounded,
             label: loc.markDone,
             color: AppColors.success,
-            onTap: () => _update(context, {'done': true, 'inProgress': false},
-                loc.markedDone),
+            onTap: () => _update(
+                context, {'done': true, 'inProgress': false}, loc.markedDone),
           ),
         ],
       ),
@@ -422,8 +426,7 @@ class _TodoTile extends StatelessWidget {
                     description.isEmpty ? loc.noDescription : description,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
-                      fontStyle:
-                          description.isEmpty ? FontStyle.italic : null,
+                      fontStyle: description.isEmpty ? FontStyle.italic : null,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -438,8 +441,8 @@ class _TodoTile extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Icon(
-                    // chevron_right mirrors itself in RTL.
-                    Icons.chevron_right_rounded,
+              // chevron_right mirrors itself in RTL.
+              Icons.chevron_right_rounded,
               color: scheme.onSurfaceVariant,
             ),
           ],

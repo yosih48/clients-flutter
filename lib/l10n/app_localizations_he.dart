@@ -447,7 +447,8 @@ class AppLocalizationsHe extends AppLocalizations {
   String get resetPassword => 'איפוס סיסמה';
 
   @override
-  String get resetPasswordSubtitle => 'נשלח קוד אימות למספר הטלפון שלך';
+  String get resetPasswordSubtitle =>
+      'הזינו את האימייל ונשלח קישור לאיפוס הסיסמה';
 
   @override
   String get continueLabel => 'המשך';
@@ -875,4 +876,98 @@ class AppLocalizationsHe extends AppLocalizations {
   String versionLabel(String version) {
     return 'גרסה $version';
   }
+
+  @override
+  String get emailAlreadyInUse => 'כבר קיים חשבון עם האימייל הזה';
+
+  @override
+  String get weakPassword => 'הסיסמה חלשה מדי';
+
+  @override
+  String welcomeName(String name) {
+    return 'ברוכים הבאים, $name!';
+  }
+
+  @override
+  String get nameRequired => 'יש להזין שם';
+
+  @override
+  String passwordMinLength(int count) {
+    return 'לפחות $count תווים';
+  }
+
+  @override
+  String get showPassword => 'הצג סיסמה';
+
+  @override
+  String get hidePassword => 'הסתר סיסמה';
+
+  @override
+  String get passwordsDontMatch => 'הסיסמאות לא תואמות';
+
+  @override
+  String get passwordWeak => 'חלשה';
+
+  @override
+  String get passwordMedium => 'בינונית';
+
+  @override
+  String get passwordStrong => 'חזקה';
+
+  @override
+  String get sendResetLink => 'שלח קישור לאיפוס';
+
+  @override
+  String get checkYourInbox => 'בדקו את תיבת הדואר';
+
+  @override
+  String get resetLinkSentIfExists =>
+      'אם קיים חשבון עם הכתובת הזו, שלחנו אליו קישור לאיפוס הסיסמה.';
+
+  @override
+  String get checkSpamHint => 'לא הגיע? בדקו בתיקיית הספאם.';
+
+  @override
+  String get backToSignIn => 'חזרה לכניסה';
+
+  @override
+  String resendIn(int seconds) {
+    return 'שליחה חוזרת בעוד $seconds שנ׳';
+  }
+
+  @override
+  String get resendEmail => 'שלח שוב';
+
+  @override
+  String get useDifferentEmail => 'אימייל אחר';
+
+  @override
+  String get goodMorning => 'בוקר טוב';
+
+  @override
+  String get goodAfternoon => 'צהריים טובים';
+
+  @override
+  String get goodEvening => 'ערב טוב';
+
+  @override
+  String get navIncome => 'הכנסות';
+
+  @override
+  String openCallsSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count קריאות ממתינות',
+      one: 'קריאה אחת ממתינה',
+      zero: 'אין קריאות ממתינות',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get glanceOpen => 'פתוחות';
+
+  @override
+  String get glanceInProgress => 'בעבודה';
 }

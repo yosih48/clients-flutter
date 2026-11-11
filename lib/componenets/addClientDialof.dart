@@ -37,10 +37,7 @@ Future<void> displayDialog(BuildContext context, String? id) async {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(colors: [
-                          AppColors.primary,
-                          AppColors.primaryDark,
-                        ]),
+                        color: theme.colorScheme.primaryContainer,
                         borderRadius:
                             BorderRadius.circular(AppRadius.md),
                       ),
@@ -49,7 +46,7 @@ Future<void> displayDialog(BuildContext context, String? id) async {
                           isEdit
                               ? Icons.edit_rounded
                               : Icons.person_add_alt_1_rounded,
-                          color: Colors.white),
+                          color: theme.colorScheme.onPrimaryContainer),
                     ),
                     const SizedBox(width: 12),
                     Expanded(

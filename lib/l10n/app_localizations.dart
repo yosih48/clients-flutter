@@ -977,7 +977,7 @@ abstract class AppLocalizations {
   /// No description provided for @resetPasswordSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'We\'ll send a verification code to your phone'**
+  /// **'Enter your email and we\'ll send you a link to reset your password'**
   String get resetPasswordSubtitle;
 
   /// No description provided for @continueLabel.
@@ -1663,6 +1663,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version {version}'**
   String versionLabel(String version);
+
+  /// No description provided for @emailAlreadyInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with this email already exists'**
+  String get emailAlreadyInUse;
+
+  /// No description provided for @weakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'The password is too weak'**
+  String get weakPassword;
+
+  /// No description provided for @welcomeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {name}!'**
+  String welcomeName(String name);
+
+  /// No description provided for @nameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your name'**
+  String get nameRequired;
+
+  /// No description provided for @passwordMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'At least {count} characters'**
+  String passwordMinLength(int count);
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @passwordsDontMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'The passwords don\'t match'**
+  String get passwordsDontMatch;
+
+  /// No description provided for @passwordWeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak'**
+  String get passwordWeak;
+
+  /// No description provided for @passwordMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get passwordMedium;
+
+  /// No description provided for @passwordStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get passwordStrong;
+
+  /// No description provided for @sendResetLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Send reset link'**
+  String get sendResetLink;
+
+  /// No description provided for @checkYourInbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your inbox'**
+  String get checkYourInbox;
+
+  /// No description provided for @resetLinkSentIfExists.
+  ///
+  /// In en, this message translates to:
+  /// **'If an account exists for this address, we\'ve sent it a link to reset the password.'**
+  String get resetLinkSentIfExists;
+
+  /// No description provided for @checkSpamHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t get it? Check your spam folder.'**
+  String get checkSpamHint;
+
+  /// No description provided for @backToSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to sign in'**
+  String get backToSignIn;
+
+  /// No description provided for @resendIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String resendIn(int seconds);
+
+  /// No description provided for @resendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend email'**
+  String get resendEmail;
+
+  /// No description provided for @useDifferentEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a different email'**
+  String get useDifferentEmail;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get goodEvening;
+
+  /// No description provided for @navIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get navIncome;
+
+  /// No description provided for @openCallsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing waiting} =1{1 call waiting} other{{count} calls waiting}}'**
+  String openCallsSummary(int count);
+
+  /// No description provided for @glanceOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get glanceOpen;
+
+  /// No description provided for @glanceInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get glanceInProgress;
 }
 
 class _AppLocalizationsDelegate

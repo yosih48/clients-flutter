@@ -449,15 +449,19 @@ class _CallFormState extends State<_CallForm> {
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
               children: [
                 // 1. Live total hero
-                _TotalHero(
-                  amount: _liveTotal,
-                  paid: _paid,
-                  breakdown: _breakdown(loc),
+                AmountCard(
+                  label: _paid ? loc.totalPaidLabel : loc.totalToCharge,
+                  amount: '${_liveTotal.toStringAsFixed(0)} ₪',
+                  color: _paid ? AppColors.success : scheme.primary,
+                  icon: _paid
+                      ? Icons.verified_rounded
+                      : Icons.receipt_long_rounded,
+                  caption: _breakdown(loc),
                 ),
                 const SizedBox(height: 20),
 
                 // 2. Service type picker
-                _SectionLabel(loc.serviceType),
+                SectionHeader(loc.serviceType),
                 _ServiceTypePicker(
                   selected: _serviceType,
                   onChanged: (v) => setState(() => _serviceType = v),
@@ -465,7 +469,7 @@ class _CallFormState extends State<_CallForm> {
                 const SizedBox(height: 24),
 
                 // 3. Status: one of open / in progress / done, plus paid
-                _SectionLabel(loc.status),
+                SectionHeader(loc.status),
                 SizedBox(
                   width: double.infinity,
                   child: SegmentedButton<_CallStatus>(
@@ -509,7 +513,7 @@ class _CallFormState extends State<_CallForm> {
                 const SizedBox(height: 24),
 
                 // 4. Description
-                _SectionLabel(loc.calldescription),
+                SectionHeader(loc.calldescription),
                 SoftCard(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
@@ -802,97 +806,6 @@ class _CallFormState extends State<_CallForm> {
 // ─── building blocks ──────────────────────────────────────────────────────
 
 enum _CallStatus { open, inProgress, done }
-
-class _TotalHero extends StatelessWidget {
-  final double amount;
-  final bool paid;
-  final String breakdown;
-  const _TotalHero(
-      {required this.amount, required this.paid, required this.breakdown});
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final gradient = paid
-        ? const [Color(0xFF22A06B), Color(0xFF1A7F55)]
-        : const [AppColors.primary, AppColors.primaryDark];
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(22, 20, 22, 22),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: gradient,
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight),
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        boxShadow: [
-          BoxShadow(
-            color: gradient.first.withOpacity(0.28),
-            blurRadius: 28,
-            offset: const Offset(0, 14),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.18),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            alignment: Alignment.center,
-            child: Icon(
-                paid ? Icons.verified_rounded : Icons.receipt_long_rounded,
-                color: Colors.white,
-                size: 26),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  paid ? loc.totalPaidLabel : loc.totalToCharge,
-                  style: const TextStyle(
-                      color: Colors.white70,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12.5),
-                ),
-                const SizedBox(height: 2),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 240),
-                  transitionBuilder: (c, a) =>
-                      FadeTransition(opacity: a, child: c),
-                  child: Text(
-                    '${amount.toStringAsFixed(0)} ₪',
-                    key: ValueKey(amount.toStringAsFixed(0)),
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.6),
-                  ),
-                ),
-                if (breakdown.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    breakdown,
-                    style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _ServiceTypePicker extends StatelessWidget {
   final String selected;
@@ -1259,26 +1172,6 @@ class _ToggleRow extends StatelessWidget {
             ),
             Switch(value: value, onChanged: onChanged),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SectionLabel extends StatelessWidget {
-  final String text;
-  const _SectionLabel(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 4, bottom: 10),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          fontSize: 12.5,
-          fontWeight: FontWeight.w800,
         ),
       ),
     );

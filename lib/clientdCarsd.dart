@@ -1,4 +1,3 @@
-import 'package:clientsf/screens/clientCalls.dart';
 import 'package:clientsf/screens/clientInfo.dart';
 import 'package:clientsf/theme.dart';
 import 'package:clientsf/widgets/app_widgets.dart';
@@ -45,8 +44,32 @@ Future<void> deleteClientWithCalls(String clientId) async {
 
 String _digitsOnly(String s) => s.replaceAll(RegExp(r'\D'), '');
 
+/// The "Clients" tab: greeting header, today's work at a glance, search and
+/// the client list.
+class ClientsHome extends StatelessWidget {
+  final VoidCallback onOpenTodo;
+  const ClientsHome({super.key, required this.onOpenTodo});
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    return Scaffold(
+      body: SafeArea(
+        bottom: false,
+        child: UserListView(onOpenTodo: onOpenTodo),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => displayDialog(context, null),
+        icon: const Icon(Icons.person_add_alt_1_rounded, size: 22),
+        label: Text(loc.addUser),
+      ),
+    );
+  }
+}
+
 class UserListView extends StatefulWidget {
-  const UserListView({super.key});
+  final VoidCallback? onOpenTodo;
+  const UserListView({super.key, this.onOpenTodo});
 
   @override
   State<UserListView> createState() => _UserListViewState();
@@ -60,6 +83,15 @@ class _UserListViewState extends State<UserListView> {
   /// re-subscribe to Firestore (that flashed a spinner and re-read the data).
   late final Stream<QuerySnapshot<Map<String, dynamic>>> _clientsStream =
       clientsCollection().snapshots();
+
+  /// Not-done calls (same query and index as the todo tab) for the
+  /// "at a glance" tiles.
+  late final Stream<QuerySnapshot<Map<String, dynamic>>> _openCallsStream =
+      FirebaseFirestore.instance
+          .collectionGroup('calls')
+          .where('done', isEqualTo: false)
+          .where('userRef', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .snapshots();
 
   bool _showSwipeHint = false;
 
@@ -99,7 +131,21 @@ class _UserListViewState extends State<UserListView> {
 
     // Compare phones by digits only, so "0501234567" finds "050-123-4567".
     final qDigits = _digitsOnly(q);
-    return qDigits.isNotEmpty && _digitsOnly(user.phone ?? '').contains(qDigits);
+    return qDigits.isNotEmpty &&
+        _digitsOnly(user.phone ?? '').contains(qDigits);
+  }
+
+  String _greeting(AppLocalizations loc) {
+    final hour = DateTime.now().hour;
+    final name =
+        (FirebaseAuth.instance.currentUser?.displayName ?? '').trim();
+    final first = name.isEmpty ? '' : name.split(RegExp(r'\s+')).first;
+    final base = hour < 12
+        ? loc.goodMorning
+        : hour < 18
+            ? loc.goodAfternoon
+            : loc.goodEvening;
+    return first.isEmpty ? base : '$base, $first';
   }
 
   @override
@@ -108,114 +154,194 @@ class _UserListViewState extends State<UserListView> {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
-          child: TextField(
-            controller: _searchController,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              hintText: loc.searchcustomer,
-              prefixIcon: const Icon(Icons.search_rounded),
-              suffixIcon: searchQuery.isEmpty
-                  ? null
-                  : Padding(
-                      padding: const EdgeInsetsDirectional.only(end: 8),
-                      child: IconButton(
-                        tooltip: loc.clear,
-                        icon: Container(
-                          width: 22,
-                          height: 22,
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceContainerHighest,
-                            shape: BoxShape.circle,
-                          ),
-                          alignment: Alignment.center,
-                          child:
-                              Icon(Icons.close_rounded, size: 14, color: muted),
-                        ),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() => searchQuery = '');
-                        },
-                      ),
-                    ),
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: _clientsStream,
+      builder: (context, snapshot) {
+        final users = (snapshot.data?.docs ?? []).map((doc) {
+          final data = doc.data();
+          return Todo(
+            id: doc.id,
+            name: data['name'],
+            email: data['email'],
+            address: data['address'],
+            phone: data['phone'],
+            completed: false,
+          );
+        }).toList()
+          ..sort((a, b) => (a.name ?? '')
+              .trim()
+              .toLowerCase()
+              .compareTo((b.name ?? '').trim().toLowerCase()));
+        final filtered = users.where((u) => _matches(u, searchQuery)).toList();
+
+        Widget listBody;
+        if (snapshot.hasError) {
+          debugPrint('clients query error: ${snapshot.error}');
+          listBody = SliverFillRemaining(
+            hasScrollBody: false,
+            child: EmptyState(
+              icon: Icons.cloud_off_rounded,
+              title: loc.loadClientsError,
+              subtitle: loc.authNetworkError,
             ),
-            onChanged: (value) => setState(() => searchQuery = value.trim()),
-          ),
-        ),
-        Expanded(
-          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: _clientsStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                debugPrint('clients query error: ${snapshot.error}');
-                return EmptyState(
-                  icon: Icons.cloud_off_rounded,
-                  title: loc.loadClientsError,
-                  subtitle: loc.authNetworkError,
-                );
-              }
-              if (!snapshot.hasData) return const _ClientListSkeleton();
+          );
+        } else if (!snapshot.hasData) {
+          listBody = const SliverToBoxAdapter(child: _ClientListSkeleton());
+        } else if (filtered.isEmpty) {
+          listBody = SliverFillRemaining(
+            hasScrollBody: false,
+            child: EmptyState(
+              icon: Icons.people_outline_rounded,
+              title: searchQuery.isEmpty
+                  ? loc.noClientsYet
+                  : loc.noMatchingClients,
+              subtitle: searchQuery.isEmpty
+                  ? loc.noClientsHint
+                  : loc.tryDifferentSearch,
+            ),
+          );
+        } else {
+          listBody = SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 110),
+            sliver: SliverList.separated(
+              itemCount: filtered.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 8),
+              itemBuilder: (context, i) => _ClientCard(user: filtered[i]),
+            ),
+          );
+        }
 
-              final users = snapshot.data!.docs.map((doc) {
-                final data = doc.data();
-                return Todo(
-                  id: doc.id,
-                  name: data['name'],
-                  email: data['email'],
-                  address: data['address'],
-                  phone: data['phone'],
-                  completed: false,
-                );
-              }).toList()
-                ..sort((a, b) => (a.name ?? '')
-                    .trim()
-                    .toLowerCase()
-                    .compareTo((b.name ?? '').trim().toLowerCase()));
-
-              final filteredUsers =
-                  users.where((u) => _matches(u, searchQuery)).toList();
-
-              if (filteredUsers.isEmpty) {
-                return EmptyState(
-                  icon: Icons.people_outline_rounded,
-                  title: searchQuery.isEmpty
-                      ? loc.noClientsYet
-                      : loc.noMatchingClients,
-                  subtitle: searchQuery.isEmpty
-                      ? loc.noClientsHint
-                      : loc.tryDifferentSearch,
-                );
-              }
-
-              return ListView(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
-                    child: Text(
-                      searchQuery.isEmpty
-                          ? loc.clientsCount(users.length)
-                          : loc.showingOfTotal(
-                              filteredUsers.length, users.length),
-                      style: theme.textTheme.labelMedium
-                          ?.copyWith(color: muted),
-                    ),
+        return CustomScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          slivers: [
+            SliverToBoxAdapter(
+              child: PageHeader(
+                overline: _greeting(loc),
+                title: loc.clients,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: _GlanceRow(
+                  clientsCount: snapshot.hasData ? users.length : null,
+                  openCallsStream: _openCallsStream,
+                  onOpenTodo: widget.onOpenTodo,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+                child: TextField(
+                  controller: _searchController,
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    hintText: loc.searchcustomer,
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    suffixIcon: searchQuery.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: loc.clear,
+                            icon: const Icon(Icons.close_rounded, size: 20),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => searchQuery = '');
+                            },
+                          ),
                   ),
-                  if (_showSwipeHint)
-                    _SwipeHint(onDismiss: _dismissSwipeHint),
-                  for (var i = 0; i < filteredUsers.length; i++) ...[
-                    if (i > 0) const SizedBox(height: 12),
-                    _ClientCard(user: filteredUsers[i]),
-                  ],
-                ],
-              );
-            },
-          ),
-        ),
-      ],
+                  onChanged: (value) =>
+                      setState(() => searchQuery = value.trim()),
+                ),
+              ),
+            ),
+            if (snapshot.hasData && users.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 8),
+                  child: Text(
+                    searchQuery.isEmpty
+                        ? loc.clientsCount(users.length)
+                        : loc.showingOfTotal(filtered.length, users.length),
+                    style: theme.textTheme.labelMedium?.copyWith(color: muted),
+                  ),
+                ),
+              ),
+            if (_showSwipeHint && filtered.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: _SwipeHint(onDismiss: _dismissSwipeHint),
+                ),
+              ),
+            listBody,
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Three KPI tiles under the greeting: clients, open calls, in progress.
+class _GlanceRow extends StatelessWidget {
+  final int? clientsCount;
+  final Stream<QuerySnapshot<Map<String, dynamic>>> openCallsStream;
+  final VoidCallback? onOpenTodo;
+
+  const _GlanceRow({
+    required this.clientsCount,
+    required this.openCallsStream,
+    required this.onOpenTodo,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: openCallsStream,
+      builder: (context, snap) {
+        final docs = snap.data?.docs ?? [];
+        final inProgress =
+            docs.where((d) => d.data()['inProgress'] == true).length;
+        final open = docs.length - inProgress;
+        String v(int? n) => n == null ? '–' : '$n';
+
+        return Row(
+          children: [
+            Expanded(
+              child: StatTile(
+                icon: Icons.people_alt_rounded,
+                label: loc.clients,
+                value: v(clientsCount),
+                color: scheme.primary,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: StatTile(
+                icon: Icons.inbox_rounded,
+                label: loc.glanceOpen,
+                value: v(snap.hasData ? open : null),
+                color: AppColors.warning,
+                onTap: onOpenTodo,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: StatTile(
+                icon: Icons.build_circle_rounded,
+                label: loc.glanceInProgress,
+                value: v(snap.hasData ? inProgress : null),
+                color: const Color(0xFF0891B2),
+                onTap: onOpenTodo,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -229,28 +355,29 @@ class _SwipeHint extends StatelessWidget {
     final loc = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsetsDirectional.fromSTEB(14, 6, 4, 6),
+      padding: const EdgeInsetsDirectional.fromSTEB(14, 4, 4, 4),
       decoration: BoxDecoration(
-        color: scheme.primary.withOpacity(0.08),
+        color: scheme.primaryContainer,
         borderRadius: BorderRadius.circular(AppRadius.md),
       ),
       child: Row(
         children: [
-          Icon(Icons.swipe_rounded, size: 20, color: scheme.primary),
+          Icon(Icons.swipe_rounded,
+              size: 20, color: scheme.onPrimaryContainer),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               loc.swipeHint,
               style: TextStyle(
-                  color: scheme.primary,
+                  color: scheme.onPrimaryContainer,
                   fontWeight: FontWeight.w600,
                   fontSize: 13),
             ),
           ),
           IconButton(
             tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-            icon: Icon(Icons.close_rounded, size: 18, color: scheme.primary),
+            icon: Icon(Icons.close_rounded,
+                size: 18, color: scheme.onPrimaryContainer),
             onPressed: onDismiss,
           ),
         ],
@@ -285,25 +412,23 @@ class _ClientCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final hasPhone = (user.phone ?? '').trim().isNotEmpty;
-
-    void openInfo() => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => clientInfo(user: user)),
-        );
+    final scheme = theme.colorScheme;
+    final phone = (user.phone ?? '').trim();
+    final address = (user.address ?? '').trim();
+    final subtitle = [if (phone.isNotEmpty) phone, if (address.isNotEmpty) address];
 
     return Slidable(
       key: ValueKey(user.id),
       endActionPane: ActionPane(
         motion: const BehindMotion(),
-        extentRatio: 0.46,
+        extentRatio: 0.42,
         children: [
           const SizedBox(width: 8),
           Expanded(
             child: _SwipeAction(
               icon: Icons.edit_rounded,
               label: loc.edit,
-              color: theme.colorScheme.primary,
+              color: scheme.primary,
               onTap: (ctx) {
                 Slidable.of(ctx)?.close();
                 displayDialog(context, user.id);
@@ -325,185 +450,102 @@ class _ClientCard extends StatelessWidget {
         ],
       ),
       child: SoftCard(
-        padding: EdgeInsets.zero,
-        onTap: openInfo,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        padding: const EdgeInsetsDirectional.fromSTEB(14, 12, 8, 12),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => clientInfo(user: user)),
+        ),
+        onLongPress: phone.isEmpty
+            ? null
+            : () async {
+                await Clipboard.setData(ClipboardData(text: phone));
+                showToast(loc.phoneCopied);
+              },
+        child: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-              child: Row(
+            InitialAvatar(name: user.name, size: 46),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  InitialAvatar(name: user.name, size: 52),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user.name ?? '',
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 6),
-                        if (hasPhone)
-                          _MetaRow(
-                            icon: Icons.phone_outlined,
-                            text: user.phone!,
-                            onTap: () => dialPhone(context, user.phone!),
-                            onLongPress: () async {
-                              await Clipboard.setData(
-                                  ClipboardData(text: user.phone!));
-                              showToast(loc.phoneCopied);
-                            },
-                          ),
-                        if ((user.address ?? '').isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4),
-                            child: _MetaRow(
-                                icon: Icons.place_outlined,
-                                text: user.address!),
-                          ),
-                      ],
-                    ),
+                  Text(
+                    user.name ?? '',
+                    style: theme.textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700),
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  if (subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle.join(' · '),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant, fontSize: 13),
+                    ),
+                  ],
                 ],
               ),
             ),
-            Container(height: 1, color: theme.dividerColor),
-            Row(
-              children: [
-                Expanded(
-                  child: _CardAction(
-                    icon: Icons.call_rounded,
-                    label: loc.callAction,
-                    color: hasPhone ? AppColors.success : null,
-                    onTap: hasPhone ? () => dialPhone(context, user.phone!) : null,
-                  ),
-                ),
-                Container(width: 1, height: 36, color: theme.dividerColor),
-                Expanded(
-                  child: _CardAction(
-                    icon: Icons.history_rounded,
-                    label: loc.history,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => CallsScreen(clientId: user)),
-                    ),
-                  ),
-                ),
-                Container(width: 1, height: 36, color: theme.dividerColor),
-                Expanded(
-                  child: _CardAction(
-                    icon: Icons.add_circle_outline_rounded,
-                    label: loc.openTicket,
-                    color: theme.colorScheme.primary,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => actions(user: user)),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MetaRow extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
-
-  const _MetaRow({
-    required this.icon,
-    required this.text,
-    this.onTap,
-    this.onLongPress,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final interactive = onTap != null;
-    final color =
-        interactive ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant;
-
-    final row = Row(
-      children: [
-        Icon(icon, size: 14, color: color),
-        const SizedBox(width: 6),
-        Flexible(
-          child: Text(
-            text,
-            // Phone numbers stay left-to-right inside RTL layouts.
-            textDirection: interactive ? TextDirection.ltr : null,
-            style: theme.textTheme.bodySmall
-                ?.copyWith(color: color, fontWeight: FontWeight.w500),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-
-    if (!interactive) return row;
-    return InkWell(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: row,
-      ),
-    );
-  }
-}
-
-class _CardAction extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback? onTap;
-  final Color? color;
-
-  const _CardAction({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final base = color ?? scheme.onSurfaceVariant;
-    final fg = onTap == null ? base.withOpacity(0.4) : base;
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: fg, size: 20),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: fg,
-                fontSize: 12.5,
-                fontWeight: FontWeight.w600,
+            if (phone.isNotEmpty)
+              _RoundAction(
+                icon: Icons.call_rounded,
+                color: AppColors.success,
+                tooltip: loc.callAction,
+                onTap: () => dialPhone(context, phone),
+              ),
+            _RoundAction(
+              icon: Icons.add_rounded,
+              color: scheme.primary,
+              tooltip: loc.openTicket,
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => actions(user: user)),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Tonal circular quick action on a client row.
+class _RoundAction extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  const _RoundAction({
+    required this.icon,
+    required this.color,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: 6),
+      child: Tooltip(
+        message: tooltip,
+        child: Material(
+          color: color.withOpacity(isDark ? 0.22 : 0.10),
+          shape: const CircleBorder(),
+          child: InkWell(
+            customBorder: const CircleBorder(),
+            onTap: onTap,
+            child: SizedBox(
+              width: 42,
+              height: 42,
+              child: Icon(icon,
+                  size: 20,
+                  color: isDark ? Color.lerp(color, Colors.white, 0.3) : color),
+            ),
+          ),
         ),
       ),
     );
@@ -527,12 +569,11 @@ class _SwipeAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
-      color: color.withOpacity(0.12),
+      color: color.withOpacity(isDark ? 0.22 : 0.10),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppRadius.lg),
-        side: BorderSide(color: color.withOpacity(0.2)),
-      ),
+          borderRadius: BorderRadius.circular(AppRadius.lg)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => onTap(context),
@@ -545,7 +586,7 @@ class _SwipeAction extends StatelessWidget {
               label,
               style: TextStyle(
                 color: color,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w700,
                 fontSize: 12,
               ),
             ),
@@ -556,14 +597,13 @@ class _SwipeAction extends StatelessWidget {
   }
 }
 
-/// Placeholder cards shown while the client list loads.
+/// Placeholder rows shown while the client list loads.
 class _ClientListSkeleton extends StatelessWidget {
   const _ClientListSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final block = theme.colorScheme.surfaceContainerHighest;
+    final block = Theme.of(context).colorScheme.surfaceContainerHighest;
 
     Widget bar(double width, double height) => Container(
           width: width,
@@ -574,35 +614,39 @@ class _ClientListSkeleton extends StatelessWidget {
           ),
         );
 
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
-      itemCount: 5,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (_, __) => SoftCard(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(color: block, shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  bar(140, 14),
-                  const SizedBox(height: 10),
-                  bar(100, 10),
-                  const SizedBox(height: 6),
-                  bar(170, 10),
-                ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: Column(
+        children: [
+          for (var i = 0; i < 6; i++)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: SoftCard(
+                padding: const EdgeInsets.all(14),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 46,
+                      height: 46,
+                      decoration:
+                          BoxDecoration(color: block, shape: BoxShape.circle),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          bar(130, 14),
+                          const SizedBox(height: 8),
+                          bar(190, 10),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

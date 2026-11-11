@@ -230,65 +230,73 @@ class _DataTableExampleState extends State<DataTableExample> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text(loc.incomeTable)),
-      body: RefreshIndicator(
-        onRefresh: _loadData,
-        child: CustomScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(child: _buildFilterBar(locale)),
-            if (_isLoading && _stats.isNotEmpty)
-              const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: LinearProgressIndicator(minHeight: 2),
-                ),
-              ),
-            if (!_hasError && _stats.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _StatCard(
-                          label: loc.statusPaid,
-                          value: _paidTotal,
-                          icon: Icons.check_circle_outline_rounded,
-                          color: AppColors.success,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _StatCard(
-                          label: loc.totalToCharge,
-                          value: _outstandingTotal,
-                          icon: Icons.schedule_rounded,
-                          color: const Color(0xFFD9822B),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _StatCard(
-                          label: loc.net,
-                          value: _netProfitTotal,
-                          icon: Icons.trending_up_rounded,
-                          color: Theme.of(context).colorScheme.primary,
-                          trend: _netTrend,
-                        ),
-                      ),
-                    ],
+      body: SafeArea(
+        bottom: false,
+        child: RefreshIndicator(
+          onRefresh: _loadData,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(child: PageHeader(title: loc.navIncome)),
+              SliverToBoxAdapter(child: _buildFilterBar(locale)),
+              if (_isLoading && _stats.isNotEmpty)
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    child: LinearProgressIndicator(minHeight: 2),
                   ),
                 ),
+              if (!_hasError && _stats.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: StatTile(
+                            label: loc.statusPaid,
+                            value: _money(_paidTotal),
+                            icon: Icons.check_circle_rounded,
+                            color: AppColors.success,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: StatTile(
+                            label: loc.totalToCharge,
+                            value: _money(_outstandingTotal),
+                            icon: Icons.schedule_rounded,
+                            color: AppColors.warning,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: StatTile(
+                            label: loc.net,
+                            value: _money(_netProfitTotal),
+                            icon: Icons.trending_up_rounded,
+                            color: Theme.of(context).colorScheme.primary,
+                            footnote: _netTrend == null
+                                ? null
+                                : '${_netTrend! >= 0 ? '▲' : '▼'} ${_netTrend!.abs().toStringAsFixed(0)}%',
+                            footnoteColor: (_netTrend ?? 0) >= 0
+                                ? AppColors.success
+                                : AppColors.danger,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 16),
+                  child: content,
+                ),
               ),
-            SliverFillRemaining(
-              hasScrollBody: false,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 16),
-                child: content,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -375,108 +383,16 @@ class _DataTableExampleState extends State<DataTableExample> {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final String label;
-  final double value;
-  final IconData icon;
-  final Color color;
-  final double? trend;
-  const _StatCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-    required this.color,
-    this.trend,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
-    final formatted = NumberFormat.decimalPattern().format(
-        value.truncateToDouble() == value ? value : (value * 10).round() / 10);
-
-    return SoftCard(
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.14),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                alignment: Alignment.center,
-                child: Icon(icon, color: color, size: 14),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: muted,
-                    fontSize: 12.5,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: AlignmentDirectional.centerStart,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  formatted,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.4,
-                    fontFeatures: [FontFeature.tabularFigures()],
-                  ),
-                ),
-                const SizedBox(width: 3),
-                Text(
-                  '₪',
-                  style: TextStyle(
-                      color: muted, fontSize: 13, fontWeight: FontWeight.w700),
-                ),
-              ],
-            ),
-          ),
-          if (trend != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              '${trend! >= 0 ? '▲' : '▼'} ${trend!.abs().toStringAsFixed(0)}%',
-              textDirection: TextDirection.ltr,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: trend! >= 0 ? AppColors.success : AppColors.danger,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
+/// Whole shekels with thousands separators, e.g. "12,450 ₪".
+String _money(double v) =>
+    '${NumberFormat.decimalPattern().format(v.round())} ₪';
 
 class ClientStats {
   final Todo client;
   final double totalPayment; // gross paid (extraPayment of paid calls)
   final double totalNotPaid; // gross pending (extraPayment of unpaid calls)
-  final double netProfit; // realized profit = paid gross − parts cost of paid calls
+  final double
+      netProfit; // realized profit = paid gross − parts cost of paid calls
 
   ClientStats({
     required this.client,

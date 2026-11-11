@@ -8,9 +8,6 @@ import 'package:clientsf/l10n/app_localizations.dart';
 
 import '../componenets/alertDialog.dart';
 
-/// Darker orange gradient so white text on the "unpaid" hero stays readable.
-const List<Color> _unpaidGradient = [Color(0xFFD9822B), Color(0xFFB4651A)];
-const List<Color> _paidGradient = [Color(0xFF22A06B), Color(0xFF1A7F55)];
 
 class ClientServiceScreen extends StatefulWidget {
   /// The call as it was in the list; shown until the live document loads.
@@ -218,77 +215,19 @@ class _ClientServiceScreenState extends State<ClientServiceScreen> {
               ),
             ),
 
-          // Hero payment summary
-          Container(
-            padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: paid ? _paidGradient : _unpaidGradient,
-              ),
-              borderRadius: BorderRadius.circular(AppRadius.xl),
-              boxShadow: [
-                BoxShadow(
-                  color: (paid ? _paidGradient : _unpaidGradient)
-                      .first
-                      .withOpacity(0.28),
-                  blurRadius: 24,
-                  offset: const Offset(0, 12),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(AppRadius.pill),
-                      ),
-                      child: Text(
-                        paid ? loc.statusPaid : loc.statusPending,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    const Spacer(),
-                    Icon(
-                      paid
-                          ? Icons.check_circle_outline_rounded
-                          : Icons.schedule_rounded,
-                      color: Colors.white.withOpacity(0.9),
-                      size: 24,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  loc.paymentAmount,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${call['payment'] ?? 0} ₪',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.6),
-                ),
-              ],
-            ),
+          AmountCard(
+            label: loc.paymentAmount,
+            amount: '${call['payment'] ?? 0} ₪',
+            color: paid ? AppColors.success : AppColors.warning,
+            icon: paid
+                ? Icons.check_circle_rounded
+                : Icons.receipt_long_rounded,
+            badge: paid
+                ? StatusPill.success(loc.statusPaid, icon: Icons.check_rounded)
+                : StatusPill.warning(loc.statusPending,
+                    icon: Icons.schedule_rounded),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
 
           // Quick actions
           Row(
@@ -335,7 +274,7 @@ class _ClientServiceScreenState extends State<ClientServiceScreen> {
           const SizedBox(height: 20),
 
           // Description, full width and selectable
-          _Section(title: loc.description),
+          SectionHeader(loc.description),
           SoftCard(
             padding: const EdgeInsets.all(18),
             child: SelectableText(
@@ -349,7 +288,7 @@ class _ClientServiceScreenState extends State<ClientServiceScreen> {
           const SizedBox(height: 20),
 
           // General info
-          _Section(title: loc.sectionGeneral),
+          SectionHeader(loc.sectionGeneral),
           SoftCard(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
             child: Column(
@@ -364,7 +303,7 @@ class _ClientServiceScreenState extends State<ClientServiceScreen> {
           ),
           const SizedBox(height: 20),
 
-          _Section(title: loc.sectionPayment),
+          SectionHeader(loc.sectionPayment),
           SoftCard(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
             child: Column(
@@ -372,7 +311,7 @@ class _ClientServiceScreenState extends State<ClientServiceScreen> {
                 InfoRow(
                   label: loc.paymentStatus,
                   value: paid ? loc.statusPaid : loc.statusPending,
-                  valueColor: paid ? AppColors.success : _unpaidGradient.first,
+                  valueColor: paid ? AppColors.success : AppColors.warning,
                 ),
                 if (extraPayment != null && extraPayment != 0) ...[
                   divider,
@@ -394,7 +333,7 @@ class _ClientServiceScreenState extends State<ClientServiceScreen> {
               windowsLicense ||
               officeLicense) ...[
             const SizedBox(height: 20),
-            _Section(title: loc.sectionAdditional),
+            SectionHeader(loc.sectionAdditional),
             SoftCard(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
               child: Column(
@@ -424,7 +363,7 @@ class _ClientServiceScreenState extends State<ClientServiceScreen> {
 
           if (products.isNotEmpty) ...[
             const SizedBox(height: 20),
-            _Section(title: loc.products),
+            SectionHeader(loc.products),
             SoftCard(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
               child: Column(
@@ -487,25 +426,6 @@ class _ClientServiceScreenState extends State<ClientServiceScreen> {
             ),
           ],
         ],
-      ),
-    );
-  }
-}
-
-class _Section extends StatelessWidget {
-  final String title;
-  const _Section({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(start: 6, end: 6, bottom: 10),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w700,
-            ),
       ),
     );
   }

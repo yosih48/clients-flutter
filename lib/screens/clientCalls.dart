@@ -203,7 +203,7 @@ class _CallsScreenState extends State<CallsScreen> {
           body: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                 child: _BalanceCard(
                   label: loc.ramainingBalance,
                   amount: snapshot.hasData ? outstanding : null,
@@ -324,77 +324,13 @@ class _BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(22, 20, 22, 22),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.primary, AppColors.primaryDark],
-        ),
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withOpacity(0.28),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.16),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            alignment: Alignment.center,
-            child: const Icon(Icons.account_balance_wallet_rounded,
-                color: Colors.white),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(label,
-                    style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500)),
-                const SizedBox(height: 4),
-                if (amount == null)
-                  const SizedBox(
-                    height: 26,
-                    width: 26,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white),
-                  )
-                else
-                  Text(
-                    '${amount!.toStringAsFixed(2)} ₪',
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.6),
-                  ),
-                if (caption != null) ...[
-                  const SizedBox(height: 2),
-                  Text(caption!,
-                      style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500)),
-                ],
-              ],
-            ),
-          ),
-        ],
-      ),
+    final owed = (amount ?? 0) > 0;
+    return AmountCard(
+      label: label,
+      amount: amount == null ? '…' : '${amount!.toStringAsFixed(amount! == amount!.truncateToDouble() ? 0 : 2)} ₪',
+      color: owed ? AppColors.warning : AppColors.success,
+      icon: Icons.account_balance_wallet_rounded,
+      caption: caption,
     );
   }
 }

@@ -26,7 +26,7 @@ void showToast(String text) {
     toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.BOTTOM,
     timeInSecForIosWeb: 1,
-    backgroundColor: AppColors.ink,
+    backgroundColor: const Color(0xFF111318),
     textColor: Colors.white,
     fontSize: 15.0,
   );
@@ -50,8 +50,11 @@ void showDialogw(BuildContext context, {required VoidCallback onConfirm}) {
               Container(
                 width: 56,
                 height: 56,
-                decoration: const BoxDecoration(
-                  color: AppColors.dangerSoft,
+                decoration: BoxDecoration(
+                  color: AppColors.danger.withOpacity(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? 0.22
+                          : 0.10),
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
@@ -67,8 +70,8 @@ void showDialogw(BuildContext context, {required VoidCallback onConfirm}) {
               const SizedBox(height: 8),
               Text(
                 loc.actionCannotBeUndone,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.inkMuted),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 22),

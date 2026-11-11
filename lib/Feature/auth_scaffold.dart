@@ -21,35 +21,9 @@ class AuthScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    // Blobs are toned down on dark backgrounds where they'd otherwise glow.
-    final blobStrength = isDark ? 0.5 : 1.0;
     return Scaffold(
       body: Stack(
         children: [
-          // Decorative gradient blobs in the background
-          Positioned(
-            top: -120,
-            right: -80,
-            child: _Blob(
-              size: 320,
-              colors: [
-                AppColors.primary.withOpacity(0.35 * blobStrength),
-                AppColors.primary.withOpacity(0.0),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: -100,
-            left: -60,
-            child: _Blob(
-              size: 260,
-              colors: [
-                AppColors.accent.withOpacity(0.45 * blobStrength),
-                AppColors.accent.withOpacity(0.0),
-              ],
-            ),
-          ),
           SafeArea(
             child: Center(
               child: SingleChildScrollView(
@@ -62,28 +36,16 @@ class AuthScaffold extends StatelessWidget {
                       // Brand badge
                       Center(
                         child: Container(
-                          width: 68,
-                          height: 68,
+                          width: 64,
+                          height: 64,
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                AppColors.primary,
-                                AppColors.primaryDark,
-                              ],
-                            ),
+                            color: theme.colorScheme.primary,
                             borderRadius:
                                 BorderRadius.circular(AppRadius.lg),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.35),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
+                            boxShadow: AppShadows.lifted,
                           ),
-                          child: Icon(icon, color: Colors.white, size: 32),
+                          child: Icon(icon,
+                              color: theme.colorScheme.onPrimary, size: 30),
                         ),
                       ),
                       const SizedBox(height: 24),
@@ -114,7 +76,6 @@ class AuthScaffold extends StatelessWidget {
                               BorderRadius.circular(AppRadius.xl),
                           border: Border.all(
                               color: Theme.of(context).dividerColor),
-                          boxShadow: AppShadows.soft,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -128,26 +89,6 @@ class AuthScaffold extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _Blob extends StatelessWidget {
-  final double size;
-  final List<Color> colors;
-  const _Blob({required this.size, required this.colors});
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: RadialGradient(colors: colors),
-        ),
       ),
     );
   }

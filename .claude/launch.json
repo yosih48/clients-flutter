@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "design-preview",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8787", "--directory", "C:\\Users\\1\\AppData\\Local\\Temp\\design_preview_web"],
+      "port": 8787
+    }
+  ]
+}

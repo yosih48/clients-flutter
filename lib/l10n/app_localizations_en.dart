@@ -449,7 +449,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetPasswordSubtitle =>
-      'We\'ll send a verification code to your phone';
+      'Enter your email and we\'ll send you a link to reset your password';
 
   @override
   String get continueLabel => 'Continue';
@@ -872,4 +872,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String versionLabel(String version) {
     return 'Version $version';
   }
+
+  @override
+  String get emailAlreadyInUse => 'An account with this email already exists';
+
+  @override
+  String get weakPassword => 'The password is too weak';
+
+  @override
+  String welcomeName(String name) {
+    return 'Welcome, $name!';
+  }
+
+  @override
+  String get nameRequired => 'Please enter your name';
+
+  @override
+  String passwordMinLength(int count) {
+    return 'At least $count characters';
+  }
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
+  String get passwordsDontMatch => 'The passwords don\'t match';
+
+  @override
+  String get passwordWeak => 'Weak';
+
+  @override
+  String get passwordMedium => 'Medium';
+
+  @override
+  String get passwordStrong => 'Strong';
+
+  @override
+  String get sendResetLink => 'Send reset link';
+
+  @override
+  String get checkYourInbox => 'Check your inbox';
+
+  @override
+  String get resetLinkSentIfExists =>
+      'If an account exists for this address, we\'ve sent it a link to reset the password.';
+
+  @override
+  String get checkSpamHint => 'Didn\'t get it? Check your spam folder.';
+
+  @override
+  String get backToSignIn => 'Back to sign in';
+
+  @override
+  String resendIn(int seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get resendEmail => 'Resend email';
+
+  @override
+  String get useDifferentEmail => 'Use a different email';
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get goodAfternoon => 'Good afternoon';
+
+  @override
+  String get goodEvening => 'Good evening';
+
+  @override
+  String get navIncome => 'Income';
+
+  @override
+  String openCallsSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count calls waiting',
+      one: '1 call waiting',
+      zero: 'Nothing waiting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get glanceOpen => 'Open';
+
+  @override
+  String get glanceInProgress => 'In progress';
 }

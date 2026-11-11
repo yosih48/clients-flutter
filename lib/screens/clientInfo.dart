@@ -13,7 +13,7 @@ import 'actions.dart';
 import 'clientCalls.dart';
 
 /// Darker orange than [AppColors.warning], readable on white.
-const Color _directionsColor = Color(0xFFD9822B);
+const Color _directionsColor = Color(0xFF0891B2);
 
 class clientInfo extends StatefulWidget {
   final Todo user;
@@ -350,6 +350,7 @@ class _CallsSummary extends StatelessWidget {
   }
 }
 
+/// Round tonal action with a label underneath (contact-card style).
 class _QuickAction extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -367,32 +368,37 @@ class _QuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final fg = isDark ? Color.lerp(color, Colors.white, 0.3)! : color;
     return Opacity(
-      opacity: enabled ? 1 : 0.45,
-      child: SoftCard(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
+      opacity: enabled ? 1 : 0.4,
+      child: InkWell(
         onTap: enabled ? onTap : null,
-        child: Column(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.12),
-                shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Column(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: color.withOpacity(isDark ? 0.22 : 0.10),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: Icon(icon, color: fg, size: 24),
               ),
-              alignment: Alignment.center,
-              child: Icon(icon, color: color, size: 22),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style:
-                  const TextStyle(fontWeight: FontWeight.w600, fontSize: 12.5),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelLarge?.copyWith(fontSize: 12.5),
+              ),
+            ],
+          ),
         ),
       ),
     );

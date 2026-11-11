@@ -1,12 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:clientsf/theme.dart';
+import 'package:flutter/material.dart';
 
-/// A soft, rounded container used as the base for elevated content.
+/// Flat card with a hairline border. The base surface for every screen.
 class SoftCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry? margin;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final Color? color;
   final double radius;
   final bool bordered;
@@ -18,6 +19,7 @@ class SoftCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(20),
     this.margin,
     this.onTap,
+    this.onLongPress,
     this.color,
     this.radius = AppRadius.lg,
     this.bordered = true,
@@ -28,68 +30,93 @@ class SoftCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bg = color ?? theme.colorScheme.surface;
-    final outline = theme.dividerColor;
-
-    final content = AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-      padding: padding,
-      margin: margin,
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(radius),
-        border: bordered ? Border.all(color: outline, width: 1) : null,
-        boxShadow: shadow ?? AppShadows.soft,
-      ),
-      child: child,
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(radius),
+      side: bordered
+          ? BorderSide(color: theme.dividerColor)
+          : BorderSide.none,
     );
 
-    if (onTap == null) return content;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
+    Widget content = Padding(padding: padding, child: child);
+    if (onTap != null || onLongPress != null) {
+      content = InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(radius),
+        onLongPress: onLongPress,
+        customBorder: shape,
         child: content,
-      ),
+      );
+    }
+
+    final card = Material(
+      color: bg,
+      shape: shape,
+      clipBehavior: Clip.antiAlias,
+      child: content,
     );
+
+    final decorated = shadow == null
+        ? card
+        : DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(radius),
+              boxShadow: shadow,
+            ),
+            child: card,
+          );
+
+    return margin == null
+        ? decorated
+        : Padding(padding: margin!, child: decorated);
   }
 }
 
-/// Circular initial avatar with a soft tinted background.
+/// Round avatar with initials. Each name gets a stable colour from a small
+/// palette so lists are easy to scan.
 class InitialAvatar extends StatelessWidget {
   final String? name;
   final double size;
   final Color? color;
 
-  const InitialAvatar({super.key, required this.name, this.size = 44, this.color});
+  const InitialAvatar(
+      {super.key, required this.name, this.size = 44, this.color});
+
+  static const List<Color> _palette = [
+    Color(0xFF4F46E5), // indigo
+    Color(0xFF0891B2), // cyan
+    Color(0xFF16A34A), // green
+    Color(0xFFD97706), // amber
+    Color(0xFFDB2777), // pink
+    Color(0xFF7C3AED), // violet
+    Color(0xFF0D9488), // teal
+    Color(0xFFEA580C), // orange
+  ];
+
+  static Color colorFor(String? name) {
+    final key = (name ?? '').trim();
+    if (key.isEmpty) return _palette.first;
+    final hash = key.codeUnits.fold<int>(0, (a, c) => (a * 31 + c) & 0x7fffffff);
+    return _palette[hash % _palette.length];
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final tint = color ?? theme.colorScheme.primary;
-    final initials = _initials(name);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final tint = color ?? colorFor(name);
 
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [tint.withOpacity(0.18), tint.withOpacity(0.06)],
-        ),
+        color: tint.withOpacity(isDark ? 0.24 : 0.12),
         shape: BoxShape.circle,
-        border: Border.all(color: tint.withOpacity(0.18), width: 1),
       ),
       alignment: Alignment.center,
       child: Text(
-        initials,
+        _initials(name),
         style: TextStyle(
-          color: tint,
-          fontWeight: FontWeight.w700,
-          fontSize: size * 0.38,
-          letterSpacing: 0.4,
+          color: isDark ? Color.lerp(tint, Colors.white, 0.35) : tint,
+          fontWeight: FontWeight.w800,
+          fontSize: size * 0.36,
         ),
       ),
     );
@@ -120,37 +147,35 @@ class StatusPill extends StatelessWidget {
   });
 
   factory StatusPill.success(String label, {IconData? icon}) =>
-      StatusPill(label: label, color: AppColors.success, icon: icon, background: AppColors.successSoft);
+      StatusPill(label: label, color: AppColors.success, icon: icon);
   factory StatusPill.warning(String label, {IconData? icon}) =>
-      StatusPill(label: label, color: AppColors.warning, icon: icon, background: AppColors.warningSoft);
+      StatusPill(label: label, color: AppColors.warning, icon: icon);
   factory StatusPill.danger(String label, {IconData? icon}) =>
-      StatusPill(label: label, color: AppColors.danger, icon: icon, background: AppColors.dangerSoft);
+      StatusPill(label: label, color: AppColors.danger, icon: icon);
   factory StatusPill.info(String label, {IconData? icon}) =>
-      StatusPill(label: label, color: AppColors.primary, icon: icon, background: AppColors.primarySoft);
+      StatusPill(label: label, color: AppColors.primary, icon: icon);
 
   @override
   Widget build(BuildContext context) {
-    // The pastel backgrounds are light-only; on dark surfaces tint instead.
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fg = isDark ? Color.lerp(color, Colors.white, 0.3)! : color;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
-        color: isDark
-            ? color.withOpacity(0.18)
-            : (background ?? color.withOpacity(0.12)),
+        color: color.withOpacity(isDark ? 0.20 : 0.10),
         borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 12, color: color),
+            Icon(icon, size: 13, color: fg),
             const SizedBox(width: 4),
           ],
           Text(
             label,
             style: TextStyle(
-                color: color, fontSize: 12, fontWeight: FontWeight.w700),
+                color: fg, fontSize: 12, fontWeight: FontWeight.w700),
           ),
         ],
       ),
@@ -158,82 +183,231 @@ class StatusPill extends StatelessWidget {
   }
 }
 
-/// Decorative gradient header used at the top of detail pages.
-class GradientHeader extends StatelessWidget {
+/// Large page title used at the top of the main tabs: a small overline,
+/// a big bold title and optional trailing actions.
+class PageHeader extends StatelessWidget {
   final String title;
-  final String? subtitle;
-  final Widget? trailing;
-  final Widget? leading;
-  final List<Color>? colors;
+  final String? overline;
+  final List<Widget> actions;
   final EdgeInsetsGeometry padding;
 
-  const GradientHeader({
+  const PageHeader({
     super.key,
     required this.title,
-    this.subtitle,
-    this.trailing,
-    this.leading,
-    this.colors,
-    this.padding = const EdgeInsets.fromLTRB(20, 24, 20, 28),
+    this.overline,
+    this.actions = const [],
+    this.padding = const EdgeInsets.fromLTRB(20, 12, 12, 16),
   });
 
   @override
   Widget build(BuildContext context) {
-    final palette = colors ??
-        [AppColors.primary, AppColors.primaryDark, const Color(0xFF7E8BFF)];
-
-    return Container(
-      width: double.infinity,
+    final theme = Theme.of(context);
+    return Padding(
       padding: padding,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: palette,
-        ),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(AppRadius.xl),
-          bottomRight: Radius.circular(AppRadius.xl),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: palette.first.withOpacity(0.25),
-            blurRadius: 30,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (leading != null) ...[
-            leading!,
-            const SizedBox(width: 14),
-          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (subtitle != null)
+                if (overline != null)
                   Text(
-                    subtitle!,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.2,
-                    ),
+                    overline!,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant),
                   ),
-                if (subtitle != null) const SizedBox(height: 4),
+                Text(title, style: theme.textTheme.headlineLarge),
+              ],
+            ),
+          ),
+          ...actions,
+        ],
+      ),
+    );
+  }
+}
+
+/// Compact KPI tile: tinted icon, a big number and a label.
+class StatTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+  final String? footnote;
+  final Color? footnoteColor;
+  final VoidCallback? onTap;
+
+  const StatTile({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+    this.footnote,
+    this.footnoteColor,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return SoftCard(
+      padding: const EdgeInsets.all(14),
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: color.withOpacity(isDark ? 0.22 : 0.12),
+              borderRadius: BorderRadius.circular(AppRadius.sm),
+            ),
+            alignment: Alignment.center,
+            child: Icon(icon,
+                size: 18,
+                color: isDark ? Color.lerp(color, Colors.white, 0.3) : color),
+          ),
+          const SizedBox(height: 12),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              value,
+              style: theme.textTheme.headlineMedium?.copyWith(
+                fontSize: 22,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.labelMedium,
+          ),
+          if (footnote != null) ...[
+            const SizedBox(height: 2),
+            Text(
+              footnote!,
+              maxLines: 1,
+              textDirection: TextDirection.ltr,
+              style: theme.textTheme.labelSmall
+                  ?.copyWith(color: footnoteColor, fontWeight: FontWeight.w700),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Tonal summary card for a key amount (balance, call total…). Replaces the
+/// old heavy gradient heroes with a flat tinted surface.
+class AmountCard extends StatelessWidget {
+  final String label;
+  final String amount;
+  final Color color;
+  final IconData icon;
+  final String? caption;
+  final Widget? badge;
+  final Widget? trailing;
+
+  const AmountCard({
+    super.key,
+    required this.label,
+    required this.amount,
+    required this.color,
+    required this.icon,
+    this.caption,
+    this.badge,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final strong = isDark ? Color.lerp(color, Colors.white, 0.35)! : color;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: color.withOpacity(isDark ? 0.16 : 0.08),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        border: Border.all(color: color.withOpacity(isDark ? 0.30 : 0.18)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, size: 18, color: strong),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(label,
+                          style: theme.textTheme.labelLarge
+                              ?.copyWith(color: strong)),
+                    ),
+                    if (badge != null) ...[
+                      const SizedBox(width: 8),
+                      badge!,
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 10),
                 Text(
-                  title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.4,
+                  amount,
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    fontSize: 34,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
+                if (caption != null && caption!.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(caption!,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant)),
+                ],
               ],
+            ),
+          ),
+          if (trailing != null) trailing!,
+        ],
+      ),
+    );
+  }
+}
+
+/// Small grey heading above a group of cards.
+class SectionHeader extends StatelessWidget {
+  final String title;
+  final Widget? trailing;
+  const SectionHeader(this.title, {super.key, this.trailing});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 4, 10),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: theme.textTheme.titleSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           if (trailing != null) trailing!,
@@ -268,24 +442,24 @@ class EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 88,
-              height: 88,
+              width: 76,
+              height: 76,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.08),
-                shape: BoxShape.circle,
+                color: theme.colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(AppRadius.xl),
               ),
               alignment: Alignment.center,
-              child: Icon(icon, size: 38, color: theme.colorScheme.primary),
+              child: Icon(icon,
+                  size: 34, color: theme.colorScheme.onPrimaryContainer),
             ),
             const SizedBox(height: 20),
             Text(title,
-                style: theme.textTheme.titleLarge,
-                textAlign: TextAlign.center),
-            if (subtitle != null) ...[
-              const SizedBox(height: 8),
+                style: theme.textTheme.titleLarge, textAlign: TextAlign.center),
+            if (subtitle != null && subtitle!.isNotEmpty) ...[
+              const SizedBox(height: 6),
               Text(subtitle!,
                   style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: AppColors.inkMuted),
+                      ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                   textAlign: TextAlign.center),
             ],
             if (action != null) ...[
@@ -299,7 +473,6 @@ class EmptyState extends StatelessWidget {
   }
 }
 
-/// Small icon-circle button used inside cards / headers.
 class CircleIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onTap;
@@ -321,7 +494,8 @@ class CircleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fg = color ?? Theme.of(context).colorScheme.onSurface;
-    final bg = background ?? Theme.of(context).colorScheme.surfaceContainerHighest;
+    final bg =
+        background ?? Theme.of(context).colorScheme.surfaceContainerHighest;
     final btn = Material(
       color: bg,
       shape: const CircleBorder(),
@@ -339,7 +513,6 @@ class CircleIconButton extends StatelessWidget {
   }
 }
 
-/// A subtle, key/value row inside a SoftCard.
 class InfoRow extends StatelessWidget {
   final String label;
   final String value;
@@ -358,7 +531,7 @@ class InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 13),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -390,7 +563,6 @@ class InfoRow extends StatelessWidget {
   }
 }
 
-/// A loading screen wrapper.
 class LoadingView extends StatelessWidget {
   const LoadingView({super.key});
 
@@ -399,9 +571,9 @@ class LoadingView extends StatelessWidget {
     return const Scaffold(
       body: Center(
         child: SizedBox(
-          width: 36,
-          height: 36,
-          child: CircularProgressIndicator(strokeWidth: 2.4),
+          width: 32,
+          height: 32,
+          child: CircularProgressIndicator(strokeWidth: 2.6),
         ),
       ),
     );
