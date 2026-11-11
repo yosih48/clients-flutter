@@ -671,4 +671,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noAppToOpen => 'No app found to open this';
+
+  @override
+  String get csvDate => 'Date';
+
+  @override
+  String get csvDescription => 'Description';
+
+  @override
+  String get csvType => 'Type';
+
+  @override
+  String get csvPaid => 'Payment';
+
+  @override
+  String get csvProfit => 'Profit';
+
+  @override
+  String get csvHours => 'Hours';
+
+  @override
+  String get exportFailed => 'Export failed. Please try again.';
+
+  @override
+  String unpaidCallsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unpaid calls',
+      one: '1 unpaid call',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortNewest => 'Newest';
+
+  @override
+  String get sortOldest => 'Oldest';
+
+  @override
+  String get loadCallsError => 'Couldn\'t load calls';
+
+  @override
+  String get callDeleted => 'Call deleted';
 }

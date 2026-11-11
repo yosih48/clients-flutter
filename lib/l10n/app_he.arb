@@ -229,5 +229,18 @@
   "clientLastCall": "{count, plural, =0{קריאה אחרונה היום} =1{קריאה אחרונה אתמול} =2{קריאה אחרונה לפני יומיים} other{קריאה אחרונה לפני {count} ימים}}",
   "@clientLastCall": {"placeholders": {"count": {"type": "int"}}},
   "copiedToClipboard": "הועתק",
-  "noAppToOpen": "לא נמצאה אפליקציה מתאימה"
+  "noAppToOpen": "לא נמצאה אפליקציה מתאימה",
+  "csvDate": "תאריך",
+  "csvDescription": "תיאור",
+  "csvType": "סוג",
+  "csvPaid": "תשלום",
+  "csvProfit": "רווח",
+  "csvHours": "שעות",
+  "exportFailed": "הייצוא נכשל. נסו שוב.",
+  "unpaidCallsCount": "{count, plural, =1{קריאה אחת שלא שולמה} other{{count} קריאות שלא שולמו}}",
+  "@unpaidCallsCount": {"placeholders": {"count": {"type": "int"}}},
+  "sortNewest": "חדש לישן",
+  "sortOldest": "ישן לחדש",
+  "loadCallsError": "לא ניתן לטעון את הקריאות",
+  "callDeleted": "הקריאה נמחקה"
 }

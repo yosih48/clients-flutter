@@ -230,5 +230,18 @@
   "clientLastCall": "{count, plural, =0{last call today} =1{last call yesterday} other{last call {count} days ago}}",
   "@clientLastCall": {"placeholders": {"count": {"type": "int"}}},
   "copiedToClipboard": "Copied",
-  "noAppToOpen": "No app found to open this"
+  "noAppToOpen": "No app found to open this",
+  "csvDate": "Date",
+  "csvDescription": "Description",
+  "csvType": "Type",
+  "csvPaid": "Payment",
+  "csvProfit": "Profit",
+  "csvHours": "Hours",
+  "exportFailed": "Export failed. Please try again.",
+  "unpaidCallsCount": "{count, plural, =1{1 unpaid call} other{{count} unpaid calls}}",
+  "@unpaidCallsCount": {"placeholders": {"count": {"type": "int"}}},
+  "sortNewest": "Newest",
+  "sortOldest": "Oldest",
+  "loadCallsError": "Couldn't load calls",
+  "callDeleted": "Call deleted"
 }

@@ -667,4 +667,48 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get noAppToOpen => 'לא נמצאה אפליקציה מתאימה';
+
+  @override
+  String get csvDate => 'תאריך';
+
+  @override
+  String get csvDescription => 'תיאור';
+
+  @override
+  String get csvType => 'סוג';
+
+  @override
+  String get csvPaid => 'תשלום';
+
+  @override
+  String get csvProfit => 'רווח';
+
+  @override
+  String get csvHours => 'שעות';
+
+  @override
+  String get exportFailed => 'הייצוא נכשל. נסו שוב.';
+
+  @override
+  String unpaidCallsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count קריאות שלא שולמו',
+      one: 'קריאה אחת שלא שולמה',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get sortNewest => 'חדש לישן';
+
+  @override
+  String get sortOldest => 'ישן לחדש';
+
+  @override
+  String get loadCallsError => 'לא ניתן לטעון את הקריאות';
+
+  @override
+  String get callDeleted => 'הקריאה נמחקה';
 }

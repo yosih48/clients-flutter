@@ -130,10 +130,14 @@ class StatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The pastel backgrounds are light-only; on dark surfaces tint instead.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: background ?? color.withOpacity(0.12),
+        color: isDark
+            ? color.withOpacity(0.18)
+            : (background ?? color.withOpacity(0.12)),
         borderRadius: BorderRadius.circular(AppRadius.pill),
       ),
       child: Row(

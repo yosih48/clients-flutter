@@ -1345,6 +1345,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No app found to open this'**
   String get noAppToOpen;
+
+  /// No description provided for @csvDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get csvDate;
+
+  /// No description provided for @csvDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get csvDescription;
+
+  /// No description provided for @csvType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get csvType;
+
+  /// No description provided for @csvPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get csvPaid;
+
+  /// No description provided for @csvProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Profit'**
+  String get csvProfit;
+
+  /// No description provided for @csvHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Hours'**
+  String get csvHours;
+
+  /// No description provided for @exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed. Please try again.'**
+  String get exportFailed;
+
+  /// No description provided for @unpaidCallsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 unpaid call} other{{count} unpaid calls}}'**
+  String unpaidCallsCount(int count);
+
+  /// No description provided for @sortNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get sortNewest;
+
+  /// No description provided for @sortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest'**
+  String get sortOldest;
+
+  /// No description provided for @loadCallsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load calls'**
+  String get loadCallsError;
+
+  /// No description provided for @callDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Call deleted'**
+  String get callDeleted;
 }
 
 class _AppLocalizationsDelegate
