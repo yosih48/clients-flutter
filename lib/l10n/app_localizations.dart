@@ -1291,6 +1291,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t load clients'**
   String get loadClientsError;
+
+  /// No description provided for @deleteClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete client'**
+  String get deleteClient;
+
+  /// No description provided for @clientNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This client no longer exists'**
+  String get clientNotFound;
+
+  /// No description provided for @whatsappAction.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp'**
+  String get whatsappAction;
+
+  /// No description provided for @callHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Call history'**
+  String get callHistory;
+
+  /// No description provided for @clientNoCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'No calls yet'**
+  String get clientNoCalls;
+
+  /// No description provided for @clientOpenCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No open calls} =1{1 open call} other{{count} open calls}}'**
+  String clientOpenCalls(int count);
+
+  /// No description provided for @clientLastCall.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{last call today} =1{last call yesterday} other{last call {count} days ago}}'**
+  String clientLastCall(int count);
+
+  /// No description provided for @copiedToClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get copiedToClipboard;
+
+  /// No description provided for @noAppToOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'No app found to open this'**
+  String get noAppToOpen;
 }
 
 class _AppLocalizationsDelegate

@@ -7,10 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'componenets/addClientDialof.dart';
 import 'componenets/alertDialog.dart';
+import 'componenets/launchers.dart';
 import 'objects/clients.dart';
 import 'screens/actions.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
@@ -18,7 +18,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 const _swipeHintPrefKey = 'clientsSwipeHintDismissed';
 
-CollectionReference<Map<String, dynamic>> _clientsCollection() =>
+CollectionReference<Map<String, dynamic>> clientsCollection() =>
     FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -28,7 +28,7 @@ CollectionReference<Map<String, dynamic>> _clientsCollection() =>
 /// not cascade deletes, and the todo screen reads calls through a
 /// collectionGroup query, so leftover calls would keep showing up there.
 Future<void> deleteClientWithCalls(String clientId) async {
-  final clientRef = _clientsCollection().doc(clientId);
+  final clientRef = clientsCollection().doc(clientId);
   final calls = await clientRef.collection('calls').get();
 
   // A batch holds at most 500 writes.
@@ -45,11 +45,6 @@ Future<void> deleteClientWithCalls(String clientId) async {
 
 String _digitsOnly(String s) => s.replaceAll(RegExp(r'\D'), '');
 
-Future<void> _dial(String phone) async {
-  final uri = Uri(scheme: 'tel', path: phone.replaceAll(RegExp(r'[^\d+]'), ''));
-  if (await canLaunchUrl(uri)) await launchUrl(uri);
-}
-
 class UserListView extends StatefulWidget {
   const UserListView({super.key});
 
@@ -64,7 +59,7 @@ class _UserListViewState extends State<UserListView> {
   /// Created once: rebuilding on every search keystroke must not
   /// re-subscribe to Firestore (that flashed a spinner and re-read the data).
   late final Stream<QuerySnapshot<Map<String, dynamic>>> _clientsStream =
-      _clientsCollection().snapshots();
+      clientsCollection().snapshots();
 
   bool _showSwipeHint = false;
 
@@ -357,7 +352,7 @@ class _ClientCard extends StatelessWidget {
                           _MetaRow(
                             icon: Icons.phone_outlined,
                             text: user.phone!,
-                            onTap: () => _dial(user.phone!),
+                            onTap: () => dialPhone(context, user.phone!),
                             onLongPress: () async {
                               await Clipboard.setData(
                                   ClipboardData(text: user.phone!));
@@ -385,7 +380,7 @@ class _ClientCard extends StatelessWidget {
                     icon: Icons.call_rounded,
                     label: loc.callAction,
                     color: hasPhone ? AppColors.success : null,
-                    onTap: hasPhone ? () => _dial(user.phone!) : null,
+                    onTap: hasPhone ? () => dialPhone(context, user.phone!) : null,
                   ),
                 ),
                 Container(width: 1, height: 36, color: theme.dividerColor),

@@ -218,5 +218,16 @@
   "deleteFailed": "המחיקה נכשלה. נסו שוב.",
   "phoneCopied": "מספר הטלפון הועתק",
   "swipeHint": "החליקו כרטיס כדי לערוך או למחוק",
-  "loadClientsError": "לא ניתן לטעון את הלקוחות"
+  "loadClientsError": "לא ניתן לטעון את הלקוחות",
+  "deleteClient": "מחק לקוח",
+  "clientNotFound": "הלקוח הזה כבר לא קיים",
+  "whatsappAction": "וואטסאפ",
+  "callHistory": "היסטוריית קריאות",
+  "clientNoCalls": "אין קריאות עדיין",
+  "clientOpenCalls": "{count, plural, =0{אין קריאות פתוחות} =1{קריאה פתוחה אחת} other{{count} קריאות פתוחות}}",
+  "@clientOpenCalls": {"placeholders": {"count": {"type": "int"}}},
+  "clientLastCall": "{count, plural, =0{קריאה אחרונה היום} =1{קריאה אחרונה אתמול} =2{קריאה אחרונה לפני יומיים} other{קריאה אחרונה לפני {count} ימים}}",
+  "@clientLastCall": {"placeholders": {"count": {"type": "int"}}},
+  "copiedToClipboard": "הועתק",
+  "noAppToOpen": "לא נמצאה אפליקציה מתאימה"
 }

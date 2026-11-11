@@ -621,4 +621,50 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get loadClientsError => 'לא ניתן לטעון את הלקוחות';
+
+  @override
+  String get deleteClient => 'מחק לקוח';
+
+  @override
+  String get clientNotFound => 'הלקוח הזה כבר לא קיים';
+
+  @override
+  String get whatsappAction => 'וואטסאפ';
+
+  @override
+  String get callHistory => 'היסטוריית קריאות';
+
+  @override
+  String get clientNoCalls => 'אין קריאות עדיין';
+
+  @override
+  String clientOpenCalls(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count קריאות פתוחות',
+      one: 'קריאה פתוחה אחת',
+      zero: 'אין קריאות פתוחות',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String clientLastCall(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'קריאה אחרונה לפני $count ימים',
+      two: 'קריאה אחרונה לפני יומיים',
+      one: 'קריאה אחרונה אתמול',
+      zero: 'קריאה אחרונה היום',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get copiedToClipboard => 'הועתק';
+
+  @override
+  String get noAppToOpen => 'לא נמצאה אפליקציה מתאימה';
 }

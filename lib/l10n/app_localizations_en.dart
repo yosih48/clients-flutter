@@ -626,4 +626,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadClientsError => 'Couldn\'t load clients';
+
+  @override
+  String get deleteClient => 'Delete client';
+
+  @override
+  String get clientNotFound => 'This client no longer exists';
+
+  @override
+  String get whatsappAction => 'WhatsApp';
+
+  @override
+  String get callHistory => 'Call history';
+
+  @override
+  String get clientNoCalls => 'No calls yet';
+
+  @override
+  String clientOpenCalls(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count open calls',
+      one: '1 open call',
+      zero: 'No open calls',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String clientLastCall(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'last call $count days ago',
+      one: 'last call yesterday',
+      zero: 'last call today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get copiedToClipboard => 'Copied';
+
+  @override
+  String get noAppToOpen => 'No app found to open this';
 }

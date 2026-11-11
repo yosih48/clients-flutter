@@ -219,5 +219,16 @@
   "deleteFailed": "Delete failed. Please try again.",
   "phoneCopied": "Phone number copied",
   "swipeHint": "Swipe a card to edit or delete",
-  "loadClientsError": "Couldn't load clients"
+  "loadClientsError": "Couldn't load clients",
+  "deleteClient": "Delete client",
+  "clientNotFound": "This client no longer exists",
+  "whatsappAction": "WhatsApp",
+  "callHistory": "Call history",
+  "clientNoCalls": "No calls yet",
+  "clientOpenCalls": "{count, plural, =0{No open calls} =1{1 open call} other{{count} open calls}}",
+  "@clientOpenCalls": {"placeholders": {"count": {"type": "int"}}},
+  "clientLastCall": "{count, plural, =0{last call today} =1{last call yesterday} other{last call {count} days ago}}",
+  "@clientLastCall": {"placeholders": {"count": {"type": "int"}}},
+  "copiedToClipboard": "Copied",
+  "noAppToOpen": "No app found to open this"
 }
