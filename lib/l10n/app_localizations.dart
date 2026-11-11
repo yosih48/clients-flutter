@@ -1417,6 +1417,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Call deleted'**
   String get callDeleted;
+
+  /// No description provided for @updateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Update failed. Please try again.'**
+  String get updateFailed;
+
+  /// No description provided for @deleteCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete call'**
+  String get deleteCall;
+
+  /// No description provided for @callNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'This call no longer exists'**
+  String get callNotFound;
+
+  /// No description provided for @markPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as paid'**
+  String get markPaid;
+
+  /// No description provided for @markUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as unpaid'**
+  String get markUnpaid;
+
+  /// No description provided for @markDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as done'**
+  String get markDone;
+
+  /// No description provided for @reopenCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen'**
+  String get reopenCall;
+
+  /// No description provided for @partsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Parts total'**
+  String get partsTotal;
 }
 
 class _AppLocalizationsDelegate

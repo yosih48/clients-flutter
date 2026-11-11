@@ -242,5 +242,13 @@
   "sortNewest": "חדש לישן",
   "sortOldest": "ישן לחדש",
   "loadCallsError": "לא ניתן לטעון את הקריאות",
-  "callDeleted": "הקריאה נמחקה"
+  "callDeleted": "הקריאה נמחקה",
+  "updateFailed": "העדכון נכשל. נסו שוב.",
+  "deleteCall": "מחק קריאה",
+  "callNotFound": "הקריאה הזו כבר לא קיימת",
+  "markPaid": "סמן כשולם",
+  "markUnpaid": "סמן כלא שולם",
+  "markDone": "סמן כבוצע",
+  "reopenCall": "פתח מחדש",
+  "partsTotal": "סה\"כ חלקים"
 }

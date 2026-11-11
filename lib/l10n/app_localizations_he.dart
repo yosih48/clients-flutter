@@ -711,4 +711,28 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get callDeleted => 'הקריאה נמחקה';
+
+  @override
+  String get updateFailed => 'העדכון נכשל. נסו שוב.';
+
+  @override
+  String get deleteCall => 'מחק קריאה';
+
+  @override
+  String get callNotFound => 'הקריאה הזו כבר לא קיימת';
+
+  @override
+  String get markPaid => 'סמן כשולם';
+
+  @override
+  String get markUnpaid => 'סמן כלא שולם';
+
+  @override
+  String get markDone => 'סמן כבוצע';
+
+  @override
+  String get reopenCall => 'פתח מחדש';
+
+  @override
+  String get partsTotal => 'סה\"כ חלקים';
 }

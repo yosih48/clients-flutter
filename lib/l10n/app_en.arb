@@ -243,5 +243,13 @@
   "sortNewest": "Newest",
   "sortOldest": "Oldest",
   "loadCallsError": "Couldn't load calls",
-  "callDeleted": "Call deleted"
+  "callDeleted": "Call deleted",
+  "updateFailed": "Update failed. Please try again.",
+  "deleteCall": "Delete call",
+  "callNotFound": "This call no longer exists",
+  "markPaid": "Mark as paid",
+  "markUnpaid": "Mark as unpaid",
+  "markDone": "Mark as done",
+  "reopenCall": "Reopen",
+  "partsTotal": "Parts total"
 }

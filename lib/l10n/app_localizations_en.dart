@@ -715,4 +715,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get callDeleted => 'Call deleted';
+
+  @override
+  String get updateFailed => 'Update failed. Please try again.';
+
+  @override
+  String get deleteCall => 'Delete call';
+
+  @override
+  String get callNotFound => 'This call no longer exists';
+
+  @override
+  String get markPaid => 'Mark as paid';
+
+  @override
+  String get markUnpaid => 'Mark as unpaid';
+
+  @override
+  String get markDone => 'Mark as done';
+
+  @override
+  String get reopenCall => 'Reopen';
+
+  @override
+  String get partsTotal => 'Parts total';
 }

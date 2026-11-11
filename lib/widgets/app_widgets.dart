@@ -363,14 +363,14 @@ class InfoRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 18, color: AppColors.inkMuted),
+            Icon(icon, size: 18, color: theme.colorScheme.onSurfaceVariant),
             const SizedBox(width: 10),
           ],
           Expanded(
             flex: 4,
             child: Text(label,
                 style: theme.textTheme.bodyMedium
-                    ?.copyWith(color: AppColors.inkMuted)),
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
           ),
           const SizedBox(width: 8),
           Expanded(
