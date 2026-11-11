@@ -209,5 +209,15 @@
   "authNetworkError": "No internet connection. Check your network and try again.",
   "authTooManyRequests": "Too many attempts. Please wait a few minutes and try again.",
   "authUserDisabled": "This account has been disabled",
-  "authGenericError": "Sign-in failed. Please try again."
+  "authGenericError": "Sign-in failed. Please try again.",
+  "clientsCount": "{count, plural, =1{1 client} other{{count} clients}}",
+  "@clientsCount": {"placeholders": {"count": {"type": "int"}}},
+  "showingOfTotal": "Showing {shown} of {total}",
+  "@showingOfTotal": {"placeholders": {"shown": {"type": "int"}, "total": {"type": "int"}}},
+  "clientDeleted": "{name} was deleted",
+  "@clientDeleted": {"placeholders": {"name": {"type": "String"}}},
+  "deleteFailed": "Delete failed. Please try again.",
+  "phoneCopied": "Phone number copied",
+  "swipeHint": "Swipe a card to edit or delete",
+  "loadClientsError": "Couldn't load clients"
 }

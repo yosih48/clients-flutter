@@ -588,4 +588,37 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get authGenericError => 'הכניסה נכשלה. נסו שוב.';
+
+  @override
+  String clientsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count לקוחות',
+      one: 'לקוח אחד',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String showingOfTotal(int shown, int total) {
+    return 'מציג $shown מתוך $total';
+  }
+
+  @override
+  String clientDeleted(String name) {
+    return '$name נמחק';
+  }
+
+  @override
+  String get deleteFailed => 'המחיקה נכשלה. נסו שוב.';
+
+  @override
+  String get phoneCopied => 'מספר הטלפון הועתק';
+
+  @override
+  String get swipeHint => 'החליקו כרטיס כדי לערוך או למחוק';
+
+  @override
+  String get loadClientsError => 'לא ניתן לטעון את הלקוחות';
 }

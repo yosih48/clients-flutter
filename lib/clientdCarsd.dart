@@ -4,7 +4,10 @@ import 'package:clientsf/theme.dart';
 import 'package:clientsf/widgets/app_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'componenets/addClientDialof.dart';
 import 'componenets/alertDialog.dart';
@@ -13,7 +16,43 @@ import 'screens/actions.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+const _swipeHintPrefKey = 'clientsSwipeHintDismissed';
+
+CollectionReference<Map<String, dynamic>> _clientsCollection() =>
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('user_data');
+
+/// Deletes a client together with its `calls` subcollection. Firestore does
+/// not cascade deletes, and the todo screen reads calls through a
+/// collectionGroup query, so leftover calls would keep showing up there.
+Future<void> deleteClientWithCalls(String clientId) async {
+  final clientRef = _clientsCollection().doc(clientId);
+  final calls = await clientRef.collection('calls').get();
+
+  // A batch holds at most 500 writes.
+  const chunk = 450;
+  for (var i = 0; i < calls.docs.length; i += chunk) {
+    final batch = FirebaseFirestore.instance.batch();
+    for (final doc in calls.docs.skip(i).take(chunk)) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
+  }
+  await clientRef.delete();
+}
+
+String _digitsOnly(String s) => s.replaceAll(RegExp(r'\D'), '');
+
+Future<void> _dial(String phone) async {
+  final uri = Uri(scheme: 'tel', path: phone.replaceAll(RegExp(r'[^\d+]'), ''));
+  if (await canLaunchUrl(uri)) await launchUrl(uri);
+}
+
 class UserListView extends StatefulWidget {
+  const UserListView({super.key});
+
   @override
   State<UserListView> createState() => _UserListViewState();
 }
@@ -22,21 +61,65 @@ class _UserListViewState extends State<UserListView> {
   String searchQuery = '';
   final TextEditingController _searchController = TextEditingController();
 
+  /// Created once: rebuilding on every search keystroke must not
+  /// re-subscribe to Firestore (that flashed a spinner and re-read the data).
+  late final Stream<QuerySnapshot<Map<String, dynamic>>> _clientsStream =
+      _clientsCollection().snapshots();
+
+  bool _showSwipeHint = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSwipeHint();
+  }
+
+  Future<void> _loadSwipeHint() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final dismissed = prefs.getBool(_swipeHintPrefKey) ?? false;
+      if (mounted && !dismissed) setState(() => _showSwipeHint = true);
+    } catch (_) {}
+  }
+
+  Future<void> _dismissSwipeHint() async {
+    setState(() => _showSwipeHint = false);
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_swipeHintPrefKey, true);
+    } catch (_) {}
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
+  bool _matches(Todo user, String query) {
+    if (query.isEmpty) return true;
+    final q = query.toLowerCase();
+    bool has(String? v) => (v ?? '').toLowerCase().contains(q);
+    if (has(user.name) || has(user.email) || has(user.address)) return true;
+
+    // Compare phones by digits only, so "0501234567" finds "050-123-4567".
+    final qDigits = _digitsOnly(q);
+    return qDigits.isNotEmpty && _digitsOnly(user.phone ?? '').contains(qDigits);
+  }
+
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
           child: TextField(
             controller: _searchController,
+            textInputAction: TextInputAction.search,
             decoration: InputDecoration(
               hintText: loc.searchcustomer,
               prefixIcon: const Icon(Icons.search_rounded),
@@ -50,12 +133,12 @@ class _UserListViewState extends State<UserListView> {
                           width: 22,
                           height: 22,
                           decoration: BoxDecoration(
-                            color: AppColors.surfaceMuted,
+                            color: theme.colorScheme.surfaceContainerHighest,
                             shape: BoxShape.circle,
                           ),
                           alignment: Alignment.center,
-                          child: const Icon(Icons.close_rounded,
-                              size: 14, color: AppColors.inkMuted),
+                          child:
+                              Icon(Icons.close_rounded, size: 14, color: muted),
                         ),
                         onPressed: () {
                           _searchController.clear();
@@ -64,27 +147,25 @@ class _UserListViewState extends State<UserListView> {
                       ),
                     ),
             ),
-            onChanged: (value) =>
-                setState(() => searchQuery = value.toLowerCase()),
+            onChanged: (value) => setState(() => searchQuery = value.trim()),
           ),
         ),
         Expanded(
-          child: StreamBuilder<QuerySnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection('users')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('user_data')
-                .snapshots(),
+          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: _clientsStream,
             builder: (context, snapshot) {
               if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
+                debugPrint('clients query error: ${snapshot.error}');
+                return EmptyState(
+                  icon: Icons.cloud_off_rounded,
+                  title: loc.loadClientsError,
+                  subtitle: loc.authNetworkError,
+                );
               }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
+              if (!snapshot.hasData) return const _ClientListSkeleton();
 
-              final List<Todo> users = snapshot.data!.docs.map((doc) {
-                final data = doc.data() as Map<String, dynamic>;
+              final users = snapshot.data!.docs.map((doc) {
+                final data = doc.data();
                 return Todo(
                   id: doc.id,
                   name: data['name'],
@@ -93,14 +174,14 @@ class _UserListViewState extends State<UserListView> {
                   phone: data['phone'],
                   completed: false,
                 );
-              }).toList();
+              }).toList()
+                ..sort((a, b) => (a.name ?? '')
+                    .trim()
+                    .toLowerCase()
+                    .compareTo((b.name ?? '').trim().toLowerCase()));
 
-              final filteredUsers = users.where((user) {
-                return (user.name ?? '').toLowerCase().contains(searchQuery) ||
-                    (user.email ?? '').toLowerCase().contains(searchQuery) ||
-                    (user.phone ?? '').toLowerCase().contains(searchQuery) ||
-                    (user.address ?? '').toLowerCase().contains(searchQuery);
-              }).toList();
+              final filteredUsers =
+                  users.where((u) => _matches(u, searchQuery)).toList();
 
               if (filteredUsers.isEmpty) {
                 return EmptyState(
@@ -114,14 +195,27 @@ class _UserListViewState extends State<UserListView> {
                 );
               }
 
-              return ListView.separated(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
-                itemCount: filteredUsers.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final user = filteredUsers[index];
-                  return _ClientCard(user: user);
-                },
+              return ListView(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 10),
+                    child: Text(
+                      searchQuery.isEmpty
+                          ? loc.clientsCount(users.length)
+                          : loc.showingOfTotal(
+                              filteredUsers.length, users.length),
+                      style: theme.textTheme.labelMedium
+                          ?.copyWith(color: muted),
+                    ),
+                  ),
+                  if (_showSwipeHint)
+                    _SwipeHint(onDismiss: _dismissSwipeHint),
+                  for (var i = 0; i < filteredUsers.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 12),
+                    _ClientCard(user: filteredUsers[i]),
+                  ],
+                ],
               );
             },
           ),
@@ -131,14 +225,77 @@ class _UserListViewState extends State<UserListView> {
   }
 }
 
+class _SwipeHint extends StatelessWidget {
+  final VoidCallback onDismiss;
+  const _SwipeHint({required this.onDismiss});
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(14, 6, 4, 6),
+      decoration: BoxDecoration(
+        color: scheme.primary.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(AppRadius.md),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.swipe_rounded, size: 20, color: scheme.primary),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              loc.swipeHint,
+              style: TextStyle(
+                  color: scheme.primary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13),
+            ),
+          ),
+          IconButton(
+            tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+            icon: Icon(Icons.close_rounded, size: 18, color: scheme.primary),
+            onPressed: onDismiss,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ClientCard extends StatelessWidget {
   final Todo user;
   const _ClientCard({required this.user});
+
+  void _confirmDelete(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    showDialogw(
+      context,
+      onConfirm: () async {
+        try {
+          await deleteClientWithCalls(user.id);
+          messenger.showSnackBar(
+              SnackBar(content: Text(loc.clientDeleted(user.name ?? ''))));
+        } catch (e) {
+          debugPrint('delete client failed: $e');
+          messenger.showSnackBar(SnackBar(content: Text(loc.deleteFailed)));
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final hasPhone = (user.phone ?? '').trim().isNotEmpty;
+
+    void openInfo() => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => clientInfo(user: user)),
+        );
 
     return Slidable(
       key: ValueKey(user.id),
@@ -152,7 +309,10 @@ class _ClientCard extends StatelessWidget {
               icon: Icons.edit_rounded,
               label: loc.edit,
               color: theme.colorScheme.primary,
-              onTap: () => displayDialog(context, user.id),
+              onTap: (ctx) {
+                Slidable.of(ctx)?.close();
+                displayDialog(context, user.id);
+              },
             ),
           ),
           const SizedBox(width: 8),
@@ -161,27 +321,17 @@ class _ClientCard extends StatelessWidget {
               icon: Icons.delete_outline_rounded,
               label: loc.delete,
               color: AppColors.danger,
-              onTap: () => showDialogw(
-                context,
-                onConfirm: () async {
-                  await FirebaseFirestore.instance
-                      .collection('users')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .collection('user_data')
-                      .doc(user.id)
-                      .delete();
-                },
-              ),
+              onTap: (ctx) {
+                Slidable.of(ctx)?.close();
+                _confirmDelete(context);
+              },
             ),
           ),
         ],
       ),
       child: SoftCard(
         padding: EdgeInsets.zero,
-        onTap: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => clientInfo(user: user)),
-        ),
+        onTap: openInfo,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -203,10 +353,17 @@ class _ClientCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 6),
-                        if ((user.phone ?? '').isNotEmpty)
+                        if (hasPhone)
                           _MetaRow(
-                              icon: Icons.phone_outlined,
-                              text: user.phone!),
+                            icon: Icons.phone_outlined,
+                            text: user.phone!,
+                            onTap: () => _dial(user.phone!),
+                            onLongPress: () async {
+                              await Clipboard.setData(
+                                  ClipboardData(text: user.phone!));
+                              showToast(loc.phoneCopied);
+                            },
+                          ),
                         if ((user.address ?? '').isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
@@ -225,17 +382,13 @@ class _ClientCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _CardAction(
-                    icon: Icons.info_outline_rounded,
-                    label: loc.clientInfo,
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => clientInfo(user: user)),
-                    ),
+                    icon: Icons.call_rounded,
+                    label: loc.callAction,
+                    color: hasPhone ? AppColors.success : null,
+                    onTap: hasPhone ? () => _dial(user.phone!) : null,
                   ),
                 ),
-                Container(
-                    width: 1, height: 36, color: theme.dividerColor),
+                Container(width: 1, height: 36, color: theme.dividerColor),
                 Expanded(
                   child: _CardAction(
                     icon: Icons.history_rounded,
@@ -247,8 +400,7 @@ class _ClientCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                    width: 1, height: 36, color: theme.dividerColor),
+                Container(width: 1, height: 36, color: theme.dividerColor),
                 Expanded(
                   child: _CardAction(
                     icon: Icons.add_circle_outline_rounded,
@@ -256,8 +408,7 @@ class _ClientCard extends StatelessWidget {
                     color: theme.colorScheme.primary,
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (_) => actions(user: user)),
+                      MaterialPageRoute(builder: (_) => actions(user: user)),
                     ),
                   ),
                 ),
@@ -273,23 +424,49 @@ class _ClientCard extends StatelessWidget {
 class _MetaRow extends StatelessWidget {
   final IconData icon;
   final String text;
-  const _MetaRow({required this.icon, required this.text});
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+
+  const _MetaRow({
+    required this.icon,
+    required this.text,
+    this.onTap,
+    this.onLongPress,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    final theme = Theme.of(context);
+    final interactive = onTap != null;
+    final color =
+        interactive ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant;
+
+    final row = Row(
       children: [
-        Icon(icon, size: 14, color: AppColors.inkMuted),
+        Icon(icon, size: 14, color: color),
         const SizedBox(width: 6),
-        Expanded(
+        Flexible(
           child: Text(
             text,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.inkMuted, fontWeight: FontWeight.w500),
+            // Phone numbers stay left-to-right inside RTL layouts.
+            textDirection: interactive ? TextDirection.ltr : null,
+            style: theme.textTheme.bodySmall
+                ?.copyWith(color: color, fontWeight: FontWeight.w500),
             overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
+    );
+
+    if (!interactive) return row;
+    return InkWell(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: row,
+      ),
     );
   }
 }
@@ -297,7 +474,7 @@ class _MetaRow extends StatelessWidget {
 class _CardAction extends StatelessWidget {
   final IconData icon;
   final String label;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final Color? color;
 
   const _CardAction({
@@ -309,7 +486,9 @@ class _CardAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fg = color ?? AppColors.inkMuted;
+    final scheme = Theme.of(context).colorScheme;
+    final base = color ?? scheme.onSurfaceVariant;
+    final fg = onTap == null ? base.withOpacity(0.4) : base;
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -321,9 +500,11 @@ class _CardAction extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: fg,
-                fontSize: 11.5,
+                fontSize: 12.5,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -338,7 +519,9 @@ class _SwipeAction extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-  final VoidCallback onTap;
+
+  /// Receives a context below the [Slidable] so the pane can be closed.
+  final void Function(BuildContext slidableContext) onTap;
 
   const _SwipeAction({
     required this.icon,
@@ -349,14 +532,15 @@ class _SwipeAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.12),
-          borderRadius: BorderRadius.circular(AppRadius.lg),
-          border: Border.all(color: color.withOpacity(0.2)),
-        ),
+    return Material(
+      color: color.withOpacity(0.12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        side: BorderSide(color: color.withOpacity(0.2)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => onTap(context),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -368,6 +552,58 @@ class _SwipeAction extends StatelessWidget {
                 color: color,
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Placeholder cards shown while the client list loads.
+class _ClientListSkeleton extends StatelessWidget {
+  const _ClientListSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final block = theme.colorScheme.surfaceContainerHighest;
+
+    Widget bar(double width, double height) => Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: block,
+            borderRadius: BorderRadius.circular(6),
+          ),
+        );
+
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
+      itemCount: 5,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (_, __) => SoftCard(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(color: block, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  bar(140, 14),
+                  const SizedBox(height: 10),
+                  bar(100, 10),
+                  const SizedBox(height: 6),
+                  bar(170, 10),
+                ],
               ),
             ),
           ],

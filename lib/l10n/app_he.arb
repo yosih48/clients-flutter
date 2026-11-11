@@ -208,5 +208,15 @@
   "authNetworkError": "אין חיבור לאינטרנט. בדקו את החיבור ונסו שוב.",
   "authTooManyRequests": "יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.",
   "authUserDisabled": "החשבון הזה הושבת",
-  "authGenericError": "הכניסה נכשלה. נסו שוב."
+  "authGenericError": "הכניסה נכשלה. נסו שוב.",
+  "clientsCount": "{count, plural, =1{לקוח אחד} other{{count} לקוחות}}",
+  "@clientsCount": {"placeholders": {"count": {"type": "int"}}},
+  "showingOfTotal": "מציג {shown} מתוך {total}",
+  "@showingOfTotal": {"placeholders": {"shown": {"type": "int"}, "total": {"type": "int"}}},
+  "clientDeleted": "{name} נמחק",
+  "@clientDeleted": {"placeholders": {"name": {"type": "String"}}},
+  "deleteFailed": "המחיקה נכשלה. נסו שוב.",
+  "phoneCopied": "מספר הטלפון הועתק",
+  "swipeHint": "החליקו כרטיס כדי לערוך או למחוק",
+  "loadClientsError": "לא ניתן לטעון את הלקוחות"
 }

@@ -593,4 +593,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authGenericError => 'Sign-in failed. Please try again.';
+
+  @override
+  String clientsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count clients',
+      one: '1 client',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String showingOfTotal(int shown, int total) {
+    return 'Showing $shown of $total';
+  }
+
+  @override
+  String clientDeleted(String name) {
+    return '$name was deleted';
+  }
+
+  @override
+  String get deleteFailed => 'Delete failed. Please try again.';
+
+  @override
+  String get phoneCopied => 'Phone number copied';
+
+  @override
+  String get swipeHint => 'Swipe a card to edit or delete';
+
+  @override
+  String get loadClientsError => 'Couldn\'t load clients';
 }

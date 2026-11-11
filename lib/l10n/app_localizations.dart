@@ -1249,6 +1249,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign-in failed. Please try again.'**
   String get authGenericError;
+
+  /// No description provided for @clientsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 client} other{{count} clients}}'**
+  String clientsCount(int count);
+
+  /// No description provided for @showingOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing {shown} of {total}'**
+  String showingOfTotal(int shown, int total);
+
+  /// No description provided for @clientDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was deleted'**
+  String clientDeleted(String name);
+
+  /// No description provided for @deleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete failed. Please try again.'**
+  String get deleteFailed;
+
+  /// No description provided for @phoneCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number copied'**
+  String get phoneCopied;
+
+  /// No description provided for @swipeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe a card to edit or delete'**
+  String get swipeHint;
+
+  /// No description provided for @loadClientsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load clients'**
+  String get loadClientsError;
 }
 
 class _AppLocalizationsDelegate
