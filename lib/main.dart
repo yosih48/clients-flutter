@@ -12,12 +12,14 @@ import 'package:clientsf/l10n/app_localizations.dart';
 
 import 'clientdCarsd.dart';
 import 'componenets/addClientDialof.dart';
+import 'componenets/app_prefs.dart';
 import 'componenets/auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await dotenv.load(fileName: ".env");
+  await AppPrefs.load();
   runApp(const AppStarter());
 }
 

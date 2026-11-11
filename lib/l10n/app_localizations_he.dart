@@ -797,4 +797,82 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get periodAllTime => 'כל הזמן';
+
+  @override
+  String get workDuration => 'זמן עבודה';
+
+  @override
+  String get savedWillSync => 'נשמר. יסונכרן כשהחיבור יחזור.';
+
+  @override
+  String get saveFailed => 'השמירה נכשלה. נסו שוב.';
+
+  @override
+  String get discardChangesTitle => 'לבטל את השינויים?';
+
+  @override
+  String get discardChangesBody => 'השינויים שעשית בקריאה הזו יאבדו.';
+
+  @override
+  String get keepEditing => 'המשך לערוך';
+
+  @override
+  String get discard => 'בטל שינויים';
+
+  @override
+  String get descriptionRequired => 'יש לתאר את הקריאה';
+
+  @override
+  String hoursShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count שעות',
+      two: 'שעתיים',
+      one: 'שעה',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String perHourRate(int rate) {
+    return '$rate ₪ לשעה';
+  }
+
+  @override
+  String get sectionAppearance => 'תצוגה';
+
+  @override
+  String get themeLabel => 'ערכת נושא';
+
+  @override
+  String get followSystem => 'מערכת';
+
+  @override
+  String get themeLight => 'בהיר';
+
+  @override
+  String get themeDark => 'כהה';
+
+  @override
+  String get languageLabel => 'שפה';
+
+  @override
+  String get signedInAs => 'מחובר בתור';
+
+  @override
+  String passwordResetSent(String email) {
+    return 'קישור לאיפוס סיסמה נשלח אל $email';
+  }
+
+  @override
+  String get signOutConfirmTitle => 'להתנתק מהאפליקציה?';
+
+  @override
+  String get tapToTypeRate => 'הקש על הסכום כדי להקליד תעריף מדויק';
+
+  @override
+  String versionLabel(String version) {
+    return 'גרסה $version';
+  }
 }

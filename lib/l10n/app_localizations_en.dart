@@ -800,4 +800,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get periodAllTime => 'All time';
+
+  @override
+  String get workDuration => 'Work time';
+
+  @override
+  String get savedWillSync => 'Saved. It will sync when you\'re back online.';
+
+  @override
+  String get saveFailed => 'Saving failed. Please try again.';
+
+  @override
+  String get discardChangesTitle => 'Discard changes?';
+
+  @override
+  String get discardChangesBody =>
+      'The changes you made to this call will be lost.';
+
+  @override
+  String get keepEditing => 'Keep editing';
+
+  @override
+  String get discard => 'Discard';
+
+  @override
+  String get descriptionRequired => 'Please describe the call';
+
+  @override
+  String hoursShort(int count) {
+    return '${count}h';
+  }
+
+  @override
+  String perHourRate(int rate) {
+    return '$rate ₪/h';
+  }
+
+  @override
+  String get sectionAppearance => 'Appearance';
+
+  @override
+  String get themeLabel => 'Theme';
+
+  @override
+  String get followSystem => 'System';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get languageLabel => 'Language';
+
+  @override
+  String get signedInAs => 'Signed in as';
+
+  @override
+  String passwordResetSent(String email) {
+    return 'A password reset link was sent to $email';
+  }
+
+  @override
+  String get signOutConfirmTitle => 'Sign out of the app?';
+
+  @override
+  String get tapToTypeRate => 'Tap the amount to type an exact rate';
+
+  @override
+  String versionLabel(String version) {
+    return 'Version $version';
+  }
 }

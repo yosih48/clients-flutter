@@ -424,7 +424,6 @@ class _DetailTile extends StatelessWidget {
     final scheme = theme.colorScheme;
     final loc = AppLocalizations.of(context)!;
     final hasValue = value.isNotEmpty;
-    final dir = Directionality.of(context);
 
     return InkWell(
       onTap: hasValue ? onTap : null,
@@ -474,9 +473,8 @@ class _DetailTile extends StatelessWidget {
                 ),
                 if (hasValue)
                   Icon(
-                    dir == TextDirection.rtl
-                        ? Icons.chevron_left_rounded
-                        : Icons.chevron_right_rounded,
+                    // chevron_right mirrors itself in RTL.
+                    Icons.chevron_right_rounded,
                     color: scheme.onSurfaceVariant,
                   ),
               ],

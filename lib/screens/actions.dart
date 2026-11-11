@@ -1,29 +1,26 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:clientsf/theme.dart';
 import 'package:clientsf/widgets/app_widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../componenets/alertDialog.dart';
+import '../componenets/hourly_rate.dart';
 import '../componenets/parts.dart';
+import '../componenets/service_types.dart';
 import '../objects/clients.dart';
-import '../singelton/AppSingelton.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
 
 import '../services/airtable_service.dart';
 
 const List<String> _serviceTypeKeys = [
-  'טיפול מרחוק',
-  'מכירת ציוד',
-  'בית הלקוח',
+  serviceRemote,
+  serviceEquipmentSale,
+  serviceAtClient,
 ];
-
-const Map<String, IconData> _serviceTypeIcons = {
-  'טיפול מרחוק': Icons.headset_mic_rounded,
-  'מכירת ציוד': Icons.shopping_bag_rounded,
-  'בית הלקוח': Icons.home_work_rounded,
-  'סוג טיפול': Icons.handyman_outlined,
-};
 
 List<Map<String, dynamic>> computerModels = [];
 
@@ -79,7 +76,7 @@ class _CallFormState extends State<_CallForm> {
   int _hourlyRate = 0;
 
   // Form state
-  String _serviceType = 'טיפול מרחוק';
+  String _serviceType = serviceRemote;
   bool _paid = false;
   bool _done = false;
   bool _inProgress = false;
@@ -98,6 +95,15 @@ class _CallFormState extends State<_CallForm> {
 
   List<ProductData> _productList = [];
 
+  bool _saving = false;
+  bool _descriptionError = false;
+
+  /// Set once the form was saved, so the unsaved-changes guard lets it close.
+  bool _allowPop = false;
+
+  /// Snapshot of the form when it opened, to detect unsaved changes.
+  late String _initialSnapshot;
+
   @override
   void initState() {
     super.initState();
@@ -107,7 +113,8 @@ class _CallFormState extends State<_CallForm> {
       _detailsCtrl.text = data['call'] ?? '';
       _paid = data['paid'] ?? false;
       _done = data['done'] == true;
-      _inProgress = data['inProgress'] ?? false;
+      // A call is either in progress or done, never both.
+      _inProgress = !_done && data['inProgress'] == true;
       _partsPaid = data['partsPaid'] == true;
       _timeCtrl.text = (data['hour']?.toString().isNotEmpty == true)
           ? data['hour'].toString()
@@ -119,17 +126,13 @@ class _CallFormState extends State<_CallForm> {
       _officeLicense = data['officeLicense'] ?? false;
 
       if (data['extraPayment'] != null && data['extraPayment'] != 0) {
-        _extraPayCtrl.text = data['extraPayment'].toString();
+        _extraPayCtrl.text = _formatAmount(data['extraPayment']);
       }
 
       if (data.containsKey('products') &&
           (data['products'] as List).isNotEmpty) {
         _productList = (data['products'] as List<dynamic>)
-            .map<ProductData>((p) => ProductData(
-                  name: p['name'],
-                  price: p['price'],
-                  discountedPrice: p['discountedPrice'],
-                ))
+            .map<ProductData>(ProductData.fromDynamic)
             .toList();
       }
 
@@ -139,13 +142,42 @@ class _CallFormState extends State<_CallForm> {
           _windowsLicense ||
           _officeLicense ||
           _quantityCtrl.text.isNotEmpty;
-    } else if (!_serviceTypeKeys.contains(_serviceType)) {
+    }
+    if (!_serviceTypeKeys.contains(_serviceType)) {
       _serviceType = _serviceTypeKeys.first;
     }
 
+    _initialSnapshot = _snapshot();
     _loadHourlyRate();
     _fetchComputerModels();
   }
+
+  static String _formatAmount(dynamic v) {
+    if (v is num) {
+      return v == v.truncate() ? v.toInt().toString() : v.toString();
+    }
+    return v.toString();
+  }
+
+  String _snapshot() => [
+        _serviceType,
+        _paid,
+        _done,
+        _inProgress,
+        _partsPaid,
+        _detailsCtrl.text,
+        _extraPayCtrl.text,
+        _quantityCtrl.text,
+        _timeCtrl.text,
+        _selectedComputerProduct,
+        _selectedOfficeVersion,
+        _windowsLicense,
+        _officeLicense,
+        for (final p in _productList)
+          '${p.name}|${p.price}|${p.discountedPrice}',
+      ].join('§');
+
+  bool get _isDirty => _snapshot() != _initialSnapshot;
 
   @override
   void dispose() {
@@ -157,10 +189,8 @@ class _CallFormState extends State<_CallForm> {
   }
 
   Future<void> _loadHourlyRate() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _hourlyRate = prefs.getInt('${AppSingelton().userID}_newValue') ?? 0;
-    });
+    final rate = await loadHourlyRate();
+    if (mounted) setState(() => _hourlyRate = rate);
   }
 
   Future<void> _fetchComputerModels() async {
@@ -168,40 +198,80 @@ class _CallFormState extends State<_CallForm> {
     if (mounted) setState(() => computerModels = models);
   }
 
-  bool get _showTime => _serviceType != 'מכירת ציוד';
+  bool get _showTime => _serviceType != serviceEquipmentSale;
 
-  // Live computed total used for the hero card.
-  double get _liveTotal {
-    int hours = 0;
-    int minutes = 0;
-    if (_showTime && _timeCtrl.text.contains(':')) {
-      final parts = _timeCtrl.text.split(':');
-      hours = int.tryParse(parts[0]) ?? 0;
-      minutes = int.tryParse(parts[1]) ?? 0;
-    }
-    if (minutes > 0) hours += 1;
-
-    // Parts cost = "מחיר עלות" (the cost-to-me), stored on ProductData.price.
-    final partsCost =
-        _productList.fold<double>(0, (a, p) => a + (p.price ?? 0));
-    final extra = double.tryParse(_extraPayCtrl.text) ?? 0;
-    // Profit = what the client pays (extra) + hourly work − cost of parts.
-    return extra + hours * _hourlyRate - partsCost;
+  /// Billable hours: any started hour counts as a full hour.
+  int get _billableHours {
+    if (!_showTime) return 0;
+    final d = _parseDuration(_timeCtrl.text);
+    return d.inHours + (d.inMinutes % 60 > 0 ? 1 : 0);
   }
 
-  Future<void> _pickTime() async {
-    final time = await showTimePicker(
+  double get _extra => double.tryParse(_extraPayCtrl.text) ?? 0;
+
+  // Parts cost = "מחיר עלות" (the cost-to-me), stored on ProductData.price.
+  double get _partsCost =>
+      _productList.fold<double>(0, (a, p) => a + (p.price ?? 0));
+
+  // Profit = what the client pays (extra) + hourly work − cost of parts.
+  double get _liveTotal => _extra + _billableHours * _hourlyRate - _partsCost;
+
+  static Duration _parseDuration(String text) {
+    final parts = text.split(':');
+    final h = int.tryParse(parts.first) ?? 0;
+    final m = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
+    return Duration(hours: h, minutes: m);
+  }
+
+  /// Picks how long the work took (a duration, not a time of day).
+  Future<void> _pickDuration() async {
+    final loc = AppLocalizations.of(context)!;
+    var picked = _parseDuration(_timeCtrl.text);
+    final ok = await showModalBottomSheet<bool>(
       context: context,
-      initialTime: TimeOfDay.now(),
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(loc.workDuration, style: Theme.of(ctx).textTheme.titleMedium),
+            SizedBox(
+              height: 200,
+              child: CupertinoTheme(
+                data: CupertinoThemeData(brightness: Theme.of(ctx).brightness),
+                child: CupertinoTimerPicker(
+                  mode: CupertinoTimerPickerMode.hm,
+                  minuteInterval: 5,
+                  initialTimerDuration:
+                      Duration(minutes: (picked.inMinutes ~/ 5) * 5),
+                  onTimerDurationChanged: (d) => picked = d,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text(loc.ok),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-    if (time != null) {
+    if (ok == true) {
       setState(() => _timeCtrl.text =
-          '${time.hour}:${time.minute.toString().padLeft(2, '0')}');
+          '${picked.inHours}:${(picked.inMinutes % 60).toString().padLeft(2, '0')}');
     }
   }
 
   Future<void> _openProductDialog() async {
-    return showDialog<void>(
+    // Parts typed in the dialog are only added when the user taps "Add".
+    List<ProductData> pending = [];
+    final added = await showDialog<bool>(
       context: context,
       builder: (ctx) {
         final loc = AppLocalizations.of(ctx)!;
@@ -209,60 +279,48 @@ class _CallFormState extends State<_CallForm> {
           title: Text(loc.addParts),
           content: SizedBox(
             width: 360,
-            child: ProductForm(onProductListChanged: (updated) {
-              for (final p in updated) {
-                if (!_productList.contains(p)) _productList.add(p);
-              }
-            }),
+            child: SingleChildScrollView(
+              child: ProductForm(
+                  onProductListChanged: (updated) => pending = updated),
+            ),
           ),
           actions: [
             OutlinedButton(
-                onPressed: () => Navigator.of(ctx).pop(),
+                onPressed: () => Navigator.of(ctx).pop(false),
                 child: Text(loc.cancel)),
             ElevatedButton(
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                  setState(() {});
-                },
+                onPressed: () => Navigator.of(ctx).pop(true),
                 child: Text(loc.add)),
           ],
         );
       },
     );
+    if (added != true) return;
+    final valid = pending.where((p) =>
+        (p.name ?? '').trim().isNotEmpty ||
+        (p.price ?? 0) != 0 ||
+        (p.discountedPrice ?? 0) != 0);
+    setState(() => _productList.addAll(valid));
   }
 
-  void _save(AppLocalizations loc) {
-    if (_detailsCtrl.text.isEmpty || _serviceType.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(loc.missingDetails)),
-      );
+  Future<void> _save(AppLocalizations loc) async {
+    if (_detailsCtrl.text.trim().isEmpty) {
+      setState(() => _descriptionError = true);
       return;
     }
 
     final timeText = _showTime ? _timeCtrl.text : '0:00';
-    int hours = 0;
-    int minutes = 0;
-    if (timeText.contains(':')) {
-      final parts = timeText.split(':');
-      hours = int.tryParse(parts[0]) ?? 0;
-      minutes = int.tryParse(parts[1]) ?? 0;
-    }
-    if (minutes > 0) hours += 1;
+    // An empty field means no extra charge. (It used to fall back to the old
+    // 'payment', which re-added hours and re-subtracted parts on every save.)
+    final extra = _extra;
+    final totalPayment = _liveTotal;
 
-    // Parts cost = "מחיר עלות" (the cost-to-me), stored on ProductData.price.
-    final partsCost =
-        _productList.fold<double>(0, (a, p) => a + (p.price ?? 0));
-    final extra = _extraPayCtrl.text.isEmpty
-        ? (widget.data['payment'] as num?)?.toDouble() ?? 0.0
-        : (double.tryParse(_extraPayCtrl.text) ?? 0.0);
-
-    // Profit = what the client pays + hourly work − parts cost.
-    final totalPayment = extra + hours * _hourlyRate - partsCost;
-
+    setState(() => _saving = true);
+    final Future<void> write;
     if (widget.data.isEmpty) {
-      addCall(
+      write = addCall(
         widget.user,
-        _detailsCtrl.text,
+        _detailsCtrl.text.trim(),
         _paid,
         _serviceType,
         timeText,
@@ -279,10 +337,10 @@ class _CallFormState extends State<_CallForm> {
         inProgress: _inProgress,
       );
     } else {
-      updateUser(
+      write = updateUser(
         widget.data['usera'],
         widget.data['id'],
-        _detailsCtrl.text,
+        _detailsCtrl.text.trim(),
         _paid,
         _serviceType,
         timeText,
@@ -300,324 +358,435 @@ class _CallFormState extends State<_CallForm> {
       );
     }
 
-    Navigator.of(context).pop();
+    try {
+      // Offline, Firestore only completes the write once it reaches the
+      // server; it is already queued locally, so don't block on it forever.
+      await write.timeout(const Duration(seconds: 8));
+      showToast(loc.updatedSuccess);
+    } on TimeoutException {
+      showToast(loc.savedWillSync);
+    } catch (e) {
+      debugPrint('save call failed: $e');
+      if (mounted) {
+        setState(() => _saving = false);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(loc.saveFailed)));
+      }
+      return;
+    }
+
+    if (!mounted) return;
+    _closeForm();
+  }
+
+  /// Lets the unsaved-changes guard rebuild as "can pop" before popping.
+  void _closeForm() {
+    setState(() => _allowPop = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Navigator.of(context).pop();
+    });
+  }
+
+  Future<void> _onPopBlocked() async {
+    final loc = AppLocalizations.of(context)!;
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(loc.discardChangesTitle),
+        content: Text(loc.discardChangesBody),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(loc.keepEditing)),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            child: Text(loc.discard),
+          ),
+        ],
+      ),
+    );
+    if (discard == true && mounted) _closeForm();
+  }
+
+  /// "Extra 200 + 2h × 150 − Parts 80", shown under the hero total.
+  String _breakdown(AppLocalizations loc) {
+    final parts = <String>[];
+    if (_extra != 0) parts.add('${loc.extraPayment} ${_formatAmount(_extra)}');
+    if (_billableHours > 0 && _hourlyRate > 0) {
+      parts.add('+ ${loc.hoursShort(_billableHours)} × $_hourlyRate');
+    }
+    if (_partsCost != 0) {
+      parts.add('− ${loc.totalCosts} ${_formatAmount(_partsCost)}');
+    }
+    return parts.join('  ');
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
 
-    return Column(
-      children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
-            children: [
-              // 1. Live total hero
-              _TotalHero(amount: _liveTotal, paid: _paid),
-              const SizedBox(height: 20),
+    final _CallStatus status = _done
+        ? _CallStatus.done
+        : (_inProgress ? _CallStatus.inProgress : _CallStatus.open);
 
-              // 2. Service type picker
-              _SectionLabel(loc.serviceType),
-              _ServiceTypePicker(
-                selected: _serviceType,
-                onChanged: (v) => setState(() => _serviceType = v),
-              ),
-              const SizedBox(height: 24),
+    // Computer models come from Airtable; keep the saved choice selectable
+    // even before they load or if it was removed there.
+    final modelKeys = computerModels.map((m) => m['key']).toSet();
+    final missingSelected = _selectedComputerProduct != null &&
+        !modelKeys.contains(_selectedComputerProduct);
 
-              // 3. Status chips
-              _SectionLabel(loc.status),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  _StatusChip(
-                    label: loc.statusPaid,
-                    icon: Icons.payments_outlined,
-                    selected: _paid,
-                    color: AppColors.success,
-                    onTap: () => setState(() => _paid = !_paid),
-                  ),
-                  _StatusChip(
-                    label: loc.statusInProgress,
-                    icon: Icons.work_history_rounded,
-                    selected: _inProgress,
-                    color: AppColors.primary,
-                    onTap: () =>
-                        setState(() => _inProgress = !_inProgress),
-                  ),
-                  _StatusChip(
-                    label: loc.done,
-                    icon: Icons.check_circle_outline_rounded,
-                    selected: _done,
-                    color: AppColors.warning,
-                    onTap: () => setState(() => _done = !_done),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
+    return PopScope(
+      canPop: _allowPop || !_isDirty,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _onPopBlocked();
+      },
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+              children: [
+                // 1. Live total hero
+                _TotalHero(
+                  amount: _liveTotal,
+                  paid: _paid,
+                  breakdown: _breakdown(loc),
+                ),
+                const SizedBox(height: 20),
 
-              // 4. Description
-              _SectionLabel(loc.calldescription),
-              SoftCard(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 4, vertical: 4),
-                child: TextField(
-                  controller: _detailsCtrl,
-                  maxLines: 5,
-                  minLines: 4,
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 12),
-                    hintText: loc.descriptionHint,
+                // 2. Service type picker
+                _SectionLabel(loc.serviceType),
+                _ServiceTypePicker(
+                  selected: _serviceType,
+                  onChanged: (v) => setState(() => _serviceType = v),
+                ),
+                const SizedBox(height: 24),
+
+                // 3. Status: one of open / in progress / done, plus paid
+                _SectionLabel(loc.status),
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<_CallStatus>(
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment(
+                        value: _CallStatus.open,
+                        label: Text(loc.statusOpen),
+                        icon: const Icon(Icons.radio_button_unchecked_rounded,
+                            size: 16),
+                      ),
+                      ButtonSegment(
+                        value: _CallStatus.inProgress,
+                        label: Text(loc.statusInProgress),
+                        icon: const Icon(Icons.build_rounded, size: 16),
+                      ),
+                      ButtonSegment(
+                        value: _CallStatus.done,
+                        label: Text(loc.done),
+                        icon: const Icon(Icons.task_alt_rounded, size: 16),
+                      ),
+                    ],
+                    selected: {status},
+                    onSelectionChanged: (s) => setState(() {
+                      _done = s.first == _CallStatus.done;
+                      _inProgress = s.first == _CallStatus.inProgress;
+                    }),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 10),
+                SoftCard(
+                  padding: EdgeInsets.zero,
+                  child: _ToggleRow(
+                    icon: Icons.payments_outlined,
+                    label: loc.statusPaid,
+                    value: _paid,
+                    accent: AppColors.success,
+                    onChanged: (v) => setState(() => _paid = v),
+                  ),
+                ),
+                const SizedBox(height: 24),
 
-              // 5. Time row (conditional) + Extra payment side-by-side
-              Row(
-                children: [
-                  if (_showTime) ...[
-                    Expanded(
-                      child: _CompactField(
-                        label: loc.callTime,
-                        icon: Icons.access_time_rounded,
-                        child: GestureDetector(
-                          onTap: _pickTime,
-                          child: AbsorbPointer(
-                            child: TextFormField(
-                              controller: _timeCtrl,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                              ),
-                              style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700),
-                            ),
+                // 4. Description
+                _SectionLabel(loc.calldescription),
+                SoftCard(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                  child: TextField(
+                    controller: _detailsCtrl,
+                    maxLines: 5,
+                    minLines: 4,
+                    textCapitalization: TextCapitalization.sentences,
+                    onChanged: (_) => setState(() {
+                      if (_descriptionError) _descriptionError = false;
+                    }),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 12),
+                      hintText: loc.descriptionHint,
+                      errorText:
+                          _descriptionError ? loc.descriptionRequired : null,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // 5. Work duration (conditional) + extra payment side-by-side
+                Row(
+                  children: [
+                    if (_showTime) ...[
+                      Expanded(
+                        child: _CompactField(
+                          label: loc.workDuration,
+                          icon: Icons.timer_outlined,
+                          onTap: _pickDuration,
+                          rate: _hourlyRate > 0
+                              ? loc.perHourRate(_hourlyRate)
+                              : null,
+                          child: Text(
+                            _timeCtrl.text,
+                            textDirection: TextDirection.ltr,
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w700),
                           ),
                         ),
-                        rate: _hourlyRate > 0
-                            ? '@ $_hourlyRate ₪/h'
-                            : null,
+                      ),
+                      const SizedBox(width: 12),
+                    ],
+                    Expanded(
+                      child: _CompactField(
+                        label: loc.extraPayment,
+                        icon: Icons.add_card_rounded,
+                        child: TextField(
+                          controller: _extraPayCtrl,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,2}')),
+                          ],
+                          onChanged: (_) => setState(() {}),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
+                            hintText: '0',
+                            suffixText: '₪',
+                          ),
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 12),
                   ],
-                  Expanded(
-                    child: _CompactField(
-                      label: loc.extraPayment,
-                      icon: Icons.add_card_rounded,
-                      child: TextField(
-                        controller: _extraPayCtrl,
+                ),
+                const SizedBox(height: 20),
+
+                // 6. Parts list with inline add
+                _PartsSection(
+                  items: _productList,
+                  onAdd: _openProductDialog,
+                  onRemove: (p) => setState(() => _productList.remove(p)),
+                  partsPaid: _partsPaid,
+                  onPartsPaidChanged: (v) => setState(() => _partsPaid = v),
+                  loc: loc,
+                ),
+
+                const SizedBox(height: 20),
+
+                // 7. Advanced (hardware / licenses) – collapsible
+                _ExpandableSection(
+                  title: loc.hardwareAndLicenses,
+                  subtitle: _advancedSummary(loc),
+                  expanded: _showAdvanced,
+                  onToggle: () =>
+                      setState(() => _showAdvanced = !_showAdvanced),
+                  child: Column(
+                    children: [
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        value: _selectedComputerProduct,
+                        decoration: InputDecoration(
+                          labelText: loc.selectProduct,
+                          prefixIcon: const Icon(Icons.computer_outlined),
+                        ),
+                        items: [
+                          if (missingSelected)
+                            DropdownMenuItem<String>(
+                              value: _selectedComputerProduct,
+                              child: Text(
+                                  _computerLabel(loc, _selectedComputerProduct!),
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                          ...computerModels.map((model) {
+                            return DropdownMenuItem<String>(
+                              value: model['key'],
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                      child: Text(
+                                          _computerLabel(loc, model['key']),
+                                          overflow: TextOverflow.ellipsis)),
+                                  Text('${model['price']} ₪',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: scheme.primary)),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                        onChanged: (v) =>
+                            setState(() => _selectedComputerProduct = v),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _quantityCtrl,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly
                         ],
                         onChanged: (_) => setState(() {}),
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.zero,
-                          isDense: true,
-                          hintText: '0',
-                          suffixText: '₪',
+                        decoration: InputDecoration(
+                          labelText: loc.quantity,
+                          prefixIcon:
+                              const Icon(Icons.format_list_numbered_rounded),
                         ),
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w700),
                       ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // 6. Parts list with inline add
-              _PartsSection(
-                items: _productList,
-                onAdd: _openProductDialog,
-                onRemove: (p) =>
-                    setState(() => _productList.remove(p)),
-                partsPaid: _partsPaid,
-                onPartsPaidChanged: (v) => setState(() => _partsPaid = v),
-                loc: loc,
-              ),
-
-              const SizedBox(height: 20),
-
-              // 7. Advanced (hardware / licenses) – collapsible
-              _ExpandableSection(
-                title: loc.hardwareAndLicenses,
-                subtitle: _advancedSummary(loc),
-                expanded: _showAdvanced,
-                onToggle: () =>
-                    setState(() => _showAdvanced = !_showAdvanced),
-                child: Column(
-                  children: [
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      value: _selectedComputerProduct,
-                      decoration: InputDecoration(
-                        labelText: loc.selectProduct,
-                        prefixIcon: const Icon(Icons.computer_outlined),
-                      ),
-                      items: computerModels.map((model) {
-                        String label;
-                        switch (model['key']) {
-                          case 'miniDell':
-                            label = loc.miniDell;
-                            break;
-                          case 'hpI5':
-                            label = loc.hpI5;
-                            break;
-                          case 'lenovoI7':
-                            label = loc.lenovoI7;
-                            break;
-                          case 'macMini':
-                            label = loc.macMini;
-                            break;
-                          default:
-                            label = model['key'];
+                      const SizedBox(height: 12),
+                      DropdownButtonFormField<String>(
+                        value: _selectedOfficeVersion,
+                        decoration: InputDecoration(
+                          labelText: loc.officeVersion,
+                          prefixIcon: const Icon(Icons.apps_rounded),
+                        ),
+                        items: {
+                          ..._officeVersions,
+                          if (_selectedOfficeVersion != null)
+                            _selectedOfficeVersion!,
                         }
-                        return DropdownMenuItem<String>(
-                          value: model['key'],
-                          child: Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                  child: Text(label,
-                                      overflow: TextOverflow.ellipsis)),
-                              Text('${model['price']} ₪',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.primary)),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: (v) =>
-                          setState(() => _selectedComputerProduct = v),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller: _quantityCtrl,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
-                      decoration: InputDecoration(
-                        labelText: loc.quantity,
-                        prefixIcon:
-                            const Icon(Icons.format_list_numbered_rounded),
+                            .map((v) => DropdownMenuItem<String>(
+                                value: v, child: Text(v)))
+                            .toList(),
+                        onChanged: (v) =>
+                            setState(() => _selectedOfficeVersion = v),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    DropdownButtonFormField<String>(
-                      value: _selectedOfficeVersion,
-                      decoration: InputDecoration(
-                        labelText: loc.officeVersion,
-                        prefixIcon: const Icon(Icons.apps_rounded),
+                      const SizedBox(height: 12),
+                      SoftCard(
+                        padding: EdgeInsets.zero,
+                        child: Column(
+                          children: [
+                            _ToggleRow(
+                              icon: Icons.window_rounded,
+                              label: loc.windowsLicense,
+                              value: _windowsLicense,
+                              accent: scheme.primary,
+                              onChanged: (v) =>
+                                  setState(() => _windowsLicense = v),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 18),
+                              child: Divider(
+                                  height: 1,
+                                  color: Theme.of(context).dividerColor),
+                            ),
+                            _ToggleRow(
+                              icon: Icons.workspaces_outline,
+                              label: loc.officeLicense,
+                              value: _officeLicense,
+                              accent: scheme.primary,
+                              onChanged: (v) =>
+                                  setState(() => _officeLicense = v),
+                            ),
+                          ],
+                        ),
                       ),
-                      items: _officeVersions
-                          .map((v) => DropdownMenuItem<String>(
-                              value: v, child: Text(v)))
-                          .toList(),
-                      onChanged: (v) =>
-                          setState(() => _selectedOfficeVersion = v),
-                    ),
-                    const SizedBox(height: 12),
-                    SoftCard(
-                      padding: EdgeInsets.zero,
-                      child: Column(
-                        children: [
-                          _ToggleRow(
-                            icon: Icons.window_rounded,
-                            label: loc.windowsLicense,
-                            value: _windowsLicense,
-                            accent: AppColors.primary,
-                            onChanged: (v) =>
-                                setState(() => _windowsLicense = v),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 18),
-                            child: Divider(
-                                height: 1,
-                                color:
-                                    Theme.of(context).dividerColor),
-                          ),
-                          _ToggleRow(
-                            icon: Icons.workspaces_outline,
-                            label: loc.officeLicense,
-                            value: _officeLicense,
-                            accent: AppColors.primary,
-                            onChanged: (v) =>
-                                setState(() => _officeLicense = v),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        // Sticky save bar with live total summary
-        Container(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-          decoration: BoxDecoration(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            border: Border(
-                top: BorderSide(color: Theme.of(context).dividerColor)),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Row(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(loc.total,
-                        style: TextStyle(
-                            color: AppColors.inkMuted,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.8)),
-                    Text(
-                      '${_liveTotal.toStringAsFixed(0)} ₪',
-                      style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.4),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.check_rounded, size: 20),
-                    label: Text(widget.isEdit ? loc.saveChanges : loc.save),
-                    onPressed: () => _save(loc),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ),
-      ],
+
+          // Sticky save bar with live total summary
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              border: Border(
+                  top: BorderSide(color: Theme.of(context).dividerColor)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(loc.total,
+                          style: TextStyle(
+                              color: scheme.onSurfaceVariant,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700)),
+                      Text(
+                        '${_liveTotal.toStringAsFixed(0)} ₪',
+                        style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.4),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      icon: _saving
+                          ? SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: scheme.onPrimary),
+                            )
+                          : const Icon(Icons.check_rounded, size: 20),
+                      label:
+                          Text(widget.isEdit ? loc.saveChanges : loc.save),
+                      onPressed: _saving ? null : () => _save(loc),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  String _computerLabel(AppLocalizations loc, String key) {
+    switch (key) {
+      case 'miniDell':
+        return loc.miniDell;
+      case 'hpI5':
+        return loc.hpI5;
+      case 'lenovoI7':
+        return loc.lenovoI7;
+      case 'macMini':
+        return loc.macMini;
+      default:
+        return key;
+    }
   }
 
   String _advancedSummary(AppLocalizations loc) {
@@ -632,15 +801,20 @@ class _CallFormState extends State<_CallForm> {
 
 // ─── building blocks ──────────────────────────────────────────────────────
 
+enum _CallStatus { open, inProgress, done }
+
 class _TotalHero extends StatelessWidget {
   final double amount;
   final bool paid;
-  const _TotalHero({required this.amount, required this.paid});
+  final String breakdown;
+  const _TotalHero(
+      {required this.amount, required this.paid, required this.breakdown});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final gradient = paid
-        ? const [AppColors.success, Color(0xFF1F9569)]
+        ? const [Color(0xFF22A06B), Color(0xFF1A7F55)]
         : const [AppColors.primary, AppColors.primaryDark];
     return Container(
       width: double.infinity,
@@ -670,9 +844,7 @@ class _TotalHero extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: Icon(
-                paid
-                    ? Icons.verified_rounded
-                    : Icons.receipt_long_rounded,
+                paid ? Icons.verified_rounded : Icons.receipt_long_rounded,
                 color: Colors.white,
                 size: 26),
           ),
@@ -682,14 +854,11 @@ class _TotalHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  paid
-                      ? AppLocalizations.of(context)!.totalPaidLabel
-                      : AppLocalizations.of(context)!.totalToCharge,
+                  paid ? loc.totalPaidLabel : loc.totalToCharge,
                   style: const TextStyle(
                       color: Colors.white70,
                       fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      letterSpacing: 0.4),
+                      fontSize: 12.5),
                 ),
                 const SizedBox(height: 2),
                 AnimatedSwitcher(
@@ -706,6 +875,16 @@ class _TotalHero extends StatelessWidget {
                         letterSpacing: -0.6),
                   ),
                 ),
+                if (breakdown.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    breakdown,
+                    style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ],
               ],
             ),
           ),
@@ -718,58 +897,52 @@ class _TotalHero extends StatelessWidget {
 class _ServiceTypePicker extends StatelessWidget {
   final String selected;
   final ValueChanged<String> onChanged;
-  const _ServiceTypePicker(
-      {required this.selected, required this.onChanged});
+  const _ServiceTypePicker({required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: _serviceTypeKeys.map((type) {
         final isSelected = type == selected;
+        final fg = isSelected ? Colors.white : scheme.onSurface;
         return Expanded(
           child: Padding(
-            padding: EdgeInsets.only(
-                right: type == _serviceTypeKeys.last ? 0 : 10),
-            child: GestureDetector(
-              onTap: () => onChanged(type),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeOut,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 8, vertical: 16),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary
-                      : Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.primary
-                        : Theme.of(context).dividerColor,
-                    width: 1.2,
-                  ),
-                  boxShadow: isSelected ? AppShadows.lifted : null,
+            padding: EdgeInsetsDirectional.only(
+                end: type == _serviceTypeKeys.last ? 0 : 10),
+            child: Material(
+              color: isSelected ? scheme.primary : scheme.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadius.lg),
+                side: BorderSide(
+                  color: isSelected ? scheme.primary : Theme.of(context).dividerColor,
+                  width: 1.2,
                 ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      _serviceTypeIcons[type] ?? Icons.handyman_outlined,
-                      color: isSelected ? Colors.white : AppColors.ink,
-                      size: 24,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      type,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : AppColors.ink,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 12,
-                        height: 1.15,
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => onChanged(type),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(serviceTypeIcon(type), color: fg, size: 24),
+                      const SizedBox(height: 8),
+                      Text(
+                        serviceTypeLabel(loc, type),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: fg,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.5,
+                          height: 1.15,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -780,99 +953,41 @@ class _ServiceTypePicker extends StatelessWidget {
   }
 }
 
-class _StatusChip extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool selected;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _StatusChip({
-    required this.label,
-    required this.icon,
-    required this.selected,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: selected ? color : Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(AppRadius.pill),
-          border: Border.all(
-              color: selected ? color : Theme.of(context).dividerColor,
-              width: 1.2),
-          boxShadow: selected
-              ? [
-                  BoxShadow(
-                      color: color.withOpacity(0.32),
-                      blurRadius: 14,
-                      offset: const Offset(0, 6)),
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon,
-                size: 16,
-                color: selected ? Colors.white : color),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: TextStyle(
-                color:
-                    selected ? Colors.white : AppColors.ink,
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _CompactField extends StatelessWidget {
   final String label;
   final IconData icon;
   final Widget child;
   final String? rate;
+  final VoidCallback? onTap;
 
   const _CompactField({
     required this.label,
     required this.icon,
     required this.child,
     this.rate,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return SoftCard(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 14, color: AppColors.inkMuted),
+              Icon(icon, size: 14, color: scheme.onSurfaceVariant),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: AppColors.inkMuted,
-                    fontSize: 11,
+                    color: scheme.onSurfaceVariant,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.4,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -881,8 +996,8 @@ class _CompactField extends StatelessWidget {
                 Text(
                   rate!,
                   style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 11,
+                    color: scheme.primary,
+                    fontSize: 11.5,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -915,18 +1030,18 @@ class _PartsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     // Cost-to-me total (what these parts cost YOU, not the client).
-    final total =
-        items.fold<double>(0, (a, p) => a + (p.price ?? 0));
+    final total = items.fold<double>(0, (a, p) => a + (p.price ?? 0));
     return SoftCard(
-      padding: const EdgeInsets.fromLTRB(16, 14, 12, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 14, 12, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               const Icon(Icons.inventory_2_outlined,
-                  color: AppColors.warning, size: 18),
+                  color: Color(0xFFD9822B), size: 18),
               const SizedBox(width: 8),
               Text(loc.product,
                   style: const TextStyle(
@@ -937,18 +1052,18 @@ class _PartsSection extends StatelessWidget {
                 icon: const Icon(Icons.add_rounded, size: 16),
                 label: Text(loc.addParts),
                 style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 6)),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6)),
               ),
             ],
           ),
           if (items.isEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: 4, bottom: 8, left: 26),
+              padding:
+                  const EdgeInsetsDirectional.only(top: 4, bottom: 8, start: 26),
               child: Text(
                 loc.noPartsAdded,
-                style: TextStyle(
-                    color: AppColors.inkMuted, fontSize: 12),
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12.5),
               ),
             )
           else ...[
@@ -961,28 +1076,27 @@ class _PartsSection extends StatelessWidget {
                         width: 6,
                         height: 6,
                         decoration: const BoxDecoration(
-                            color: AppColors.accent,
-                            shape: BoxShape.circle),
+                            color: AppColors.accent, shape: BoxShape.circle),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                          child: Text(p.name ?? '—',
+                          child: Text(
+                              (p.name ?? '').isEmpty ? '—' : p.name!,
                               style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600))),
+                                  fontSize: 14, fontWeight: FontWeight.w600))),
                       Text(
                         '${p.price ?? 0} ₪',
                         style: const TextStyle(
                             fontWeight: FontWeight.w700, fontSize: 14),
                       ),
                       IconButton(
+                        tooltip: loc.delete,
                         icon: const Icon(Icons.close_rounded,
                             size: 16, color: AppColors.danger),
                         onPressed: () => onRemove(p),
-                        constraints: const BoxConstraints(
-                            minWidth: 28, minHeight: 28),
+                        constraints:
+                            const BoxConstraints(minWidth: 36, minHeight: 36),
                         padding: EdgeInsets.zero,
-                        splashRadius: 16,
                       ),
                     ],
                   ),
@@ -994,8 +1108,8 @@ class _PartsSection extends StatelessWidget {
               children: [
                 Text('${loc.totalCosts}: ',
                     style: TextStyle(
-                        color: AppColors.inkMuted,
-                        fontSize: 12,
+                        color: scheme.onSurfaceVariant,
+                        fontSize: 12.5,
                         fontWeight: FontWeight.w600)),
                 Text('${total.toStringAsFixed(0)} ₪',
                     style: const TextStyle(
@@ -1006,9 +1120,8 @@ class _PartsSection extends StatelessWidget {
                         fontSize: 13, fontWeight: FontWeight.w600)),
                 Transform.scale(
                   scale: 0.85,
-                  child: Switch(
-                      value: partsPaid,
-                      onChanged: onPartsPaidChanged),
+                  child:
+                      Switch(value: partsPaid, onChanged: onPartsPaidChanged),
                 ),
               ],
             ),
@@ -1036,6 +1149,7 @@ class _ExpandableSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return SoftCard(
       padding: EdgeInsets.zero,
       child: Column(
@@ -1045,19 +1159,19 @@ class _ExpandableSection extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppRadius.lg),
             onTap: onToggle,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
+              padding: const EdgeInsetsDirectional.fromSTEB(18, 16, 14, 16),
               child: Row(
                 children: [
                   Container(
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.primarySoft,
+                      color: scheme.primary.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(Icons.tune_rounded,
-                        color: AppColors.primary, size: 18),
+                    child:
+                        Icon(Icons.tune_rounded, color: scheme.primary, size: 18),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -1066,12 +1180,11 @@ class _ExpandableSection extends StatelessWidget {
                       children: [
                         Text(title,
                             style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 14)),
+                                fontWeight: FontWeight.w700, fontSize: 14)),
                         Text(subtitle,
                             style: TextStyle(
-                                color: AppColors.inkMuted,
-                                fontSize: 12,
+                                color: scheme.onSurfaceVariant,
+                                fontSize: 12.5,
                                 fontWeight: FontWeight.w500),
                             overflow: TextOverflow.ellipsis),
                       ],
@@ -1080,8 +1193,8 @@ class _ExpandableSection extends StatelessWidget {
                   AnimatedRotation(
                     turns: expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
-                    child: const Icon(Icons.expand_more_rounded,
-                        color: AppColors.inkMuted),
+                    child: Icon(Icons.expand_more_rounded,
+                        color: scheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -1093,9 +1206,8 @@ class _ExpandableSection extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: child,
             ),
-            crossFadeState: expanded
-                ? CrossFadeState.showSecond
-                : CrossFadeState.showFirst,
+            crossFadeState:
+                expanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
             duration: const Duration(milliseconds: 220),
           ),
         ],
@@ -1121,25 +1233,23 @@ class _ToggleRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: () => onChanged(!value),
       child: Padding(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         child: Row(
           children: [
             Container(
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color:
-                    value ? accent.withOpacity(0.14) : Colors.transparent,
+                color: value ? accent.withOpacity(0.14) : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
               ),
               alignment: Alignment.center,
               child: Icon(icon,
-                  size: 16,
-                  color: value ? accent : AppColors.inkMuted),
+                  size: 16, color: value ? accent : scheme.onSurfaceVariant),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -1162,14 +1272,13 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 10),
+      padding: const EdgeInsetsDirectional.only(start: 4, bottom: 10),
       child: Text(
-        text.toUpperCase(),
+        text,
         style: TextStyle(
-          color: AppColors.inkMuted,
-          fontSize: 11,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          fontSize: 12.5,
           fontWeight: FontWeight.w800,
-          letterSpacing: 1.2,
         ),
       ),
     );
@@ -1237,6 +1346,7 @@ Future<void> addCall(
     });
   } catch (error) {
     debugPrint("Failed to add call: $error");
+    rethrow;
   }
 }
 
@@ -1294,5 +1404,6 @@ Future<void> updateUser(
     });
   } catch (error) {
     debugPrint("Failed to update call: $error");
+    rethrow;
   }
 }
