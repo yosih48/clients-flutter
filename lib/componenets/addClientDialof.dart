@@ -184,11 +184,10 @@ Future<void> updateUserb(id, name, email, address, phone) {
   if (address != null && address.isNotEmpty) updatedData['address'] = address;
   if (phone != null && phone.isNotEmpty) updatedData['phone'] = phone;
 
-  return clients
-      .doc(user!.uid)
-      .collection('user_data')
-      .doc(id)
+  final clientRef = clients.doc(user!.uid).collection('user_data').doc(id);
+  return clientRef
       .update(updatedData)
+      .then((_) => _syncClientNameOnCalls(clientRef, updatedData['name']))
       .then((value) {
     showToast('עודכן בהצלחה');
     _textFieldController.clear();
@@ -198,6 +197,24 @@ Future<void> updateUserb(id, name, email, address, phone) {
   }).catchError((error) {
     debugPrint('Error updating user: $error');
   });
+}
+
+/// Calls keep a copy of the client's name (shown on the todo screen), so a
+/// rename has to be copied onto every call of that client.
+Future<void> _syncClientNameOnCalls(
+    DocumentReference clientRef, String? name) async {
+  if (name == null) return;
+  final calls = await clientRef.collection('calls').get();
+  const chunk = 450; // a batch holds at most 500 writes
+  for (var i = 0; i < calls.docs.length; i += chunk) {
+    final batch = FirebaseFirestore.instance.batch();
+    for (final doc in calls.docs.skip(i).take(chunk)) {
+      if (doc.data()['clientName'] != name) {
+        batch.update(doc.reference, {'clientName': name});
+      }
+    }
+    await batch.commit();
+  }
 }
 
 String generateClientId() {

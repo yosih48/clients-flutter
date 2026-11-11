@@ -250,5 +250,18 @@
   "markUnpaid": "סמן כלא שולם",
   "markDone": "סמן כבוצע",
   "reopenCall": "פתח מחדש",
-  "partsTotal": "סה\"כ חלקים"
+  "partsTotal": "סה\"כ חלקים",
+  "orphanCallsFound": "{count, plural, =1{קריאה אחת שייכת ללקוח שנמחק} other{{count} קריאות שייכות ללקוחות שנמחקו}}",
+  "@orphanCallsFound": {"placeholders": {"count": {"type": "int"}}},
+  "orphanCallsDeleted": "{count, plural, =1{קריאה אחת נמחקה} other{{count} קריאות נמחקו}}",
+  "@orphanCallsDeleted": {"placeholders": {"count": {"type": "int"}}},
+  "cleanUp": "נקה",
+  "startWork": "התחל עבודה",
+  "movedToInProgress": "הועבר לבעבודה",
+  "markedDone": "סומן כבוצע",
+  "openForDays": "{count, plural, =0{היום} =1{יום אחד} =2{יומיים} other{{count} ימים}}",
+  "@openForDays": {"placeholders": {"count": {"type": "int"}}},
+  "serviceRemote": "טיפול מרחוק",
+  "serviceEquipmentSale": "מכירת ציוד",
+  "serviceAtClient": "בית הלקוח"
 }

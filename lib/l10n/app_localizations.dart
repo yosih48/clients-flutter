@@ -1465,6 +1465,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Parts total'**
   String get partsTotal;
+
+  /// No description provided for @orphanCallsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 call belongs to a deleted client} other{{count} calls belong to deleted clients}}'**
+  String orphanCallsFound(int count);
+
+  /// No description provided for @orphanCallsDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 call removed} other{{count} calls removed}}'**
+  String orphanCallsDeleted(int count);
+
+  /// No description provided for @cleanUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean up'**
+  String get cleanUp;
+
+  /// No description provided for @startWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Start work'**
+  String get startWork;
+
+  /// No description provided for @movedToInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Moved to in progress'**
+  String get movedToInProgress;
+
+  /// No description provided for @markedDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as done'**
+  String get markedDone;
+
+  /// No description provided for @openForDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{today} =1{1 day} other{{count} days}}'**
+  String openForDays(int count);
+
+  /// No description provided for @serviceRemote.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote support'**
+  String get serviceRemote;
+
+  /// No description provided for @serviceEquipmentSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment sale'**
+  String get serviceEquipmentSale;
+
+  /// No description provided for @serviceAtClient.
+  ///
+  /// In en, this message translates to:
+  /// **'At client\'s home'**
+  String get serviceAtClient;
 }
 
 class _AppLocalizationsDelegate

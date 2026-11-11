@@ -739,4 +739,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get partsTotal => 'Parts total';
+
+  @override
+  String orphanCallsFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count calls belong to deleted clients',
+      one: '1 call belongs to a deleted client',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String orphanCallsDeleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count calls removed',
+      one: '1 call removed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cleanUp => 'Clean up';
+
+  @override
+  String get startWork => 'Start work';
+
+  @override
+  String get movedToInProgress => 'Moved to in progress';
+
+  @override
+  String get markedDone => 'Marked as done';
+
+  @override
+  String openForDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+      zero: 'today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get serviceRemote => 'Remote support';
+
+  @override
+  String get serviceEquipmentSale => 'Equipment sale';
+
+  @override
+  String get serviceAtClient => 'At client\'s home';
 }

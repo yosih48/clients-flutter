@@ -735,4 +735,60 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get partsTotal => 'סה\"כ חלקים';
+
+  @override
+  String orphanCallsFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count קריאות שייכות ללקוחות שנמחקו',
+      one: 'קריאה אחת שייכת ללקוח שנמחק',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String orphanCallsDeleted(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count קריאות נמחקו',
+      one: 'קריאה אחת נמחקה',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get cleanUp => 'נקה';
+
+  @override
+  String get startWork => 'התחל עבודה';
+
+  @override
+  String get movedToInProgress => 'הועבר לבעבודה';
+
+  @override
+  String get markedDone => 'סומן כבוצע';
+
+  @override
+  String openForDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ימים',
+      two: 'יומיים',
+      one: 'יום אחד',
+      zero: 'היום',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get serviceRemote => 'טיפול מרחוק';
+
+  @override
+  String get serviceEquipmentSale => 'מכירת ציוד';
+
+  @override
+  String get serviceAtClient => 'בית הלקוח';
 }
