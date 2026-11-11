@@ -104,6 +104,7 @@ class AppTheme {
             surfaceContainerHighest: surfaceMuted,
             outline: outline,
             outlineVariant: outline,
+            onSurfaceVariant: inkMuted,
           )
         : ColorScheme.light(
             primary: primary,
@@ -117,6 +118,7 @@ class AppTheme {
             surfaceContainerHighest: surfaceMuted,
             outline: outline,
             outlineVariant: outline,
+            onSurfaceVariant: inkMuted,
           );
 
     final TextTheme textTheme = TextTheme(

@@ -147,7 +147,7 @@
   "signInSubtitle": "התחבר כדי לנהל את הלקוחות והקריאות שלך",
   "signIn": "התחבר",
   "password": "סיסמה",
-  "cantLogIn": "לא יכול להתחבר?",
+  "cantLogIn": "שכחת סיסמה?",
   "noAccountYet": "אין לך חשבון?",
   "signUp": "הרשמה",
   "createAccount": "צור חשבון",
@@ -173,7 +173,7 @@
   "sendVerificationCode": "שלח קוד אימות",
   "verificationCode": "קוד אימות",
   "phoneLoginSubtitle": "התחבר באמצעות מספר הטלפון שלך",
-  "invalidCredentials": "שם משתמש או סיסמה לא נכונים",
+  "invalidCredentials": "אימייל או סיסמה שגויים",
   "signUpError": "שגיאת הרשמה",
   "signedUpSuccess": "נרשמת בהצלחה",
   "updatedSuccess": "עודכן בהצלחה",
@@ -201,5 +201,12 @@
   "productName": "שם מוצר",
 
   "openCalls": "קריאות פתוחות",
-  "inProgressCalls": "קריאות בעבודה"
+  "inProgressCalls": "קריאות בעבודה",
+  "emailRequired": "יש להזין כתובת אימייל",
+  "emailInvalid": "כתובת האימייל אינה תקינה",
+  "passwordRequired": "יש להזין סיסמה",
+  "authNetworkError": "אין חיבור לאינטרנט. בדקו את החיבור ונסו שוב.",
+  "authTooManyRequests": "יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.",
+  "authUserDisabled": "החשבון הזה הושבת",
+  "authGenericError": "הכניסה נכשלה. נסו שוב."
 }

@@ -8,20 +8,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
 
-import 'Feature/Login Screen/Login_Screen.dart';
 import 'clientdCarsd.dart';
 import 'componenets/addClientDialof.dart';
 import 'componenets/auth.dart';
-import 'screens/actions.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await dotenv.load(fileName: ".env");
-  runApp(AppStarter());
+  runApp(const AppStarter());
 }
 
 class TodoApp extends StatelessWidget {
@@ -29,24 +26,7 @@ class TodoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      routes: {
-        '/action': (context) => actions(),
-      },
-      title: 'Todo Manage',
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('en'), Locale('he')],
-      themeMode: ThemeMode.system,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      home: MyHomePage(title: AppLocalizations.of(context)!.clients),
-    );
+    return MyHomePage(title: AppLocalizations.of(context)!.clients);
   }
 }
 
@@ -168,14 +148,9 @@ class _AppDrawer extends StatelessWidget {
               icon: Icons.logout_rounded,
               label: loc.signout,
               destructive: true,
-              onTap: () async {
-                await removeAuthToken();
-                if (!context.mounted) return;
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => LoginScreen()),
-                );
-              },
+              // The home screen (and its drawer) is replaced by the login
+              // screen once Firebase reports the sign-out.
+              onTap: () => signOutUser(context),
             ),
             const SizedBox(height: 12),
           ],

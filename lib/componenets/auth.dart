@@ -1,29 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Function to save the authentication token
-  Future<void> saveAuthToken(String token) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  await prefs.setString('authToken', token);
-}
-
-// Function to retrieve the authentication token
-Future<String?> getAuthToken() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('authToken');
-}
-
-// Function to check if the user is authenticated
-bool isUserAuthenticated() {
-  Future<String?> authToken = getAuthToken();
-  return authToken != null;
-}
-
-Future<void> removeAuthToken() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+/// Signs the user out of Firebase. [AppStarter] listens to auth state, so the
+/// root switches back to the login screen by itself; we only need to clear
+/// any screens pushed on top of the home screen.
+Future<void> signOutUser(BuildContext context) async {
+  final navigator = Navigator.of(context);
+  await FirebaseAuth.instance.signOut();
+  // Clean up the legacy "authToken" flag older versions stored.
+  final prefs = await SharedPreferences.getInstance();
   await prefs.remove('authToken');
-}
-
-Future<bool> checkAuthToken() async {
-  String? token = await getAuthToken();
-  return token != null && token.isNotEmpty;
+  navigator.popUntil((route) => route.isFirst);
 }

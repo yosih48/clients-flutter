@@ -421,7 +421,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get password => 'Password';
 
   @override
-  String get cantLogIn => 'Can\'t log in?';
+  String get cantLogIn => 'Forgot password?';
 
   @override
   String get noAccountYet => 'Don\'t have an account?';
@@ -570,4 +570,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get inProgressCalls => 'In progress calls';
+
+  @override
+  String get emailRequired => 'Please enter your email';
+
+  @override
+  String get emailInvalid => 'Please enter a valid email address';
+
+  @override
+  String get passwordRequired => 'Please enter your password';
+
+  @override
+  String get authNetworkError =>
+      'No internet connection. Check your network and try again.';
+
+  @override
+  String get authTooManyRequests =>
+      'Too many attempts. Please wait a few minutes and try again.';
+
+  @override
+  String get authUserDisabled => 'This account has been disabled';
+
+  @override
+  String get authGenericError => 'Sign-in failed. Please try again.';
 }

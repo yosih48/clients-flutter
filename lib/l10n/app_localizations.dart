@@ -923,7 +923,7 @@ abstract class AppLocalizations {
   /// No description provided for @cantLogIn.
   ///
   /// In en, this message translates to:
-  /// **'Can\'t log in?'**
+  /// **'Forgot password?'**
   String get cantLogIn;
 
   /// No description provided for @noAccountYet.
@@ -1207,6 +1207,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'In progress calls'**
   String get inProgressCalls;
+
+  /// No description provided for @emailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your email'**
+  String get emailRequired;
+
+  /// No description provided for @emailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address'**
+  String get emailInvalid;
+
+  /// No description provided for @passwordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password'**
+  String get passwordRequired;
+
+  /// No description provided for @authNetworkError.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Check your network and try again.'**
+  String get authNetworkError;
+
+  /// No description provided for @authTooManyRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait a few minutes and try again.'**
+  String get authTooManyRequests;
+
+  /// No description provided for @authUserDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been disabled'**
+  String get authUserDisabled;
+
+  /// No description provided for @authGenericError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in failed. Please try again.'**
+  String get authGenericError;
 }
 
 class _AppLocalizationsDelegate

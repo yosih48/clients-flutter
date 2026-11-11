@@ -148,7 +148,7 @@
   "signInSubtitle": "Sign in to manage your clients and calls",
   "signIn": "Sign in",
   "password": "Password",
-  "cantLogIn": "Can't log in?",
+  "cantLogIn": "Forgot password?",
   "noAccountYet": "Don't have an account?",
   "signUp": "Sign up",
   "createAccount": "Create account",
@@ -202,5 +202,12 @@
   "productName": "Product name",
 
   "openCalls": "Open calls",
-  "inProgressCalls": "In progress calls"
+  "inProgressCalls": "In progress calls",
+  "emailRequired": "Please enter your email",
+  "emailInvalid": "Please enter a valid email address",
+  "passwordRequired": "Please enter your password",
+  "authNetworkError": "No internet connection. Check your network and try again.",
+  "authTooManyRequests": "Too many attempts. Please wait a few minutes and try again.",
+  "authUserDisabled": "This account has been disabled",
+  "authGenericError": "Sign-in failed. Please try again."
 }

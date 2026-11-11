@@ -1,29 +1,19 @@
 import 'package:clientsf/theme.dart';
 import 'package:clientsf/widgets/app_widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:clientsf/l10n/app_localizations.dart';
 
 import '../Feature/Login Screen/Login_Screen.dart';
-import '../componenets/auth.dart';
 import '../main.dart';
 import 'actions.dart';
 
-class AppStarter extends StatefulWidget {
+/// The single [MaterialApp] of the app. Which root screen is shown is driven
+/// by Firebase's auth state: signing in or out anywhere swaps the root
+/// automatically, so screens never push a new app on top of the old one.
+class AppStarter extends StatelessWidget {
   const AppStarter({super.key});
-
-  @override
-  State<AppStarter> createState() => _AppStarterState();
-}
-
-class _AppStarterState extends State<AppStarter> {
-  late Future<bool> _checkToken;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkToken = checkAuthToken();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +33,14 @@ class _AppStarterState extends State<AppStarter> {
       themeMode: ThemeMode.system,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      home: FutureBuilder<bool>(
-        future: _checkToken,
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const LoadingView();
           }
-          if (snapshot.data == true) return const TodoApp();
-          return LoginScreen();
+          if (snapshot.data != null) return const TodoApp();
+          return const LoginScreen();
         },
       ),
     );

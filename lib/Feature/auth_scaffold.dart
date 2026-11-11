@@ -20,6 +20,10 @@ class AuthScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    // Blobs are toned down on dark backgrounds where they'd otherwise glow.
+    final blobStrength = isDark ? 0.5 : 1.0;
     return Scaffold(
       body: Stack(
         children: [
@@ -30,7 +34,7 @@ class AuthScaffold extends StatelessWidget {
             child: _Blob(
               size: 320,
               colors: [
-                AppColors.primary.withOpacity(0.35),
+                AppColors.primary.withOpacity(0.35 * blobStrength),
                 AppColors.primary.withOpacity(0.0),
               ],
             ),
@@ -41,7 +45,7 @@ class AuthScaffold extends StatelessWidget {
             child: _Blob(
               size: 260,
               colors: [
-                AppColors.accent.withOpacity(0.45),
+                AppColors.accent.withOpacity(0.45 * blobStrength),
                 AppColors.accent.withOpacity(0.0),
               ],
             ),
@@ -96,8 +100,8 @@ class AuthScaffold extends StatelessWidget {
                         Text(
                           subtitle!,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.inkMuted,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.onSurfaceVariant,
                               ),
                         ),
                       ],

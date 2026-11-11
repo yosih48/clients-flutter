@@ -420,7 +420,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get password => 'סיסמה';
 
   @override
-  String get cantLogIn => 'לא יכול להתחבר?';
+  String get cantLogIn => 'שכחת סיסמה?';
 
   @override
   String get noAccountYet => 'אין לך חשבון?';
@@ -497,7 +497,7 @@ class AppLocalizationsHe extends AppLocalizations {
   String get phoneLoginSubtitle => 'התחבר באמצעות מספר הטלפון שלך';
 
   @override
-  String get invalidCredentials => 'שם משתמש או סיסמה לא נכונים';
+  String get invalidCredentials => 'אימייל או סיסמה שגויים';
 
   @override
   String get signUpError => 'שגיאת הרשמה';
@@ -567,4 +567,25 @@ class AppLocalizationsHe extends AppLocalizations {
 
   @override
   String get inProgressCalls => 'קריאות בעבודה';
+
+  @override
+  String get emailRequired => 'יש להזין כתובת אימייל';
+
+  @override
+  String get emailInvalid => 'כתובת האימייל אינה תקינה';
+
+  @override
+  String get passwordRequired => 'יש להזין סיסמה';
+
+  @override
+  String get authNetworkError => 'אין חיבור לאינטרנט. בדקו את החיבור ונסו שוב.';
+
+  @override
+  String get authTooManyRequests => 'יותר מדי ניסיונות. נסו שוב בעוד כמה דקות.';
+
+  @override
+  String get authUserDisabled => 'החשבון הזה הושבת';
+
+  @override
+  String get authGenericError => 'הכניסה נכשלה. נסו שוב.';
 }

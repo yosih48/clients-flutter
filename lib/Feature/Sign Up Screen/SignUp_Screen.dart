@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../componenets/alertDialog.dart';
-import '../Login Screen/Login_Screen.dart';
 import '../auth_scaffold.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -31,10 +30,8 @@ class _SignupScreenState extends State<SignupScreen> {
       );
       if (!mounted) return;
       showToast(AppLocalizations.of(context)!.signedUpSuccess);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
+      // Firebase signs the new user in; AppStarter shows the home screen.
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } catch (_) {
       if (!mounted) return;
       showToast(AppLocalizations.of(context)!.signUpError);
